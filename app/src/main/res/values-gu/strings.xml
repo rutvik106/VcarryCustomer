@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">V-Carry Customer</string>
+
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_home">ActivityHome</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">સેટિંગ્સ</string>
+
+    <string name="nav_home">હોમ</string>
+    <string name="nav_trips">ટ્રિપ્સ</string>
+    <string name="nav_accountBalance">એકાઉન્ટ બેલેન્સ</string>
+    <string name="nav_tripOnOffer">ટ્રીપ ઓન ઓફર </string>
+    <string name="nav_share">શેર</string>
+    <string name="nav_sendFeedback">સેન્ડ ફીડબેક</string>
+
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyCVa5aEoKbZQjYvhkvPav-XtGsL3F3E7zs
+    </string>
+
+    <string name="hindi">हिंदी</string>
+
+    <string name="gujarati">ગુજરાતી</string>
+
+    <string name="select_language">ભાષા પસંદ કરો</string>
+
+    <string name="actionbar_title_trips">ટ્રિપ્સ</string>
+
+    <string name="ongoing_trip">ચાલુ ટ્રિપ્સ</string>
+    <string name="book_a_trip">બુક ટ્રીપ</string>
+    <string name="schedule_trip">શેડ્યૂલ ટ્રીપ</string>
+    <string name="trip_summary">ટ્રીપ સારાંશ</string>
+
+
+    <string name="from">પ્રારંભ બિંદુ પસંદ કરો</string>
+    <string name="to">ગંતવ્ય પસંદ કરો</string>
+    <string name="vehicle">વાહન</string>
+    <string name="request_trip">ટ્રીપ ની વિનંતી કરો</string>
+
+
+</resources>

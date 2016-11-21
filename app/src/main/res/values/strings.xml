@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">V-Carry Customer</string>
+
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_home">ActivityHome</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_trips">Trips</string>
+    <string name="nav_accountBalance">Account Balance</string>
+    <string name="nav_tripOnOffer">Trip On Offer</string>
+    <string name="nav_share">Share</string>
+    <string name="nav_sendFeedback">Send Feedback</string>
+
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyCVa5aEoKbZQjYvhkvPav-XtGsL3F3E7zs
+    </string>
+
+    <string name="hindi">हिंदी</string>
+
+    <string name="gujarati">ગુજરાતી</string>
+
+    <string name="select_language">Select Language</string>
+
+    <string name="actionbar_title_trips">Trips</string>
+
+    <string name="ongoing_trip">Ongoing Trips</string>
+    <string name="book_a_trip">Book a Trip</string>
+    <string name="schedule_trip">Schedule a Trip</string>
+    <string name="trip_summary">Trip Summary</string>
+
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="vehicle">Vehicle</string>
+    <string name="request_trip">Request Trip</string>
+
+</resources>

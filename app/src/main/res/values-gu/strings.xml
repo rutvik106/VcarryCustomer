@@ -36,10 +36,14 @@
     <string name="trip_summary">ટ્રીપ સારાંશ</string>
 
 
-    <string name="from">પ્રારંભ બિંદુ પસંદ કરો</string>
+    <string name="from">પ્રારંભ સ્થળ પસંદ કરો</string>
     <string name="to">ગંતવ્ય પસંદ કરો</string>
     <string name="vehicle">વાહન</string>
     <string name="request_trip">ટ્રીપ ની વિનંતી કરો</string>
 
+    <string name="select_start_location">પ્રારંભ સ્થળ</string>
+    <string name="select_destination">ગંતવ્ય</string>
+
+    <string name="select_this_location">પસંદ કરો</string>
 
 </resources>

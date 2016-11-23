@@ -40,4 +40,9 @@
     <string name="vehicle">Vehicle</string>
     <string name="request_trip">Request Trip</string>
 
+    <string name="select_start_location">Starting Location</string>
+    <string name="select_destination">Select Destination</string>
+
+    <string name="select_this_location">SELECT LOCATION</string>
+
 </resources>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import fragments.FragmentMap;
 
@@ -47,21 +48,27 @@ public class ActivityPickLocation extends VCarryActivity
             @Override
             public void onClick(View view)
             {
-                ActivityPickLocation.this.finish();
+                if(!map.getCurrentPlace().equals("Fetching location..."))
+                {
+                    setResultIntent();
+                }
+                else {
+                    Toast.makeText(ActivityPickLocation.this, "Fetching location...", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
     }
 
 
-    @Override
-    public void finish()
+    private void setResultIntent()
     {
         Intent i = new Intent();
         i.putExtra("PLACE", map.getCurrentPlace());
         i.putExtra("LAT", map.getCurrentLat());
         i.putExtra("LNG", map.getCurrentLng());
-        setResult(Activity.RESULT_OK,i);
-        super.finish();
+        setResult(Activity.RESULT_OK, i);
+        finish();
     }
+
 }

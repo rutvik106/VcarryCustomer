@@ -23,9 +23,9 @@ public class ActivityBookTrip extends AppCompatActivity
 
     AutoCompleteTextView actFrom, actTo;
 
-    String fromPlace, fromLat, fromLng;
+    String fromPlace = "", fromLat, fromLng;
 
-    String toPlace, toLat, toLng;
+    String toPlace = "", toLat, toLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -76,20 +76,28 @@ public class ActivityBookTrip extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                TripOperations.bookTrip(new TripOperations.TripOperationListener()
+                if (!actFrom.getText().toString().isEmpty() && !actTo.getText().toString().isEmpty())
                 {
-                    @Override
-                    public void tripBookedSuccessfully()
+                    btnRequestTrip.setEnabled(false);
+                    TripOperations.bookTrip(actFrom.getText().toString(), actTo.getText().toString(), new TripOperations.TripOperationListener()
                     {
-                        Toast.makeText(ActivityBookTrip.this, "Trip Booked Successfully", Toast.LENGTH_SHORT).show();
-                    }
+                        @Override
+                        public void tripBookedSuccessfully()
+                        {
+                            Toast.makeText(ActivityBookTrip.this, "Trip Booked Successfully", Toast.LENGTH_SHORT).show();
+                            btnRequestTrip.setEnabled(true);
+                        }
 
-                    @Override
-                    public void failedToBookTrip(DatabaseError databaseError)
-                    {
-
-                    }
-                });
+                        @Override
+                        public void failedToBookTrip(DatabaseError databaseError)
+                        {
+                            btnRequestTrip.setEnabled(true);
+                        }
+                    });
+                } else
+                {
+                    Toast.makeText(ActivityBookTrip.this, "Please enter from and to", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

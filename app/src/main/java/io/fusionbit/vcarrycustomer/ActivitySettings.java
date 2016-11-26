@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import extra.LocaleHelper;
+import extra.Log;
 
 public class ActivitySettings extends VCarryActivity
 {
+
+    private static final String TAG = App.APP_TAG + ActivitySettings.class.getSimpleName();
 
     AppCompatSpinner spinSelectLanguage;
 
@@ -47,6 +50,7 @@ public class ActivitySettings extends VCarryActivity
 
         final String language = LocaleHelper.getLanguage(this);
 
+        Log.i(TAG, "LANGUAGE: " + language);
 
         if (language.equals("en"))
         {

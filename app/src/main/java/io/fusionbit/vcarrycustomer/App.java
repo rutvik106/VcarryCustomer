@@ -36,5 +36,4 @@ public class App extends MultiDexApplication
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
-
 }

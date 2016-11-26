@@ -306,17 +306,23 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         {
             if (resultCode == Constants.SUCCESS_RESULT)
             {
-                //final Address address = resultData.getParcelable(Constants.RESULT_ADDRESS);
-                getActivity().runOnUiThread(new Runnable()
+                try
                 {
-                    @Override
-                    public void run()
+                    //final Address address = resultData.getParcelable(Constants.RESULT_ADDRESS);
+                    getActivity().runOnUiThread(new Runnable()
                     {
-                        String address = resultData.getString(Constants.RESULT_DATA_KEY);
-                        address = address.substring(0, address.length() - 2);
-                        etCurrentLocation.setText(address);
-                    }
-                });
+                        @Override
+                        public void run()
+                        {
+                            String address = resultData.getString(Constants.RESULT_DATA_KEY);
+                            address = address.substring(0, address.length() - 2);
+                            etCurrentLocation.setText(address);
+                        }
+                    });
+                } catch (NullPointerException e)
+                {
+                    e.printStackTrace();
+                }
             } else
             {
                 getActivity().runOnUiThread(new Runnable()

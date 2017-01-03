@@ -16,13 +16,13 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
 
-import extra.CircleTransform;
 import extra.LocaleHelper;
 import fragments.FragmentHome;
 import fragments.FragmentTrips;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import static io.fusionbit.vcarrycustomer.Constants.WAS_LANGUAGE_CHANGED;
 
@@ -59,8 +59,8 @@ public class ActivityHome extends AppCompatActivity
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {
 
-            Picasso.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
-                    .transform(new CircleTransform())
+            Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
+                    .bitmapTransform(new CropCircleTransformation(this))
                     .into((ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userPic));
 
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_titleUserName))

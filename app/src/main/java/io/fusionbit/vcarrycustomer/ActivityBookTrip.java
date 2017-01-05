@@ -12,20 +12,35 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseError;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import components.DaggerFirebaseOperations;
+import components.FirebaseOperations;
 import firebase.TripOperations;
 
 public class ActivityBookTrip extends AppCompatActivity
 {
 
+    @BindView(R.id.btn_requestTrip)
     Button btnRequestTrip;
 
-    ImageView ivSelectFrom, ivSelectTo;
+    @BindView(R.id.iv_selectFrom)
+    ImageView ivSelectFrom;
 
-    AutoCompleteTextView actFrom, actTo;
+    @BindView(R.id.iv_selectTo)
+    ImageView ivSelectTo;
+
+    @BindView(R.id.act_from)
+    AutoCompleteTextView actFrom;
+
+    @BindView(R.id.act_to)
+    AutoCompleteTextView actTo;
 
     String fromPlace = "", fromLat, fromLng;
 
     String toPlace = "", toLat, toLng;
+
+    FirebaseOperations firebaseOperations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -33,17 +48,17 @@ public class ActivityBookTrip extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_trip);
 
+        ButterKnife.bind(this);
+
         if (getSupportActionBar() != null)
         {
             getSupportActionBar().setTitle(getResources().getString(R.string.book_a_trip));
         }
 
-        actFrom = (AutoCompleteTextView) findViewById(R.id.act_from);
-        actTo = (AutoCompleteTextView) findViewById(R.id.act_to);
+        firebaseOperations = DaggerFirebaseOperations.builder()
+                .firebaseRemoteConfigSettingsModule(null)
+                .build();
 
-        btnRequestTrip = (Button) findViewById(R.id.btn_requestTrip);
-
-        ivSelectFrom = (ImageView) findViewById(R.id.iv_selectFrom);
         ivSelectFrom.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -58,7 +73,6 @@ public class ActivityBookTrip extends AppCompatActivity
             }
         });
 
-        ivSelectTo = (ImageView) findViewById(R.id.iv_selectTo);
         ivSelectTo.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -79,7 +93,7 @@ public class ActivityBookTrip extends AppCompatActivity
                 if (!actFrom.getText().toString().isEmpty() && !actTo.getText().toString().isEmpty())
                 {
                     btnRequestTrip.setEnabled(false);
-                    TripOperations.bookTrip(actFrom.getText().toString(), actTo.getText().toString(), new TripOperations.TripOperationListener()
+                    firebaseOperations.tripOperations().bookTrip(actFrom.getText().toString(), actTo.getText().toString(), new TripOperations.TripOperationListener()
                     {
                         @Override
                         public void tripBookedSuccessfully()

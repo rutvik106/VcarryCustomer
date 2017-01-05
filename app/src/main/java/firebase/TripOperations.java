@@ -3,22 +3,36 @@ package firebase;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.inject.Inject;
+
 /**
  * Created by rutvik on 11/20/2016 at 5:02 PM.
  */
 
+
 public class TripOperations
 {
 
-    public static void bookTrip(final String from, final String to, final TripOperationListener tripOperationListener)
+    FirebaseDatabase firebaseDatabase;
+    FirebaseRemoteConfig remoteConfig;
+
+    @Inject
+    TripOperations(FirebaseDatabase firebaseDatabase, FirebaseRemoteConfig remoteConfig)
+    {
+        this.firebaseDatabase = firebaseDatabase;
+        this.remoteConfig = remoteConfig;
+    }
+
+    public void bookTrip(final String from, final String to, final TripOperationListener tripOperationListener)
     {
 
-        final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference dbRef = firebaseDatabase.getReference();
         dbRef.getRoot();
 
         Random r = new Random();

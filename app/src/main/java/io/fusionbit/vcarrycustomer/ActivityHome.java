@@ -3,6 +3,7 @@ package io.fusionbit.vcarrycustomer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -37,6 +38,10 @@ public class ActivityHome extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.CUSTOMER_ID, null);
+
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -78,6 +83,21 @@ public class ActivityHome extends AppCompatActivity
             finish();
         }
 
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.CUSTOMER_ID, null);
+
+        if (customerId == null)
+        {
+            final Intent i = new Intent(this, ActivityRegistrationForm.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        }
     }
 
     private void setActionBarTitle(String title)

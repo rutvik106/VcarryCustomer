@@ -3,6 +3,7 @@ package io.fusionbit.vcarrycustomer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.multidex.BuildConfig;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -11,12 +12,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import components.DaggerFirebaseOperations;
 import components.FirebaseOperations;
 import firebase.TripOperations;
+import module.FirebaseRemoteConfigSettingsModule;
 
 public class ActivityBookTrip extends AppCompatActivity
 {
@@ -55,8 +58,13 @@ public class ActivityBookTrip extends AppCompatActivity
             getSupportActionBar().setTitle(getResources().getString(R.string.book_a_trip));
         }
 
+        final FirebaseRemoteConfigSettings configSettings =
+                new FirebaseRemoteConfigSettings.Builder()
+                        .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                        .build();
+
         firebaseOperations = DaggerFirebaseOperations.builder()
-                .firebaseRemoteConfigSettingsModule(null)
+                .firebaseRemoteConfigSettingsModule(new FirebaseRemoteConfigSettingsModule(configSettings))
                 .build();
 
         ivSelectFrom.setOnClickListener(new View.OnClickListener()

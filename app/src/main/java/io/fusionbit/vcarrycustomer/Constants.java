@@ -7,8 +7,13 @@ package io.fusionbit.vcarrycustomer;
 public class Constants
 {
 
+    //public static final String API_BASE_URL = "";
+    public static final String API_BASE_URL = "http://tapandtype.com/vcarry/webservice/";
+
     public static final int CHANGE_LANGUAGE = 123;
     public static final String WAS_LANGUAGE_CHANGED = "WAS_LANGUAGE_CHANGED";
+
+    public static final String CUSTOMER_ID = "0ce7141e06cb2bae1f1cbff8aded62d5";
 
 
     public static final String PACKAGE_NAME =
@@ -29,5 +34,6 @@ public class Constants
 
     public static final int USE_ADDRESS_NAME = 1;
     public static final int USE_ADDRESS_LOCATION = 2;
+
 
 }

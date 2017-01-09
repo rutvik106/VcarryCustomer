@@ -44,5 +44,13 @@
     <string name="select_destination">Select Destination</string>
 
     <string name="select_this_location">SELECT LOCATION</string>
+    <string name="full_name">Full Name</string>
+    <string name="contact_no">Contact No</string>
+    <string name="address_one">Address Line 1</string>
+    <string name="address_two">Address Line 2</string>
+    <string name="prefix">Prefix</string>
+    <string name="city">City</string>
+    <string name="area">Area</string>
+    <string name="register">Register</string>
 
 </resources>

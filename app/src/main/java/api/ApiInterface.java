@@ -4,6 +4,7 @@ import java.util.List;
 
 import apimodels.Area;
 import apimodels.City;
+import apimodels.Vehicle;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -38,5 +39,15 @@ public interface ApiInterface
                                       @Field("customer_area") String areaId,
                                       @Field("customerContact") String contact,
                                       @Field("email") String email);
+
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<Vehicle>> getVehicleTypes(@Field("method") String method);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> getCustomerIdFromEmail(@Field("method") String method,
+                                              @Field("email") String email);
 
 }

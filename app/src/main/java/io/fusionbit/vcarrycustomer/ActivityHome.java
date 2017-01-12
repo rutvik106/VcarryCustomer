@@ -12,18 +12,27 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.IOException;
+
+import api.API;
+import api.RetrofitCallbacks;
 import extra.LocaleHelper;
 import fragments.FragmentHome;
 import fragments.FragmentTrips;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static io.fusionbit.vcarrycustomer.Constants.WAS_LANGUAGE_CHANGED;
 
@@ -38,9 +47,6 @@ public class ActivityHome extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Constants.CUSTOMER_ID, null);
 
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -63,6 +69,7 @@ public class ActivityHome extends AppCompatActivity
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {
+            tryToGetCustomerIdFromCustomerEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
             Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
                     .bitmapTransform(new CropCircleTransformation(this))
@@ -82,22 +89,62 @@ public class ActivityHome extends AppCompatActivity
         {
             finish();
         }
-
     }
 
-    @Override
-    protected void onResume()
+    private void tryToGetCustomerIdFromCustomerEmail(String email)
     {
-        super.onResume();
-        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Constants.CUSTOMER_ID, null);
 
-        if (customerId == null)
-        {
-            final Intent i = new Intent(this, ActivityRegistrationForm.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-        }
+        final RetrofitCallbacks<ResponseBody> onGetCustomerIdCallback =
+                new RetrofitCallbacks<ResponseBody>()
+                {
+
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            try
+                            {
+                                if (TextUtils.isDigitsOnly(response.body().string()))
+                                {
+                                    final String customerId = response.body().string();
+
+                                    PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                            .edit()
+                                            .putString(Constants.CUSTOMER_ID, customerId)
+                                            .apply();
+                                }
+                            } catch (IOException e)
+                            {
+                                e.printStackTrace();
+                                PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                        .edit()
+                                        .putString(Constants.CUSTOMER_ID, null)
+                                        .apply();
+                                Toast.makeText(ActivityHome.this, "customer id not found", Toast.LENGTH_SHORT).show();
+                            }
+                        } else
+                        {
+                            PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                    .edit()
+                                    .putString(Constants.CUSTOMER_ID, null)
+                                    .apply();
+                            Toast.makeText(ActivityHome.this, "something went wrong try again later", Toast.LENGTH_SHORT).show();
+                        }
+                        promptForRegistration();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        Toast.makeText(ActivityHome.this, "please check network connection", Toast.LENGTH_SHORT).show();
+                    }
+                };
+
+        API.getInstance().getCustomerIdFromEmail(email, onGetCustomerIdCallback);
+
     }
 
     private void setActionBarTitle(String title)
@@ -209,6 +256,19 @@ public class ActivityHome extends AppCompatActivity
 
 
             }
+        }
+    }
+
+    private void promptForRegistration()
+    {
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.CUSTOMER_ID, null);
+
+        if (customerId == null)
+        {
+            final Intent i = new Intent(this, ActivityRegistrationForm.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
         }
     }
 }

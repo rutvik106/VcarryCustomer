@@ -7,6 +7,7 @@ import java.util.List;
 
 import apimodels.Area;
 import apimodels.City;
+import apimodels.Vehicle;
 import io.fusionbit.vcarrycustomer.App;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -70,6 +71,27 @@ public class API
 
         Call<ResponseBody> call = apiService.insertCustomer("insert_customer", namePrefix, name,
                 address1, address2, cityId, areaId, contact, email);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+
+    public Call<List<Vehicle>> getVehicleTypes(final RetrofitCallbacks<List<Vehicle>> callback)
+    {
+        Call<List<Vehicle>> call = apiService.getVehicleTypes("get_vehicle_types");
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<ResponseBody> getCustomerIdFromEmail(final String email,
+                                                     RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call = apiService.getCustomerIdFromEmail("get_customer_id_from_customer_email",
+                email);
 
         call.enqueue(callback);
 

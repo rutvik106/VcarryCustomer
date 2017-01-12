@@ -1,9 +1,11 @@
 package io.fusionbit.vcarrycustomer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -220,20 +222,26 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
                             {
                                 if (!response.body().string().isEmpty() && !response.body().string().contains("error"))
                                 {
-                                    PreferenceManager.getDefaultSharedPreferences(ActivityRegistrationForm.this)
-                                            .edit()
-                                            .putString(Constants.CUSTOMER_ID, response.body().string())
-                                            .apply();
+                                    if (TextUtils.isDigitsOnly(response.body().string()))
+                                    {
+                                        PreferenceManager.getDefaultSharedPreferences(ActivityRegistrationForm.this)
+                                                .edit()
+                                                .putString(Constants.CUSTOMER_ID, response.body().string())
+                                                .apply();
+                                        startActivity(new Intent(ActivityRegistrationForm.this,
+                                                ActivityHome.class));
+                                    } else
+                                    {
+                                        Toast.makeText(ActivityRegistrationForm.this, "Failed to register", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             } catch (IOException e)
                             {
                                 e.printStackTrace();
                             }
 
-                        } else
-                        {
-                            btnRegisterNewCustomer.setVisibility(View.VISIBLE);
                         }
+                        btnRegisterNewCustomer.setVisibility(View.VISIBLE);
                     }
 
                     @Override

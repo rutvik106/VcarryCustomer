@@ -1,13 +1,18 @@
 package apimodels;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by rutvik on 1/9/2017 at 4:58 PM.
  */
 
-public class NamePrefix extends SpinnerModel
+public class NamePrefix implements SpinnerModel
 {
 
-    private String id, label;
+    public String id;
+
+    public String label;
 
     public NamePrefix(String id, String label)
     {

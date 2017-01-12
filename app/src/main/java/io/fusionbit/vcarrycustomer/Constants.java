@@ -35,5 +35,7 @@ public class Constants
     public static final int USE_ADDRESS_NAME = 1;
     public static final int USE_ADDRESS_LOCATION = 2;
 
+    public static final String REALM_DATABASE_NAME = "vcarrycustomerrealmdb";
+
 
 }

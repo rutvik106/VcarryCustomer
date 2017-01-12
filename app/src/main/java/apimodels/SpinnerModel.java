@@ -1,14 +1,16 @@
 package apimodels;
 
+import io.realm.RealmObject;
+
 /**
  * Created by rutvik on 1/9/2017 at 4:11 PM.
  */
 
-public abstract class SpinnerModel
+public interface SpinnerModel
 {
 
-    public abstract int getId();
+     int getId();
 
-    public abstract String getLabel();
+     String getLabel();
 
 }

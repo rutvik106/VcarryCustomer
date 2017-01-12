@@ -65,7 +65,7 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
         View v = null;
         if (convertView == null)
         {
-            convertView = LayoutInflater.from(context).inflate(R.layout.single_spinner_row_item, parent,false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.single_spinner_row_item, parent, false);
         }
         TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
         // Then you can get the current item using the values array (Users array) and the current position
@@ -82,7 +82,7 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
     {
         if (convertView == null)
         {
-            convertView = LayoutInflater.from(context).inflate(R.layout.single_spinner_row_item, parent,false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.single_spinner_row_item, parent, false);
         }
         TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
         label.setTextColor(Color.BLACK);

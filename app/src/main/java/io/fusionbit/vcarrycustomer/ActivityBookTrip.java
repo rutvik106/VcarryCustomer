@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.multidex.BuildConfig;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -14,12 +15,24 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import adapters.CustomListAdapter;
+import api.API;
+import api.RetrofitCallbacks;
+import apimodels.Vehicle;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import components.DaggerFirebaseOperations;
 import components.FirebaseOperations;
 import firebase.TripOperations;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 import module.FirebaseRemoteConfigSettingsModule;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class ActivityBookTrip extends AppCompatActivity
 {
@@ -33,6 +46,9 @@ public class ActivityBookTrip extends AppCompatActivity
     @BindView(R.id.iv_selectTo)
     ImageView ivSelectTo;
 
+    @BindView(R.id.spin_vehicle)
+    AppCompatSpinner spinVehicle;
+
     @BindView(R.id.act_from)
     AutoCompleteTextView actFrom;
 
@@ -44,6 +60,10 @@ public class ActivityBookTrip extends AppCompatActivity
     String toPlace = "", toLat, toLng;
 
     FirebaseOperations firebaseOperations;
+
+    RealmResults<Vehicle> realmVehicles;
+
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -123,6 +143,75 @@ public class ActivityBookTrip extends AppCompatActivity
             }
         });
 
+        getVehiclesFromRealm();
+
+        setVehicleListAdapter();
+
+        getVehiclesFromApi();
+
+    }
+
+    private void getVehiclesFromApi()
+    {
+
+        final RetrofitCallbacks<List<Vehicle>> onGetVehiclesCallback =
+                new RetrofitCallbacks<List<Vehicle>>()
+                {
+
+                    @Override
+                    public void onResponse(Call<List<Vehicle>> call, Response<List<Vehicle>> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            realm.beginTransaction();
+                            for (Vehicle vehicle : response.body())
+                            {
+                                realm.copyToRealmOrUpdate(vehicle);
+                            }
+                            realm.commitTransaction();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Vehicle>> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        Toast.makeText(ActivityBookTrip.this, "cannot get vehicle list", Toast.LENGTH_SHORT).show();
+                    }
+                };
+
+        API.getInstance().getVehicleTypes(onGetVehiclesCallback);
+
+    }
+
+    private void getVehiclesFromRealm()
+    {
+
+        realm = Realm.getDefaultInstance();
+
+        realmVehicles = realm.where(Vehicle.class).findAll();
+
+        realmVehicles.addChangeListener(new RealmChangeListener<RealmResults<Vehicle>>()
+        {
+            @Override
+            public void onChange(RealmResults<Vehicle> element)
+            {
+                setVehicleListAdapter();
+            }
+        });
+
+    }
+
+    private void setVehicleListAdapter()
+    {
+        final List<Vehicle> vehicleList = new ArrayList<>();
+        vehicleList.addAll(realmVehicles);
+
+        spinVehicle
+                .setAdapter(new CustomListAdapter<>(this,
+                        android.R.layout.simple_list_item_1, vehicleList));
+
     }
 
 
@@ -134,8 +223,6 @@ public class ActivityBookTrip extends AppCompatActivity
 
             switch (requestCode)
             {
-
-
                 case Constants.SELECT_START_LOCATION_ACTIVITY:
 
                     fromPlace = data.getExtras().getString("PLACE");
@@ -155,8 +242,6 @@ public class ActivityBookTrip extends AppCompatActivity
                     actTo.setText(toPlace);
 
                     break;
-
-
             }
 
         }

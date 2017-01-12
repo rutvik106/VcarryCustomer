@@ -2,11 +2,14 @@ package apimodels;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by rutvik on 1/9/2017 at 3:37 PM.
  */
 
-public class City extends SpinnerModel
+public class City implements SpinnerModel
 {
 
 

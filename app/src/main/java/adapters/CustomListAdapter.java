@@ -2,13 +2,16 @@ package adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import apimodels.SpinnerModel;
@@ -25,21 +28,23 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
     private final Context context;
 
     private final List<T> spinnerModelList;
+    private final CustomFilter filter;
+    private List<T> suggestedSpinnerModelList;
 
     public CustomListAdapter(Context context, int resource, List<T> spinnerModelList)
     {
         super(context, resource, spinnerModelList);
-
         this.context = context;
         this.spinnerModelList = spinnerModelList;
-
+        filter = new CustomFilter();
+        this.suggestedSpinnerModelList = spinnerModelList;
     }
 
 
     @Override
     public int getCount()
     {
-        return spinnerModelList.size();
+        return suggestedSpinnerModelList.size();
     }
 
 
@@ -90,5 +95,62 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
 
         return label;
     }
+
+    @NonNull
+    @Override
+    public Filter getFilter()
+    {
+        return filter;
+    }
+
+
+    private class CustomFilter extends Filter
+    {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence)
+        {
+            final FilterResults filterResults = new FilterResults();
+            final List<SpinnerModel> queryResult = new ArrayList<>();
+
+            if (charSequence.length() > 0)
+            {
+
+                for (SpinnerModel model : spinnerModelList)
+                {
+                    if (model.getLabel().toLowerCase().contains(charSequence))
+                    {
+                        queryResult.add(model);
+                    }
+                }
+            }
+
+            filterResults.values = queryResult;
+            filterResults.count = queryResult.size();
+
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults)
+        {
+            suggestedSpinnerModelList = (List<T>) filterResults.values;
+            if (suggestedSpinnerModelList != null)
+            {
+                if (suggestedSpinnerModelList.size() > 0)
+                {
+                    notifyDataSetChanged();
+                } else
+                {
+                    suggestedSpinnerModelList = spinnerModelList;
+                    notifyDataSetChanged();
+                }
+            } else
+            {
+                suggestedSpinnerModelList = spinnerModelList;
+                notifyDataSetInvalidated();
+            }
+        }
+    }
+
 
 }

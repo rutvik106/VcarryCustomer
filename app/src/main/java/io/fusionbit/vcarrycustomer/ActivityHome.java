@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -22,15 +21,13 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.io.IOException;
-
 import api.API;
 import api.RetrofitCallbacks;
 import extra.LocaleHelper;
+import extra.Log;
 import fragments.FragmentHome;
 import fragments.FragmentTrips;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -94,36 +91,25 @@ public class ActivityHome extends AppCompatActivity
     private void tryToGetCustomerIdFromCustomerEmail(String email)
     {
 
-        final RetrofitCallbacks<ResponseBody> onGetCustomerIdCallback =
-                new RetrofitCallbacks<ResponseBody>()
+        final RetrofitCallbacks<Integer> onGetCustomerIdCallback =
+                new RetrofitCallbacks<Integer>()
                 {
-
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                    public void onResponse(Call<Integer> call, Response<Integer> response)
                     {
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
-                            try
-                            {
-                                if (TextUtils.isDigitsOnly(response.body().string()))
-                                {
-                                    final String customerId = response.body().string();
+                            System.out.println(response.body());
 
-                                    PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
-                                            .edit()
-                                            .putString(Constants.CUSTOMER_ID, customerId)
-                                            .apply();
-                                }
-                            } catch (IOException e)
-                            {
-                                e.printStackTrace();
-                                PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
-                                        .edit()
-                                        .putString(Constants.CUSTOMER_ID, null)
-                                        .apply();
-                                Toast.makeText(ActivityHome.this, "customer id not found", Toast.LENGTH_SHORT).show();
-                            }
+                            final Integer customerId = response.body();
+
+                            Log.i(TAG, "CUSTOMER ID: " + customerId);
+
+                            PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                    .edit()
+                                    .putString(Constants.CUSTOMER_ID, customerId + "")
+                                    .apply();
                         } else
                         {
                             PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
@@ -136,7 +122,7 @@ public class ActivityHome extends AppCompatActivity
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t)
+                    public void onFailure(Call<Integer> call, Throwable t)
                     {
                         super.onFailure(call, t);
                         Toast.makeText(ActivityHome.this, "please check network connection", Toast.LENGTH_SHORT).show();

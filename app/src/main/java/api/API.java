@@ -7,6 +7,7 @@ import java.util.List;
 
 import apimodels.Area;
 import apimodels.City;
+import apimodels.FromLocation;
 import apimodels.Vehicle;
 import io.fusionbit.vcarrycustomer.App;
 import okhttp3.ResponseBody;
@@ -19,11 +20,9 @@ import retrofit2.Call;
 public class API
 {
 
-    private ApiInterface apiService;
-
     private static final String TAG = App.APP_TAG + API.class.getSimpleName();
-
     private static API instance = new API();
+    private ApiInterface apiService;
 
     private API()
     {
@@ -87,11 +86,67 @@ public class API
         return call;
     }
 
-    public Call<ResponseBody> getCustomerIdFromEmail(final String email,
-                                                     RetrofitCallbacks<ResponseBody> callback)
+    public Call<Integer> getCustomerIdFromEmail(final String email,
+                                                RetrofitCallbacks<Integer> callback)
     {
-        Call<ResponseBody> call = apiService.getCustomerIdFromEmail("get_customer_id_from_customer_email",
+        Call<Integer> call = apiService.getCustomerIdFromEmail("get_customer_id_from_customer_email",
                 email);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<List<FromLocation>> getShippingLocationsForCustomer(final String customerId,
+                                                                    RetrofitCallbacks<List<FromLocation>> callback)
+    {
+        Call<List<FromLocation>> call =
+                apiService.getShippingLocationsForCustomer("get_shipping_locations_for_customer",
+                        customerId);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<ResponseBody> getFareForVehicleTypeLocations(final String fromShippingId,
+                                                             final String toShippingId,
+                                                             final String vehicleTypeId,
+                                                             RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call =
+                apiService.getFareForVehicleTypeLocations("get_fare_for_vehicle_type_locations",
+                        fromShippingId, toShippingId, vehicleTypeId);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<ResponseBody> insertCustomerTrip(final String fromShippingId,
+                                                 final String toShippingId,
+                                                 final String vehicleTypeId,
+                                                 final String customerId,
+                                                 final String fromNewAddress,
+                                                 final String toNewAddress,
+                                                 RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call =
+                apiService.insertCustomerTrip("insert_customer_trip",
+                        fromShippingId, toShippingId, vehicleTypeId, customerId, fromNewAddress, toNewAddress);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<ResponseBody> updateDeviceTokenCustomer(final String customerId,
+                                                        final String deviceToken,
+                                                        RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call =
+                apiService.updateDeviceTokenCustomer("update_device_token_customer",
+                        customerId, deviceToken);
 
         call.enqueue(callback);
 

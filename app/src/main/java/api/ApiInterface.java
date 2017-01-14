@@ -4,6 +4,7 @@ import java.util.List;
 
 import apimodels.Area;
 import apimodels.City;
+import apimodels.FromLocation;
 import apimodels.Vehicle;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -47,7 +48,35 @@ public interface ApiInterface
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<ResponseBody> getCustomerIdFromEmail(@Field("method") String method,
-                                              @Field("email") String email);
+    Call<Integer> getCustomerIdFromEmail(@Field("method") String method,
+                                         @Field("email") String email);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<FromLocation>> getShippingLocationsForCustomer(@Field("method") String method,
+                                                             @Field("customer_id") String customerId);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> getFareForVehicleTypeLocations(@Field("method") String method,
+                                                      @Field("from_shipping_id") String fromShippingId,
+                                                      @Field("to_shipping_id") String toShippingLocation,
+                                                      @Field("vehicle_type_id") String vehicleTypeId);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> insertCustomerTrip(@Field("method") String method,
+                                          @Field("from_shipping_id") String fromShippingId,
+                                          @Field("to_shipping_id") String toShippingLocation,
+                                          @Field("vehicle_type_id") String vehicleTypeId,
+                                          @Field("customer_id") String customerId,
+                                          @Field("from_new_address") String fromNewAddress,
+                                          @Field("to_new_address") String toNewAddress);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> updateDeviceTokenCustomer(@Field("method") String method,
+                                                 @Field("customer_id") String customerId,
+                                                 @Field("device_token") String deviceToken);
 
 }

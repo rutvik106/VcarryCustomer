@@ -3,10 +3,12 @@ package io.fusionbit.vcarrycustomer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.multidex.BuildConfig;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,6 +23,8 @@ import java.util.List;
 import adapters.CustomListAdapter;
 import api.API;
 import api.RetrofitCallbacks;
+import apimodels.FromLocation;
+import apimodels.SpinnerModel;
 import apimodels.Vehicle;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,7 +67,9 @@ public class ActivityBookTrip extends AppCompatActivity
 
     RealmResults<Vehicle> realmVehicles;
 
+    RealmResults<FromLocation> realmFromLocations;
     Realm realm;
+    private int shippingLocationId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -143,11 +149,97 @@ public class ActivityBookTrip extends AppCompatActivity
             }
         });
 
+        actFrom.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                actFrom.showDropDown();
+            }
+        });
+
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.CUSTOMER_ID, null);
+
+        realm = Realm.getDefaultInstance();
+
+        getShippingLocationsFromRealm();
+        setShippingLocationListAdapter();
+        getShippingLocations(customerId);
+
         getVehiclesFromRealm();
-
         setVehicleListAdapter();
-
         getVehiclesFromApi();
+
+    }
+
+    private void getShippingLocationsFromRealm()
+    {
+
+        realmFromLocations = realm.where(FromLocation.class).findAll();
+
+        realmFromLocations.addChangeListener(new RealmChangeListener<RealmResults<FromLocation>>()
+        {
+            @Override
+            public void onChange(RealmResults<FromLocation> element)
+            {
+                setShippingLocationListAdapter();
+            }
+        });
+
+    }
+
+    private void setShippingLocationListAdapter()
+    {
+        final List<FromLocation> shippingLocationList = new ArrayList<>();
+        shippingLocationList.addAll(realm.copyFromRealm(realmFromLocations));
+
+        CustomListAdapter<FromLocation> adapter = new CustomListAdapter<FromLocation>(this,
+                android.R.layout.simple_list_item_1, shippingLocationList);
+
+        actFrom.setAdapter(adapter);
+        actTo.setAdapter(adapter);
+
+        final AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            {
+                final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
+
+                actFrom.setText(model.getLabel());
+                shippingLocationId = model.getId();
+            }
+        };
+
+        actFrom.setOnItemClickListener(listener);
+        actTo.setOnItemClickListener(listener);
+    }
+
+    private void getShippingLocations(String customerId)
+    {
+
+        final RetrofitCallbacks<List<FromLocation>> onGetShippingLocationCallback =
+                new RetrofitCallbacks<List<FromLocation>>()
+                {
+
+                    @Override
+                    public void onResponse(Call<List<FromLocation>> call, Response<List<FromLocation>> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            realm.beginTransaction();
+                            for (FromLocation location : response.body())
+                            {
+                                realm.copyToRealmOrUpdate(location);
+                            }
+                            realm.commitTransaction();
+                        }
+                    }
+                };
+
+        API.getInstance().getShippingLocationsForCustomer(customerId, onGetShippingLocationCallback);
 
     }
 
@@ -187,9 +279,6 @@ public class ActivityBookTrip extends AppCompatActivity
 
     private void getVehiclesFromRealm()
     {
-
-        realm = Realm.getDefaultInstance();
-
         realmVehicles = realm.where(Vehicle.class).findAll();
 
         realmVehicles.addChangeListener(new RealmChangeListener<RealmResults<Vehicle>>()
@@ -200,7 +289,6 @@ public class ActivityBookTrip extends AppCompatActivity
                 setVehicleListAdapter();
             }
         });
-
     }
 
     private void setVehicleListAdapter()

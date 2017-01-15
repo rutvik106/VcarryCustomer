@@ -22,10 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapters.CustomListAdapter;
-import api.API;
 import api.RetrofitCallbacks;
-import apimodels.Area;
-import apimodels.City;
 import apimodels.NamePrefix;
 import apimodels.SpinnerModel;
 import butterknife.BindView;
@@ -149,7 +146,7 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
 
     private void getAreaList(String cityId)
     {
-        API.getInstance().getAreas(cityId, new RetrofitCallbacks<List<Area>>()
+        /*API.getInstance().getAreas(cityId, new RetrofitCallbacks<List<Area>>()
         {
             @Override
             public void onResponse(Call<List<Area>> call, Response<List<Area>> response)
@@ -158,13 +155,13 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
                 spinArea.setAdapter(new CustomListAdapter<>(ActivityRegistrationForm.this,
                         android.R.layout.simple_list_item_1, response.body()));
             }
-        });
+        });*/
     }
 
     private void getCityList()
     {
 
-        API.getInstance().getCities(new RetrofitCallbacks<List<City>>()
+        /*API.getInstance().getCities(new RetrofitCallbacks<List<City>>()
         {
 
             @Override
@@ -177,7 +174,7 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
                             android.R.layout.simple_spinner_item, response.body()));
                 }
             }
-        });
+        });*/
 
     }
 
@@ -252,14 +249,14 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
                     }
                 };
 
-        API.getInstance().insertCustomer(selectedPrefixId,
+        /*API.getInstance().insertCustomer(selectedPrefixId,
                 etFullName.getText().toString(),
                 etAddressLineOne.getText().toString(),
                 etAddressLineTwo.getText().toString(),
                 selectedAreaId,
                 etContact.getText().toString(),
                 selectedCityId,
-                onRegistrationCallback);
+                onRegistrationCallback);*/
 
     }
 

@@ -2,8 +2,9 @@ package api;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.Calendar;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import apimodels.Area;
 import apimodels.City;
@@ -12,6 +13,7 @@ import apimodels.Vehicle;
 import io.fusionbit.vcarrycustomer.App;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Retrofit;
 
 /**
  * Created by rutvik on 1/9/2017 at 3:23 PM.
@@ -21,17 +23,14 @@ public class API
 {
 
     private static final String TAG = App.APP_TAG + API.class.getSimpleName();
-    private static API instance = new API();
+    Retrofit retrofit;
     private ApiInterface apiService;
 
-    private API()
+    @Inject
+    public API(Retrofit retrofit)
     {
-        apiService = ApiClient.getClient().create(ApiInterface.class);
-    }
-
-    public static API getInstance()
-    {
-        return instance;
+        this.retrofit = retrofit;
+        apiService = retrofit.create(ApiInterface.class);
     }
 
     //**********************************************************************************************
@@ -65,8 +64,6 @@ public class API
                                              final RetrofitCallbacks<ResponseBody> callback)
     {
         final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
-        final String time = Calendar.getInstance().getTimeInMillis() + "";
 
         Call<ResponseBody> call = apiService.insertCustomer("insert_customer", namePrefix, name,
                 address1, address2, cityId, areaId, contact, email);
@@ -109,12 +106,12 @@ public class API
         return call;
     }
 
-    public Call<ResponseBody> getFareForVehicleTypeLocations(final String fromShippingId,
-                                                             final String toShippingId,
-                                                             final String vehicleTypeId,
-                                                             RetrofitCallbacks<ResponseBody> callback)
+    public Call<Integer> getFareForVehicleTypeLocations(final String fromShippingId,
+                                                        final String toShippingId,
+                                                        final String vehicleTypeId,
+                                                        RetrofitCallbacks<Integer> callback)
     {
-        Call<ResponseBody> call =
+        Call<Integer> call =
                 apiService.getFareForVehicleTypeLocations("get_fare_for_vehicle_type_locations",
                         fromShippingId, toShippingId, vehicleTypeId);
 
@@ -123,15 +120,15 @@ public class API
         return call;
     }
 
-    public Call<ResponseBody> insertCustomerTrip(final String fromShippingId,
-                                                 final String toShippingId,
-                                                 final String vehicleTypeId,
-                                                 final String customerId,
-                                                 final String fromNewAddress,
-                                                 final String toNewAddress,
-                                                 RetrofitCallbacks<ResponseBody> callback)
+    public Call<Integer> insertCustomerTrip(final String fromShippingId,
+                                            final String toShippingId,
+                                            final String vehicleTypeId,
+                                            final String customerId,
+                                            final String fromNewAddress,
+                                            final String toNewAddress,
+                                            RetrofitCallbacks<Integer> callback)
     {
-        Call<ResponseBody> call =
+        Call<Integer> call =
                 apiService.insertCustomerTrip("insert_customer_trip",
                         fromShippingId, toShippingId, vehicleTypeId, customerId, fromNewAddress, toNewAddress);
 

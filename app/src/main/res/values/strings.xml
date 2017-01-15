@@ -52,5 +52,8 @@
     <string name="city">City</string>
     <string name="area">Area</string>
     <string name="register">Register</string>
+    <string name="trip_cost">Trip Cost</string>
+
+    <string name="rs">\u20B9</string>
 
 </resources>

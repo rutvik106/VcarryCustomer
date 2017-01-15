@@ -58,20 +58,20 @@ public interface ApiInterface
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<ResponseBody> getFareForVehicleTypeLocations(@Field("method") String method,
-                                                      @Field("from_shipping_id") String fromShippingId,
-                                                      @Field("to_shipping_id") String toShippingLocation,
-                                                      @Field("vehicle_type_id") String vehicleTypeId);
+    Call<Integer> getFareForVehicleTypeLocations(@Field("method") String method,
+                                                 @Field("from_shipping_id") String fromShippingId,
+                                                 @Field("to_shipping_id") String toShippingLocation,
+                                                 @Field("vehicle_type_id") String vehicleTypeId);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<ResponseBody> insertCustomerTrip(@Field("method") String method,
-                                          @Field("from_shipping_id") String fromShippingId,
-                                          @Field("to_shipping_id") String toShippingLocation,
-                                          @Field("vehicle_type_id") String vehicleTypeId,
-                                          @Field("customer_id") String customerId,
-                                          @Field("from_new_address") String fromNewAddress,
-                                          @Field("to_new_address") String toNewAddress);
+    Call<Integer> insertCustomerTrip(@Field("method") String method,
+                                     @Field("from_shipping_id") String fromShippingId,
+                                     @Field("to_shipping_id") String toShippingLocation,
+                                     @Field("vehicle_type_id") String vehicleTypeId,
+                                     @Field("customer_id") String customerId,
+                                     @Field("from_new_address") String fromNewAddress,
+                                     @Field("to_new_address") String toNewAddress);
 
     @FormUrlEncoded
     @POST("webservice.php")

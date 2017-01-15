@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +19,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+
+import javax.inject.Inject;
 
 import api.API;
 import api.RetrofitCallbacks;
@@ -33,12 +34,15 @@ import retrofit2.Response;
 
 import static io.fusionbit.vcarrycustomer.Constants.WAS_LANGUAGE_CHANGED;
 
-public class ActivityHome extends AppCompatActivity
+public class ActivityHome extends VCarryActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
     private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
 
     FragmentTransaction ft;
+
+    @Inject
+    API api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,6 +54,8 @@ public class ActivityHome extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         setActionBarTitle("V-Carry");
+
+        api = ((App) getApplication()).getVcarryApi().api();
 
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
 
@@ -129,7 +135,7 @@ public class ActivityHome extends AppCompatActivity
                     }
                 };
 
-        API.getInstance().getCustomerIdFromEmail(email, onGetCustomerIdCallback);
+        api.getCustomerIdFromEmail(email, onGetCustomerIdCallback);
 
     }
 

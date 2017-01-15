@@ -112,7 +112,7 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
             final FilterResults filterResults = new FilterResults();
             final List<SpinnerModel> queryResult = new ArrayList<>();
 
-            if (charSequence.length() > 0)
+            if (charSequence != null)
             {
 
                 for (SpinnerModel model : spinnerModelList)

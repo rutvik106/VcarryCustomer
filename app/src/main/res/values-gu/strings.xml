@@ -45,11 +45,14 @@
     <string name="select_destination">ગંતવ્ય</string>
 
     <string name="select_this_location">પસંદ કરો</string>
-    <string name="address_one">Address Line 1</string>
-    <string name="address_two">Address Line 2</string>
-    <string name="prefix">Prefix</string>
-    <string name="city">City</string>
-    <string name="area">Area</string>
-    <string name="register">Register</string>
+    <string name="address_one">સરનામું લાઇન 1</string>
+    <string name="address_two">સરનામું લાઇન 2</string>
+    <string name="prefix">પૂર્વગ</string>
+    <string name="city">સિટી</string>
+    <string name="area">વિસ્તાર</string>
+    <string name="register">રેજિસ્ટર</string>
+    <string name="trip_cost">ટ્રીપ નો ભાવ</string>
+
+    <string name="rs">\u20B9</string>
 
 </resources>

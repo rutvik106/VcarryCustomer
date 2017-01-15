@@ -5,20 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.multidex.BuildConfig;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import adapters.CustomListAdapter;
 import api.API;
@@ -30,7 +35,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import components.DaggerFirebaseOperations;
 import components.FirebaseOperations;
-import firebase.TripOperations;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -38,7 +42,7 @@ import module.FirebaseRemoteConfigSettingsModule;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ActivityBookTrip extends AppCompatActivity
+public class ActivityBookTrip extends VCarryActivity implements Validator.ValidationListener
 {
 
     @BindView(R.id.btn_requestTrip)
@@ -53,9 +57,14 @@ public class ActivityBookTrip extends AppCompatActivity
     @BindView(R.id.spin_vehicle)
     AppCompatSpinner spinVehicle;
 
+    @BindView(R.id.tv_tripFare)
+    TextView tvTripFare;
+
+    @NotEmpty
     @BindView(R.id.act_from)
     AutoCompleteTextView actFrom;
 
+    @NotEmpty
     @BindView(R.id.act_to)
     AutoCompleteTextView actTo;
 
@@ -69,7 +78,13 @@ public class ActivityBookTrip extends AppCompatActivity
 
     RealmResults<FromLocation> realmFromLocations;
     Realm realm;
-    private int shippingLocationId = 0;
+    @Inject
+    API api;
+    Validator validator;
+    Call<Integer> getFare;
+    private int fromShippingLocationId = 0;
+    private int toShippingLocationId = 0;
+    private int vehicleTypeId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -79,10 +94,16 @@ public class ActivityBookTrip extends AppCompatActivity
 
         ButterKnife.bind(this);
 
+        validator = new Validator(this);
+        validator.setValidationListener(this);
+
         if (getSupportActionBar() != null)
         {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(getResources().getString(R.string.book_a_trip));
         }
+
+        api = ((App) getApplication()).getVcarryApi().api();
 
         final FirebaseRemoteConfigSettings configSettings =
                 new FirebaseRemoteConfigSettings.Builder()
@@ -92,6 +113,24 @@ public class ActivityBookTrip extends AppCompatActivity
         firebaseOperations = DaggerFirebaseOperations.builder()
                 .firebaseRemoteConfigSettingsModule(new FirebaseRemoteConfigSettingsModule(configSettings))
                 .build();
+
+        spinVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
+            {
+                SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
+                vehicleTypeId = model.getId();
+                getFair();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView)
+            {
+
+            }
+        });
+
 
         ivSelectFrom.setOnClickListener(new View.OnClickListener()
         {
@@ -124,7 +163,10 @@ public class ActivityBookTrip extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                if (!actFrom.getText().toString().isEmpty() && !actTo.getText().toString().isEmpty())
+
+                validator.validate();
+
+                /*if (!actFrom.getText().toString().isEmpty() && !actTo.getText().toString().isEmpty())
                 {
                     btnRequestTrip.setEnabled(false);
                     firebaseOperations.tripOperations().bookTrip(actFrom.getText().toString(), actTo.getText().toString(), new TripOperations.TripOperationListener()
@@ -145,7 +187,7 @@ public class ActivityBookTrip extends AppCompatActivity
                 } else
                 {
                     Toast.makeText(ActivityBookTrip.this, "Please enter from and to", Toast.LENGTH_SHORT).show();
-                }
+                }*/
             }
         });
 
@@ -155,6 +197,39 @@ public class ActivityBookTrip extends AppCompatActivity
             public void onClick(View view)
             {
                 actFrom.showDropDown();
+            }
+        });
+
+        actTo.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                actTo.showDropDown();
+            }
+        });
+
+        actFrom.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+            @Override
+            public void onFocusChange(View view, boolean inFocus)
+            {
+                if (inFocus)
+                {
+                    actFrom.showDropDown();
+                }
+            }
+        });
+
+        actTo.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+            @Override
+            public void onFocusChange(View view, boolean inFocus)
+            {
+                if (inFocus)
+                {
+                    actTo.showDropDown();
+                }
             }
         });
 
@@ -170,6 +245,50 @@ public class ActivityBookTrip extends AppCompatActivity
         getVehiclesFromRealm();
         setVehicleListAdapter();
         getVehiclesFromApi();
+
+    }
+
+    private void getFair()
+    {
+
+        if (getFare != null)
+        {
+            getFare.cancel();
+        }
+
+        final RetrofitCallbacks<Integer> onGetFairCallback =
+                new RetrofitCallbacks<Integer>()
+                {
+
+                    @Override
+                    public void onResponse(Call<Integer> call, Response<Integer> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() > 0)
+                            {
+                                tvTripFare.setText(getResources().getString(R.string.rs) + " " + response.body());
+                            } else
+                            {
+                                tvTripFare.setText("N/A");
+                            }
+                        } else
+                        {
+                            tvTripFare.setText("N/A");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Integer> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        tvTripFare.setText("N/A");
+                    }
+                };
+
+        getFare = api.getFareForVehicleTypeLocations(fromShippingLocationId + "",
+                toShippingLocationId + "", vehicleTypeId + "", onGetFairCallback);
 
     }
 
@@ -194,13 +313,16 @@ public class ActivityBookTrip extends AppCompatActivity
         final List<FromLocation> shippingLocationList = new ArrayList<>();
         shippingLocationList.addAll(realm.copyFromRealm(realmFromLocations));
 
-        CustomListAdapter<FromLocation> adapter = new CustomListAdapter<FromLocation>(this,
+        CustomListAdapter<FromLocation> fromAdaoter = new CustomListAdapter<FromLocation>(this,
                 android.R.layout.simple_list_item_1, shippingLocationList);
 
-        actFrom.setAdapter(adapter);
-        actTo.setAdapter(adapter);
+        CustomListAdapter<FromLocation> toAdapter = new CustomListAdapter<FromLocation>(this,
+                android.R.layout.simple_list_item_1, shippingLocationList);
 
-        final AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener()
+        actFrom.setAdapter(fromAdaoter);
+        actTo.setAdapter(toAdapter);
+
+        final AdapterView.OnItemClickListener actFromListener = new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
@@ -208,12 +330,26 @@ public class ActivityBookTrip extends AppCompatActivity
                 final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
 
                 actFrom.setText(model.getLabel());
-                shippingLocationId = model.getId();
+                fromShippingLocationId = model.getId();
+                getFair();
             }
         };
 
-        actFrom.setOnItemClickListener(listener);
-        actTo.setOnItemClickListener(listener);
+        final AdapterView.OnItemClickListener actToListener = new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            {
+                final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
+
+                actTo.setText(model.getLabel());
+                toShippingLocationId = model.getId();
+                getFair();
+            }
+        };
+
+        actFrom.setOnItemClickListener(actFromListener);
+        actTo.setOnItemClickListener(actToListener);
     }
 
     private void getShippingLocations(String customerId)
@@ -239,7 +375,7 @@ public class ActivityBookTrip extends AppCompatActivity
                     }
                 };
 
-        API.getInstance().getShippingLocationsForCustomer(customerId, onGetShippingLocationCallback);
+        api.getShippingLocationsForCustomer(customerId, onGetShippingLocationCallback);
 
     }
 
@@ -273,7 +409,7 @@ public class ActivityBookTrip extends AppCompatActivity
                     }
                 };
 
-        API.getInstance().getVehicleTypes(onGetVehiclesCallback);
+        api.getVehicleTypes(onGetVehiclesCallback);
 
     }
 
@@ -335,4 +471,70 @@ public class ActivityBookTrip extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onValidationSucceeded()
+    {
+        tryInsertingNewTrip();
+    }
+
+    private void tryInsertingNewTrip()
+    {
+
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityBookTrip.this)
+                .getString(Constants.CUSTOMER_ID, null);
+
+        final RetrofitCallbacks<Integer> onInsertCustomerTrip =
+                new RetrofitCallbacks<Integer>()
+                {
+
+                    @Override
+                    public void onResponse(Call<Integer> call, Response<Integer> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+
+                        }
+                    }
+                };
+
+        if (customerId != null)
+        {
+            api.insertCustomerTrip(fromShippingLocationId + "", toShippingLocationId + "",
+                    vehicleTypeId + "", customerId, actFrom.getText().toString()
+                    , actTo.getText().toString(), onInsertCustomerTrip);
+        }
+
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors)
+    {
+
+        for (ValidationError error : errors)
+        {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+
+            // Display error messages ;)
+            if (view instanceof AutoCompleteTextView)
+            {
+                ((AutoCompleteTextView) view).setError(message);
+            } else
+            {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            }
+        }
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if (item.getItemId() == android.R.id.home)
+        {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

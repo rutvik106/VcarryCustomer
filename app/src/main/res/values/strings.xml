@@ -55,5 +55,6 @@
     <string name="trip_cost">Trip Cost</string>
 
     <string name="rs">\u20B9</string>
+    <string name="map">Map</string>
 
 </resources>

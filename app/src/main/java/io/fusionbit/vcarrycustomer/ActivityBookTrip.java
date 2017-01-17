@@ -336,10 +336,10 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
             {
                 final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
-
                 actFrom.setText(model.getLabel());
                 fromShippingLocationId = model.getId();
                 getFair();
+                Utils.hideSoftKeyboard(ActivityBookTrip.this);
             }
         };
 
@@ -349,10 +349,10 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
             {
                 final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
-
                 actTo.setText(model.getLabel());
                 toShippingLocationId = model.getId();
                 getFair();
+                Utils.hideSoftKeyboard(ActivityBookTrip.this);
             }
         };
 

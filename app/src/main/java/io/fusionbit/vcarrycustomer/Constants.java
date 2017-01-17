@@ -37,5 +37,7 @@ public class Constants
 
     public static final String REALM_DATABASE_NAME = "vcarrycustomerrealmdb";
 
+    public static final String FCM_INSTANCE_ID = "a9ccaffd39b6bbcf445a914d4988778e";
+
 
 }

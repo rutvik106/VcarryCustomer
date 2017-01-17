@@ -25,10 +25,10 @@ import javax.inject.Inject;
 import api.API;
 import api.RetrofitCallbacks;
 import extra.LocaleHelper;
-import extra.Log;
 import fragments.FragmentHome;
 import fragments.FragmentTrips;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -108,21 +108,26 @@ public class ActivityHome extends VCarryActivity
                         {
                             System.out.println(response.body());
 
-                            final Integer customerId = response.body();
+                            if (response.body() > 0)
+                            {
+                                PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                        .edit()
+                                        .putString(Constants.CUSTOMER_ID, String.valueOf(response.body()))
+                                        .apply();
 
-                            Log.i(TAG, "CUSTOMER ID: " + customerId);
+                                updateFcmDeviceToken(String.valueOf(response.body()));
 
-                            PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
-                                    .edit()
-                                    .putString(Constants.CUSTOMER_ID, customerId + "")
-                                    .apply();
-                        } else
-                        {
-                            PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
-                                    .edit()
-                                    .putString(Constants.CUSTOMER_ID, null)
-                                    .apply();
-                            Toast.makeText(ActivityHome.this, "something went wrong try again later", Toast.LENGTH_SHORT).show();
+                            } else
+                            {
+                                PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                        .edit()
+                                        .putString(Constants.CUSTOMER_ID, null)
+                                        .apply();
+
+                                Toast.makeText(ActivityHome.this,
+                                        "Something went wrong, Please try again later",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
                         promptForRegistration();
                     }
@@ -136,6 +141,33 @@ public class ActivityHome extends VCarryActivity
                 };
 
         api.getCustomerIdFromEmail(email, onGetCustomerIdCallback);
+
+    }
+
+    private void updateFcmDeviceToken(String customerId)
+    {
+        final String fcmDeviceToken = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.FCM_INSTANCE_ID, null);
+
+        final RetrofitCallbacks<ResponseBody> onUpdateDeviceTokenCallback =
+                new RetrofitCallbacks<ResponseBody>()
+                {
+
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                    {
+                        super.onResponse(call, response);
+                    }
+                };
+
+        if (fcmDeviceToken != null)
+        {
+            api.updateDeviceTokenCustomer(customerId, fcmDeviceToken, onUpdateDeviceTokenCallback);
+        } else
+        {
+            Toast.makeText(this, "FCM Instance ID not found!", Toast.LENGTH_SHORT).show();
+        }
+
 
     }
 

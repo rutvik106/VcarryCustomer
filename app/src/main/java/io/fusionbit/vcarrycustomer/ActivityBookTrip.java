@@ -1,6 +1,7 @@
 package io.fusionbit.vcarrycustomer;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +69,9 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     @NotEmpty
     @BindView(R.id.act_to)
     AutoCompleteTextView actTo;
+
+    @BindView(R.id.pb_loadingTripCost)
+    ProgressBar pbLoadingTripCost;
 
     String fromPlace = "", fromLat, fromLng;
 
@@ -250,6 +255,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
     private void getFair()
     {
+        pbLoadingTripCost.setVisibility(View.VISIBLE);
 
         if (getFare != null)
         {
@@ -277,6 +283,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                         {
                             tvTripFare.setText("N/A");
                         }
+                        pbLoadingTripCost.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -284,6 +291,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                     {
                         super.onFailure(call, t);
                         tvTripFare.setText("N/A");
+                        pbLoadingTripCost.setVisibility(View.GONE);
                     }
                 };
 
@@ -479,22 +487,49 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
     private void tryInsertingNewTrip()
     {
-
+        btnRequestTrip.setVisibility(View.GONE);
         final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityBookTrip.this)
                 .getString(Constants.CUSTOMER_ID, null);
 
         final RetrofitCallbacks<Integer> onInsertCustomerTrip =
                 new RetrofitCallbacks<Integer>()
                 {
-
                     @Override
                     public void onResponse(Call<Integer> call, Response<Integer> response)
                     {
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
-
+                            if (response.body() > 0)
+                            {
+                                Utils.showSimpleAlertBox(ActivityBookTrip.this,
+                                        "Your trip request was submitted successfully, Please " +
+                                                "wait for confirmation from V-Carry!",
+                                        new DialogInterface.OnClickListener()
+                                        {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i)
+                                            {
+                                                finish();
+                                            }
+                                        });
+                            } else
+                            {
+                                Toast.makeText(ActivityBookTrip.this, "Something went wrong, Please try again later", Toast.LENGTH_SHORT).show();
+                            }
                         }
+                        btnRequestTrip.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Integer> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        if (!call.isCanceled())
+                        {
+                            Toast.makeText(ActivityBookTrip.this, "Please check internet connection", Toast.LENGTH_SHORT).show();
+                        }
+                        btnRequestTrip.setVisibility(View.GONE);
                     }
                 };
 
@@ -537,4 +572,5 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

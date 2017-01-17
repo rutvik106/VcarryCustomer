@@ -55,5 +55,6 @@
 
     <string name="rs">\u20B9</string>
     <string name="map">Map</string>
+    <string name="simple_alert_title">Alert!</string>
 
 </resources>

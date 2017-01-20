@@ -73,9 +73,9 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     @BindView(R.id.pb_loadingTripCost)
     ProgressBar pbLoadingTripCost;
 
-    String fromPlace = "", fromLat, fromLng;
+    String fromPlace, fromLat, fromLng;
 
-    String toPlace = "", toLat, toLng;
+    String toPlace, toLat, toLng;
 
     FirebaseOperations firebaseOperations;
 
@@ -87,8 +87,8 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     API api;
     Validator validator;
     Call<Integer> getFare;
-    private int fromShippingLocationId = 0;
-    private int toShippingLocationId = 0;
+    private String fromShippingLocationId = null;
+    private String toShippingLocationId = null;
     private int vehicleTypeId = 0;
 
     @Override
@@ -337,8 +337,9 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             {
                 final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
                 actFrom.setText(model.getLabel());
-                fromShippingLocationId = model.getId();
+                fromShippingLocationId = model.getId() + "";
                 getFair();
+                fromPlace = null;
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
             }
         };
@@ -350,8 +351,9 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             {
                 final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
                 actTo.setText(model.getLabel());
-                toShippingLocationId = model.getId();
+                toShippingLocationId = model.getId() + "";
                 getFair();
+                toPlace = null;
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
             }
         };
@@ -460,7 +462,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                     fromPlace = data.getExtras().getString("PLACE");
                     fromLat = data.getExtras().getString("LAT");
                     fromLng = data.getExtras().getString("LNG");
-
+                    fromShippingLocationId = null;
                     actFrom.setText(fromPlace);
 
                     break;
@@ -470,7 +472,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                     toPlace = data.getExtras().getString("PLACE");
                     toLat = data.getExtras().getString("LAT");
                     toLng = data.getExtras().getString("LNG");
-
+                    toShippingLocationId = null;
                     actTo.setText(toPlace);
 
                     break;
@@ -535,9 +537,12 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
         if (customerId != null)
         {
+            final String fromLatLng = fromLat + "," + fromLng;
+            final String toLatLng = toLat + "," + toLng;
+
             api.insertCustomerTrip(fromShippingLocationId + "", toShippingLocationId + "",
-                    vehicleTypeId + "", customerId, actFrom.getText().toString()
-                    , actTo.getText().toString(), onInsertCustomerTrip);
+                    vehicleTypeId + "", customerId, fromPlace
+                    , toPlace, fromLatLng, toLatLng, onInsertCustomerTrip);
         }
 
     }
@@ -545,7 +550,6 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     @Override
     public void onValidationFailed(List<ValidationError> errors)
     {
-
         for (ValidationError error : errors)
         {
             View view = error.getView();
@@ -560,7 +564,6 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
         }
-
     }
 
     @Override

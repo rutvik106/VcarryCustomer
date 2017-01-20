@@ -32,5 +32,17 @@
         android:layout_height="match_parent"
         android:layout_above="@id/fl_selectLocation"/>
 
+    <EditText
+        android:id="@+id/et_searchLocation"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/rounded_rect_bg"
+        android:hint="@string/search_location"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:padding="5dp"
+        android:textSize="15sp"/>
+
 
 </RelativeLayout>

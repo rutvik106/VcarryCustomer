@@ -57,5 +57,7 @@
     <string name="rs">\u20B9</string>
     <string name="map">Map</string>
     <string name="simple_alert_title">Alert!</string>
+    <string name="search_location">Search location...</string>
+    <string name="fetching_location">Fetching location...</string>
 
 </resources>

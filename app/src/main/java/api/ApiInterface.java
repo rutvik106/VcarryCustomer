@@ -71,7 +71,9 @@ public interface ApiInterface
                                      @Field("vehicle_type_id") String vehicleTypeId,
                                      @Field("customer_id") String customerId,
                                      @Field("from_new_address") String fromNewAddress,
-                                     @Field("to_new_address") String toNewAddress);
+                                     @Field("to_new_address") String toNewAddress,
+                                     @Field("from_lat_long") String fromLatLng,
+                                     @Field("to_lat_long") String toLatLng);
 
     @FormUrlEncoded
     @POST("webservice.php")

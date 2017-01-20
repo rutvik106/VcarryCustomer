@@ -43,27 +43,18 @@ import static java.lang.StrictMath.toDegrees;
 public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnCameraIdleListener
 {
     private static final String TAG = App.APP_TAG + FragmentMap.class.getSimpleName();
-
-    private SyncedMapFragment mapFragment;
-
-    private GoogleMap mMap;
-
-    private LatLngInterpolator mLatLngInterpolator;
-
-    private MapWrapperLayout mapWrapperLayout;
-
-    public boolean isReady = false;
-
-    private Context context;
-
-    private LatLng currentLatLng;
-
-    private AppCompatEditText etCurrentLocation;
-
-    private AddressResultReceiver mResultReceiver;
-
     final Handler mHandler = new Handler();
-
+    private final GetAddressFromIntentService addressFromIntentService =
+            new GetAddressFromIntentService();
+    public GoogleMap mMap;
+    public boolean isReady = false;
+    private SyncedMapFragment mapFragment;
+    private LatLngInterpolator mLatLngInterpolator;
+    private MapWrapperLayout mapWrapperLayout;
+    private Context context;
+    private LatLng currentLatLng;
+    private AppCompatEditText etCurrentLocation;
+    private AddressResultReceiver mResultReceiver;
     private LatLng onCameraChangedLatLng;
 
     public static FragmentMap newInstance(int index, Context context)
@@ -76,6 +67,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         return fragmentMap;
     }
 
+    public static int getPixelsFromDp(Context context, float dp)
+    {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
+    }
 
     @Nullable
     @Override
@@ -121,7 +117,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
         }
     }
-
 
     private void loadMapNow()
     {
@@ -184,27 +179,25 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onCameraIdle()
     {
-        mHandler.postDelayed(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Intent intent = new Intent(getActivity(), GeocodeAddressIntentService.class);
-                intent.putExtra(Constants.RECEIVER, mResultReceiver);
-                intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
-
-                intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA,
-                        onCameraChangedLatLng.latitude);
-
-                intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA,
-                        onCameraChangedLatLng.longitude);
-
-                getActivity().startService(intent);
-            }
-        }, 1200);
+        mHandler.removeCallbacks(addressFromIntentService);
+        mHandler.postDelayed(addressFromIntentService, 800);
 
     }
 
+    public String getCurrentPlace()
+    {
+        return etCurrentLocation.getText().toString();
+    }
+
+    public String getCurrentLat()
+    {
+        return currentLatLng.latitude + "";
+    }
+
+    public String getCurrentLng()
+    {
+        return currentLatLng.longitude + "";
+    }
 
     public interface LatLngInterpolator
     {
@@ -287,12 +280,25 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
     }
 
-    public static int getPixelsFromDp(Context context, float dp)
+    class GetAddressFromIntentService implements Runnable
     {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
-    }
 
+        @Override
+        public void run()
+        {
+            Intent intent = new Intent(getActivity(), GeocodeAddressIntentService.class);
+            intent.putExtra(Constants.RECEIVER, mResultReceiver);
+            intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
+
+            intent.putExtra(Constants.LOCATION_LATITUDE_DATA_EXTRA,
+                    onCameraChangedLatLng.latitude);
+
+            intent.putExtra(Constants.LOCATION_LONGITUDE_DATA_EXTRA,
+                    onCameraChangedLatLng.longitude);
+
+            getActivity().startService(intent);
+        }
+    }
 
     class AddressResultReceiver extends ResultReceiver
     {
@@ -335,21 +341,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                 });
             }
         }
-    }
-
-    public String getCurrentPlace()
-    {
-        return etCurrentLocation.getText().toString();
-    }
-
-    public String getCurrentLat()
-    {
-        return currentLatLng.latitude + "";
-    }
-
-    public String getCurrentLng()
-    {
-        return currentLatLng.longitude + "";
     }
 
 }

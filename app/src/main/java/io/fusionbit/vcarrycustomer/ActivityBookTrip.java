@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.multidex.BuildConfig;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.MenuItem;
 import android.view.View;
@@ -484,7 +485,24 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     @Override
     public void onValidationSucceeded()
     {
-        tryInsertingNewTrip();
+        promptUserForBookingTrip();
+    }
+
+    private void promptUserForBookingTrip()
+    {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.book_trip))
+                .setMessage(R.string.book_trip_prompt_msg)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setPositiveButton(getString(R.string.book_trip), new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        tryInsertingNewTrip();
+                    }
+                }).setNegativeButton("CANCEL", null)
+                .show();
     }
 
     private void tryInsertingNewTrip()
@@ -505,8 +523,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                             if (response.body() > 0)
                             {
                                 Utils.showSimpleAlertBox(ActivityBookTrip.this,
-                                        "Your trip request was submitted successfully, Please " +
-                                                "wait for confirmation from V-Carry!",
+                                        getString(R.string.booking_request_success_message),
                                         new DialogInterface.OnClickListener()
                                         {
                                             @Override
@@ -517,7 +534,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                                         });
                             } else
                             {
-                                Toast.makeText(ActivityBookTrip.this, "Something went wrong, Please try again later", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ActivityBookTrip.this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
                             }
                         }
                         btnRequestTrip.setVisibility(View.GONE);
@@ -529,7 +546,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                         super.onFailure(call, t);
                         if (!call.isCanceled())
                         {
-                            Toast.makeText(ActivityBookTrip.this, "Please check internet connection", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ActivityBookTrip.this, R.string.check_internet, Toast.LENGTH_SHORT).show();
                         }
                         btnRequestTrip.setVisibility(View.GONE);
                     }

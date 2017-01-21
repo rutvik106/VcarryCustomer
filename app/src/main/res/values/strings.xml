@@ -59,5 +59,10 @@
     <string name="simple_alert_title">Alert!</string>
     <string name="search_location">Search location...</string>
     <string name="fetching_location">Fetching location...</string>
+    <string name="book_trip">BOOK TRIP</string>
+    <string name="book_trip_prompt_msg">Are you sure you want to book this trip?</string>
+    <string name="booking_request_success_message">Your trip request was submitted successfully, Please wait for booking confirmation from V-Carry!</string>
+    <string name="something_went_wrong">Something went wrong, Please try again later</string>
+    <string name="check_internet">Please check internet connection</string>
 
 </resources>

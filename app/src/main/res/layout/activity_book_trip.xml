@@ -154,7 +154,7 @@
             android:drawableRight="@drawable/ic_forward_black_24dp"
             android:paddingLeft="130dp"
             android:paddingRight="120dp"
-            android:text="@string/request_trip"
+            android:text="@string/book_trip"
             android:textSize="15sp"
             android:textStyle="bold"
             android:visibility="visible"/>

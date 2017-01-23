@@ -1,8 +1,6 @@
 package io.fusionbit.vcarrycustomer;
 
-import android.content.Context;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
+import android.app.Application;
 
 import components.DaggerVcarryApi;
 import components.VcarryApi;
@@ -17,7 +15,7 @@ import module.AppModule;
  * Created by rutvik on 11/18/2016 at 10:29 PM.
  */
 
-public class App extends MultiDexApplication
+public class App extends Application
 {
 
     public static final String APP_TAG = "VCRY ";
@@ -57,10 +55,10 @@ public class App extends MultiDexApplication
         return vcarryApi;
     }
 
-    @Override
+    /*@Override
     protected void attachBaseContext(Context base)
     {
         super.attachBaseContext(base);
         MultiDex.install(this);
-    }
+    }*/
 }

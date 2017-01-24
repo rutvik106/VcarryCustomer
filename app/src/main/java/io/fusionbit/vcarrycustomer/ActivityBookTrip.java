@@ -40,6 +40,8 @@ import components.FirebaseOperations;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+import models.BookedTrip;
+import models.UserActivities;
 import module.FirebaseRemoteConfigSettingsModule;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -82,11 +84,15 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     RealmResults<Vehicle> realmVehicles;
 
     RealmResults<FromLocation> realmFromLocations;
-    Realm realm;
-    @Inject
-    API api;
+
     Validator validator;
     Call<Integer> getFare;
+    @Inject
+    API api;
+    @Inject
+    Realm realm;
+    @Inject
+    UserActivities userActivities;
     private String fromShippingLocationId = null;
     private String toShippingLocationId = null;
     private int vehicleTypeId = 0;
@@ -99,6 +105,8 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
         ButterKnife.bind(this);
 
+        ((App) getApplication()).getUser().inject(this);
+
         validator = new Validator(this);
         validator.setValidationListener(this);
 
@@ -107,8 +115,6 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(getResources().getString(R.string.book_a_trip));
         }
-
-        api = ((App) getApplication()).getVcarryApi().api();
 
         final FirebaseRemoteConfigSettings configSettings =
                 new FirebaseRemoteConfigSettings.Builder()
@@ -240,8 +246,6 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
         final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CUSTOMER_ID, null);
-
-        realm = Realm.getDefaultInstance();
 
         getShippingLocationsFromRealm();
         setShippingLocationListAdapter();
@@ -521,6 +525,8 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                         {
                             if (response.body() > 0)
                             {
+                                userActivities.addBookedTrip(new BookedTrip(response.body(),
+                                        actFrom.getText().toString(), actTo.getText().toString()));
                                 Utils.showSimpleAlertBox(ActivityBookTrip.this,
                                         getString(R.string.booking_request_success_message),
                                         new DialogInterface.OnClickListener()

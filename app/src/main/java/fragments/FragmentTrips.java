@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.fusionbit.vcarrycustomer.ActivityBookTrip;
 import io.fusionbit.vcarrycustomer.R;
 
@@ -22,7 +24,8 @@ public class FragmentTrips extends Fragment
 
     Context context;
 
-    CardView cvBookTrip;
+    @BindView(R.id.ll_bookTrip)
+    LinearLayout llBookTrip;
 
     public static FragmentTrips newInstance(int index, Context context)
     {
@@ -41,9 +44,9 @@ public class FragmentTrips extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_trips, container, false);
 
-        cvBookTrip = (CardView) view.findViewById(R.id.cv_bookTrip);
+        ButterKnife.bind(this, view);
 
-        cvBookTrip.setOnClickListener(new BookTrip());
+        llBookTrip.setOnClickListener(new BookTrip());
 
         return view;
     }

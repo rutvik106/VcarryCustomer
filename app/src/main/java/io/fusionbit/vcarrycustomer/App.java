@@ -2,14 +2,14 @@ package io.fusionbit.vcarrycustomer;
 
 import android.app.Application;
 
-import components.DaggerVcarryApi;
-import components.VcarryApi;
+import components.DaggerUser;
+import components.User;
 import extra.LocaleHelper;
 import extra.Log;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import module.ApiModule;
 import module.AppModule;
+import module.RealmConfigModule;
 
 /**
  * Created by rutvik on 11/18/2016 at 10:29 PM.
@@ -22,37 +22,29 @@ public class App extends Application
 
     private static final String TAG = APP_TAG + App.class.getSimpleName();
 
-    private VcarryApi vcarryApi;
+    private User user;
 
     @Override
     public void onCreate()
     {
         super.onCreate();
 
-        LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
+        Log.i(TAG, "Application Created!!!");
 
         Realm.init(this);
 
-        final RealmConfiguration realmConfig = new RealmConfiguration
-                .Builder()
-                .name(Constants.REALM_DATABASE_NAME)
-                .deleteRealmIfMigrationNeeded()
-                .build();
+        LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
 
-        vcarryApi = DaggerVcarryApi.builder()
+        user = DaggerUser.builder()
                 .appModule(new AppModule(this))
                 .apiModule(new ApiModule(Constants.API_BASE_URL))
+                .realmConfigModule(new RealmConfigModule(Constants.REALM_DATABASE_NAME))
                 .build();
-
-
-        Realm.setDefaultConfiguration(realmConfig);
-
-        Log.i(TAG, "Application Created!!!");
     }
 
-    public VcarryApi getVcarryApi()
+    public User getUser()
     {
-        return vcarryApi;
+        return user;
     }
 
     /*@Override

@@ -39,5 +39,13 @@ public class Constants
 
     public static final String FCM_INSTANCE_ID = "a9ccaffd39b6bbcf445a914d4988778e";
 
+    public static final String USER_ACTIVITIES = "USER_ACTIVITIES";
+
+    public static final class NotificationType
+    {
+        public static final String SIMPLE = "simple";
+        public static final String TRIP_CONFIRMATION = "trip_confirmation";
+        public static final String DRIVER_ALLOCATED = "driver_allocated";
+    }
 
 }

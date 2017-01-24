@@ -3,7 +3,6 @@ package io.fusionbit.vcarrycustomer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -21,8 +20,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import adapters.CustomListAdapter;
+import api.API;
 import api.RetrofitCallbacks;
+import apimodels.Area;
+import apimodels.City;
 import apimodels.NamePrefix;
 import apimodels.SpinnerModel;
 import butterknife.BindView;
@@ -32,7 +36,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ActivityRegistrationForm extends AppCompatActivity implements Validator.ValidationListener
+public class ActivityRegistrationForm extends VCarryActivity implements Validator.ValidationListener
 {
 
     @BindView(R.id.spin_prefix)
@@ -68,6 +72,9 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
 
     Validator validator;
 
+    @Inject
+    API api;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -81,6 +88,8 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
         }
 
         ButterKnife.bind(this);
+
+        ((App) getApplication()).getUser().inject(this);
 
         validator = new Validator(this);
 
@@ -146,7 +155,7 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
 
     private void getAreaList(String cityId)
     {
-        /*API.getInstance().getAreas(cityId, new RetrofitCallbacks<List<Area>>()
+        api.getAreas(cityId, new RetrofitCallbacks<List<Area>>()
         {
             @Override
             public void onResponse(Call<List<Area>> call, Response<List<Area>> response)
@@ -155,13 +164,13 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
                 spinArea.setAdapter(new CustomListAdapter<>(ActivityRegistrationForm.this,
                         android.R.layout.simple_list_item_1, response.body()));
             }
-        });*/
+        });
     }
 
     private void getCityList()
     {
 
-        /*API.getInstance().getCities(new RetrofitCallbacks<List<City>>()
+        api.getCities(new RetrofitCallbacks<List<City>>()
         {
 
             @Override
@@ -174,7 +183,7 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
                             android.R.layout.simple_spinner_item, response.body()));
                 }
             }
-        });*/
+        });
 
     }
 
@@ -249,14 +258,14 @@ public class ActivityRegistrationForm extends AppCompatActivity implements Valid
                     }
                 };
 
-        /*API.getInstance().insertCustomer(selectedPrefixId,
+        api.insertCustomer(selectedPrefixId,
                 etFullName.getText().toString(),
                 etAddressLineOne.getText().toString(),
                 etAddressLineTwo.getText().toString(),
                 selectedAreaId,
                 etContact.getText().toString(),
                 selectedCityId,
-                onRegistrationCallback);*/
+                onRegistrationCallback);
 
     }
 

@@ -55,7 +55,7 @@ public class ActivityHome extends VCarryActivity
 
         setActionBarTitle("V-Carry");
 
-        api = ((App) getApplication()).getVcarryApi().api();
+        ((App) getApplication()).getUser().inject(this);
 
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
 
@@ -87,6 +87,8 @@ public class ActivityHome extends VCarryActivity
             ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_container, FragmentHome.newInstance(0, this));
             ft.commit();
+
+            navigationView.setCheckedItem(0);
 
         } else
         {
@@ -231,6 +233,7 @@ public class ActivityHome extends VCarryActivity
         if (id == R.id.nav_home)
         {
             fragment = FragmentHome.newInstance(0, this);
+            setActionBarTitle("V-Carry");
         } else if (id == R.id.nav_trips)
         {
             fragment = FragmentTrips.newInstance(1, this);

@@ -10,9 +10,9 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -32,7 +32,9 @@ public class NotificationHandler
 
     RemoteMessage remoteMessage;
 
-    Map data;
+    JSONObject data;
+
+    JSONObject extra;
 
     Realm realm;
 
@@ -41,44 +43,94 @@ public class NotificationHandler
         this.context = context;
         this.realm = Realm.getInstance(realmConfiguration);
         this.remoteMessage = remoteMessage;
-        this.data = remoteMessage.getData();
+        try
+        {
+            this.data = new JSONObject(remoteMessage.getData().get("data"));
+            this.extra = new JSONObject(remoteMessage.getData().get("extra"));
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void handleNotification()
     {
-        Map data = remoteMessage.getData();
 
-        switch (data.get("type").toString())
+        for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet())
         {
-            case Constants.NotificationType.SIMPLE:
-                showNotification(0);
-                break;
-            case Constants.NotificationType.TRIP_CONFIRMATION:
-                confirmTrip();
-                break;
-            case Constants.NotificationType.DRIVER_ALLOCATED:
-                break;
+            String key = entry.getKey();
+            String value = entry.getValue();
+            Log.d(TAG, "key, " + key + " value " + value);
         }
 
+        try
+        {
+            switch (data.get("type").toString())
+            {
+                case Constants.NotificationType.SIMPLE:
+                    showNotification(0, data.getString("title"), data.getString("message"));
+                    break;
+                case Constants.NotificationType.TRIP_CONFIRMATION:
+                    confirmTrip();
+                    break;
+                case Constants.NotificationType.DRIVER_ALLOCATED:
+                    confirmDriver();
+                    break;
+            }
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void confirmDriver()
+    {
+        try
+        {
+            final int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
+            final int driverTripId = Integer.parseInt(extra.getString("trip_id"));
+            final String driverName = extra.getString("driver_name");
+
+            final BookedTrip bookedTrip = realm.where(BookedTrip.class)
+                    .equalTo("tripId", customerTripId).findFirst();
+            realm.beginTransaction();
+            bookedTrip.setStatus(Constants.DRIVER_ALLOCATED);
+            bookedTrip.setDriverName(driverName);
+            bookedTrip.setDriverTripId(extra.getString("trip_id"));
+            bookedTrip.setDriverDeviceToken(extra.getString("driver_device_token"));
+            realm.copyToRealmOrUpdate(bookedTrip);
+            realm.commitTransaction();
+            Log.i(TAG, "Customer Trip ID: " + customerTripId);
+            showNotification(driverTripId, data.getString("title"), "Driver " + driverName +
+                    "has been allocated to your trip. From " + bookedTrip.getTripFrom() +
+                    " To " + bookedTrip.getTripTo());
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private void confirmTrip()
     {
-        Log.i(TAG, "extra: " + data.get("extra").toString());
-        JsonElement jsonElement = new Gson().fromJson(data.get("extra").toString(), JsonElement.class);
-        JsonObject jsonObject = jsonElement.getAsJsonObject();
-        int customerTripId = Integer.parseInt(jsonObject.get("customer_trip_id").getAsString());
-        final BookedTrip bookedTrip = new BookedTrip(customerTripId);
-        bookedTrip.setStatus(1);
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(bookedTrip);
-        realm.commitTransaction();
-        Log.i(TAG, "Customer Trip ID: " + customerTripId);
-        showNotification(customerTripId);
+        try
+        {
+            int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
+            final BookedTrip bookedTrip = realm.where(BookedTrip.class)
+                    .equalTo("tripId", customerTripId).findFirst();
+            realm.beginTransaction();
+            bookedTrip.setStatus(Constants.TRIP_CONFIRMED);
+            realm.copyToRealmOrUpdate(bookedTrip);
+            realm.commitTransaction();
+            Log.i(TAG, "Customer Trip ID: " + customerTripId);
+            showNotification(customerTripId, data.getString("title"), data.getString("message"));
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
 
-    private void showNotification(int id)
+    private void showNotification(final int id, final String title, final String message)
     {
         Intent intent = new Intent(context, ActivityHome.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -88,8 +140,8 @@ public class NotificationHandler
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.logo_small)
-                .setContentTitle(data.get("title").toString())
-                .setContentText(data.get("message").toString())
+                .setContentTitle(title)
+                .setContentText(message)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);

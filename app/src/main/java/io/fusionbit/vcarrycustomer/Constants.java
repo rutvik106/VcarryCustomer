@@ -41,6 +41,9 @@ public class Constants
 
     public static final String USER_ACTIVITIES = "USER_ACTIVITIES";
 
+    public static final int TRIP_CONFIRMED = 1;
+    public static final int DRIVER_ALLOCATED = 2;
+
     public static final class NotificationType
     {
         public static final String SIMPLE = "simple";

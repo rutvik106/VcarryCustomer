@@ -88,7 +88,7 @@ public class ActivityHome extends VCarryActivity
             ft.replace(R.id.fragment_container, FragmentHome.newInstance(0, this));
             ft.commit();
 
-            navigationView.setCheckedItem(0);
+            navigationView.getMenu().getItem(0).setChecked(true);
 
         } else
         {

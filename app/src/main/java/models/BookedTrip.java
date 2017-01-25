@@ -22,6 +22,12 @@ public class BookedTrip extends RealmObject
 
     int status = 0;
 
+    String driverName;
+
+    String driverTripId;
+
+    String driverDeviceToken;
+
     public BookedTrip()
     {
 
@@ -82,6 +88,36 @@ public class BookedTrip extends RealmObject
     public void setStatus(int status)
     {
         this.status = status;
+    }
+
+    public String getDriverName()
+    {
+        return driverName;
+    }
+
+    public void setDriverName(String driverName)
+    {
+        this.driverName = driverName;
+    }
+
+    public String getDriverTripId()
+    {
+        return driverTripId;
+    }
+
+    public void setDriverTripId(String driverTripId)
+    {
+        this.driverTripId = driverTripId;
+    }
+
+    public String getDriverDeviceToken()
+    {
+        return driverDeviceToken;
+    }
+
+    public void setDriverDeviceToken(String driverDeviceToken)
+    {
+        this.driverDeviceToken = driverDeviceToken;
     }
 }
 

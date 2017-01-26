@@ -1,6 +1,5 @@
 package fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,15 +21,12 @@ import io.fusionbit.vcarrycustomer.R;
 public class FragmentTrips extends Fragment
 {
 
-    Context context;
-
     @BindView(R.id.ll_bookTrip)
     LinearLayout llBookTrip;
 
-    public static FragmentTrips newInstance(int index, Context context)
+    public static FragmentTrips newInstance(int index)
     {
         FragmentTrips fragmentTrips = new FragmentTrips();
-        fragmentTrips.context = context;
         Bundle b = new Bundle();
         b.putInt("index", index);
         fragmentTrips.setArguments(b);
@@ -58,7 +54,7 @@ public class FragmentTrips extends Fragment
         public void onClick(View view)
         {
 
-            startActivity(new Intent(context, ActivityBookTrip.class));
+            startActivity(new Intent(getActivity(), ActivityBookTrip.class));
 
         }
     }

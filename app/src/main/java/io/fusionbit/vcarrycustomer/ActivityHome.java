@@ -27,6 +27,7 @@ import api.RetrofitCallbacks;
 import extra.LocaleHelper;
 import fragments.FragmentHome;
 import fragments.FragmentTrips;
+import io.realm.Realm;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -43,6 +44,9 @@ public class ActivityHome extends VCarryActivity
 
     @Inject
     API api;
+
+    @Inject
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -85,8 +89,8 @@ public class ActivityHome extends VCarryActivity
                     .setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
             ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container, FragmentHome.newInstance(0, this));
-            ft.commit();
+            ft.replace(R.id.fragment_container, FragmentHome.newInstance(0));
+            ft.commitAllowingStateLoss();
 
             navigationView.getMenu().getItem(0).setChecked(true);
 
@@ -232,11 +236,11 @@ public class ActivityHome extends VCarryActivity
 
         if (id == R.id.nav_home)
         {
-            fragment = FragmentHome.newInstance(0, this);
+            fragment = FragmentHome.newInstance(0);
             setActionBarTitle("V-Carry");
         } else if (id == R.id.nav_trips)
         {
-            fragment = FragmentTrips.newInstance(1, this);
+            fragment = FragmentTrips.newInstance(1);
             setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
         } else if (id == R.id.nav_accountBalance)
         {
@@ -256,7 +260,7 @@ public class ActivityHome extends VCarryActivity
         {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_container, fragment);
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

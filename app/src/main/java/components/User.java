@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import io.fusionbit.vcarrycustomer.ActivityBookTrip;
+import io.fusionbit.vcarrycustomer.ActivityDriverLocation;
 import io.fusionbit.vcarrycustomer.ActivityHome;
 import io.fusionbit.vcarrycustomer.ActivityRegistrationForm;
 import io.realm.RealmConfiguration;
@@ -26,6 +27,8 @@ public interface User
     void inject(ActivityBookTrip activityBookTrip);
 
     void inject(ActivityRegistrationForm activityBookTrip);
+
+    void inject(ActivityDriverLocation activityDriverLocation);
 
     RealmConfiguration getRealmConfiguration();
 }

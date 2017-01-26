@@ -76,7 +76,24 @@ public class NotificationHandler
                 case Constants.NotificationType.DRIVER_ALLOCATED:
                     confirmDriver();
                     break;
+                case Constants.NotificationType.DRIVER_CURRENT_LOCATION:
+                    sendBroadcastForDriverCurrentLocation();
+                    break;
             }
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendBroadcastForDriverCurrentLocation()
+    {
+        try
+        {
+            final Intent locationDetails = new Intent(Constants.NotificationType.DRIVER_CURRENT_LOCATION);
+            locationDetails.putExtra("LAT", extra.getString("lat"));
+            locationDetails.putExtra("LNG", extra.getString("lng"));
+            context.sendBroadcast(locationDetails);
         } catch (JSONException e)
         {
             e.printStackTrace();
@@ -101,7 +118,7 @@ public class NotificationHandler
             realm.copyToRealmOrUpdate(bookedTrip);
             realm.commitTransaction();
             Log.i(TAG, "Customer Trip ID: " + customerTripId);
-            showNotification(driverTripId, data.getString("title"), "Driver " + driverName +
+            showBigNotification(driverTripId, data.getString("title"), "Driver " + driverName +
                     "has been allocated to your trip. From " + bookedTrip.getTripFrom() +
                     " To " + bookedTrip.getTripTo());
         } catch (JSONException e)
@@ -141,6 +158,30 @@ public class NotificationHandler
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.logo_small)
                 .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
+    }
+
+    private void showBigNotification(final int id, final String title, final String message)
+    {
+        Intent intent = new Intent(context, ActivityHome.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, id /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.logo_small)
+                .setContentTitle(title)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(message))
                 .setContentText(message)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

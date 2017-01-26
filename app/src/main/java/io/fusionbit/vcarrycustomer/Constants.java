@@ -41,6 +41,8 @@ public class Constants
 
     public static final String USER_ACTIVITIES = "USER_ACTIVITIES";
 
+    public static final String BOOKED_TRIP_ID = "BOOKED_TRIP_ID";
+
     public static final int TRIP_CONFIRMED = 1;
     public static final int DRIVER_ALLOCATED = 2;
 
@@ -49,6 +51,8 @@ public class Constants
         public static final String SIMPLE = "simple";
         public static final String TRIP_CONFIRMATION = "trip_confirmation";
         public static final String DRIVER_ALLOCATED = "driver_allocated";
+        public static final String GET_DRIVER_LOCATION = "get_driver_location";
+        public static final String DRIVER_CURRENT_LOCATION = "driver_current_location";
     }
 
 }

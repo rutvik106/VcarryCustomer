@@ -3,6 +3,7 @@ package io.fusionbit.vcarrycustomer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,7 +16,6 @@ import extra.Log;
 
 public class ActivitySettings extends VCarryActivity
 {
-
     private static final String TAG = App.APP_TAG + ActivitySettings.class.getSimpleName();
 
     AppCompatSpinner spinSelectLanguage;
@@ -33,6 +33,7 @@ public class ActivitySettings extends VCarryActivity
         if (getSupportActionBar() != null)
         {
             getSupportActionBar().setTitle(getResources().getString(R.string.action_settings));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
@@ -72,6 +73,24 @@ public class ActivitySettings extends VCarryActivity
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if (item.getItemId() == android.R.id.home)
+        {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void finish()
+    {
+        Intent output = new Intent();
+        output.putExtra(Constants.WAS_LANGUAGE_CHANGED, isChanged);
+        setResult(RESULT_OK, output);
+        super.finish();
+    }
 
     class ChangeLanguage implements AdapterView.OnItemSelectedListener
     {
@@ -105,15 +124,5 @@ public class ActivitySettings extends VCarryActivity
         {
 
         }
-    }
-
-
-    @Override
-    public void finish()
-    {
-        Intent output = new Intent();
-        output.putExtra(Constants.WAS_LANGUAGE_CHANGED, isChanged);
-        setResult(RESULT_OK, output);
-        super.finish();
     }
 }

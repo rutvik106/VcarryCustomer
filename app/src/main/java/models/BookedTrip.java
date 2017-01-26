@@ -16,9 +16,9 @@ public class BookedTrip extends RealmObject
 
     String tripTo;
 
-    String tripCost;
+    String tripCost = "N/A";
 
-    String tripVehicle;
+    String tripVehicle = "N/A";
 
     int status = 0;
 
@@ -38,11 +38,13 @@ public class BookedTrip extends RealmObject
         this.tripId = tripId;
     }
 
-    public BookedTrip(int tripId, String tripFrom, String tripTo)
+    public BookedTrip(int tripId, String tripFrom, String tripTo, String tripCost, String tripVehicle)
     {
         this.tripId = tripId;
         this.tripFrom = tripFrom;
         this.tripTo = tripTo;
+        this.tripCost = tripCost;
+        this.tripVehicle = tripVehicle;
     }
 
     public int getTripId()

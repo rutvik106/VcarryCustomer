@@ -64,5 +64,12 @@
     <string name="booking_request_success_message">Your trip request was submitted successfully, Please wait for booking confirmation from V-Carry!</string>
     <string name="something_went_wrong">Something went wrong, Please try again later</string>
     <string name="check_internet">Please check internet connection</string>
+    <string name="driver_name">Driver Name</string>
+    <string name="trip_confirmed">Trip Confirmed</string>
+    <string name="driver_allocated">Driver Allocated</string>
+    <string name="pending_confirmation">Pending Confirmation</string>
+    <string name="driver_location">Driver Location</string>
+    <string name="getting_driver_location">Getting Driver Location...</string>
+    <string name="currently_you_have_no_booked_trips">Currently you have no booked trips</string>
 
 </resources>

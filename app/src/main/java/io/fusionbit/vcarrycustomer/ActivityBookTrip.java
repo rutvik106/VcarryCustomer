@@ -96,6 +96,9 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     private String fromShippingLocationId = null;
     private String toShippingLocationId = null;
     private int vehicleTypeId = 0;
+    private String vehicleName = "N/A";
+
+    private String tripFare = "N/A";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -132,6 +135,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             {
                 SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
                 vehicleTypeId = model.getId();
+                vehicleName = model.getLabel();
                 getFair();
             }
 
@@ -278,13 +282,16 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                         {
                             if (response.body() > 0)
                             {
+                                tripFare = response.body() + "";
                                 tvTripFare.setText(getResources().getString(R.string.rs) + " " + response.body());
                             } else
                             {
+                                tripFare = "N/A";
                                 tvTripFare.setText("N/A");
                             }
                         } else
                         {
+                            tripFare = "N/A";
                             tvTripFare.setText("N/A");
                         }
                         pbLoadingTripCost.setVisibility(View.GONE);
@@ -526,7 +533,8 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                             if (response.body() > 0)
                             {
                                 userActivities.addBookedTrip(new BookedTrip(response.body(),
-                                        actFrom.getText().toString(), actTo.getText().toString()));
+                                        actFrom.getText().toString(), actTo.getText().toString(),
+                                        tripFare, vehicleName));
                                 Utils.showSimpleAlertBox(ActivityBookTrip.this,
                                         getString(R.string.booking_request_success_message),
                                         new DialogInterface.OnClickListener()

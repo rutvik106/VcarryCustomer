@@ -71,5 +71,8 @@
     <string name="driver_location">Driver Location</string>
     <string name="getting_driver_location">Getting Driver Location...</string>
     <string name="currently_you_have_no_booked_trips">Currently you have no booked trips</string>
+    <string name="trip_type">Trip Type</string>
+    <string name="one_way">One Way</string>
+    <string name="return_trip">Return</string>
 
 </resources>

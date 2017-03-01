@@ -131,6 +131,38 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_local_shipping_black_18dp"
+            android:drawablePadding="5dp"
+            android:text="@string/trip_type"
+            android:textSize="15sp"/>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:checkedButton="@id/rb_oneWay"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <RadioButton
+                android:id="@+id/rb_oneWay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/one_way"/>
+
+            <RadioButton
+                android:id="@+id/rb_return"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/return_trip"/>
+
+        </RadioGroup>
+
 
     </LinearLayout>
 

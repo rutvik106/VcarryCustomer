@@ -142,7 +142,15 @@ public class ActivityHome extends VCarryActivity
                     public void onFailure(Call<Integer> call, Throwable t)
                     {
                         super.onFailure(call, t);
-                        Toast.makeText(ActivityHome.this, "please check network connection", Toast.LENGTH_SHORT).show();
+                        final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                .getString(Constants.CUSTOMER_ID, null);
+                        if (customerId == null)
+                        {
+                            promptForRegistration();
+                        } else
+                        {
+                            Toast.makeText(ActivityHome.this, "please check network connection", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 };
 

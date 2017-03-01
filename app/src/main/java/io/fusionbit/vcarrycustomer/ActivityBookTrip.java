@@ -570,6 +570,15 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             final String fromLatLng = fromLat + "," + fromLng;
             final String toLatLng = toLat + "," + toLng;
 
+            if (fromPlace == null)
+            {
+                fromPlace = actFrom.getText().toString();
+            }
+            if (toPlace == null)
+            {
+                toPlace = actTo.getText().toString();
+            }
+
             api.insertCustomerTrip(fromShippingLocationId + "", toShippingLocationId + "",
                     vehicleTypeId + "", customerId, fromPlace
                     , toPlace, fromLatLng, toLatLng, onInsertCustomerTrip);

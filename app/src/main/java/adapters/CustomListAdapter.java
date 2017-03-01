@@ -77,6 +77,9 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
         // You can NOW reference each method you has created in your bean object (User class)
         label.setText(spinnerModelList.get(position).getLabel());
 
+        label.setTextColor(Color.BLACK);
+        label.setTextSize(15f);
+
         // And finally return your dynamic (or custom) view for each spinner item
         return label;
     }

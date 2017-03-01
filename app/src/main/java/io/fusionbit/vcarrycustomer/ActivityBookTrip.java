@@ -14,6 +14,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,6 +77,15 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     @BindView(R.id.pb_loadingTripCost)
     ProgressBar pbLoadingTripCost;
 
+    @BindView(R.id.rg_tripType)
+    RadioGroup rgTripType;
+
+    @BindView(R.id.rb_oneWay)
+    RadioButton rbOneWay;
+
+    @BindView(R.id.rb_return)
+    RadioButton rbReturn;
+
     String fromPlace, fromLat, fromLng;
 
     String toPlace, toLat, toLng;
@@ -118,6 +129,8 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(getResources().getString(R.string.book_a_trip));
         }
+
+        rgTripType.check(rbOneWay.getId());
 
         final FirebaseRemoteConfigSettings configSettings =
                 new FirebaseRemoteConfigSettings.Builder()

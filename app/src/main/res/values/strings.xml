@@ -75,4 +75,17 @@
     <string name="one_way">One Way</string>
     <string name="return_trip">Return</string>
 
+    <string name="paid">Paid</string>
+    <string name="unpaid">Unpaid</string>
+    <string name="today">Today</string>
+    <string name="this_month">This Month</string>
+    <string name="total">Total</string>
+    <string name="trip_completed">Trip Completed:</string>
+    <string name="incomplete_trip">Incomplete:</string>
+    <string name="day">DAY</string>
+    <string name="month">MONTH</string>
+    <string name="year">YEAR</string>
+    <string name="time">TIME</string>
+    <string name="trip_schedule">Trip Schedule</string>
+
 </resources>

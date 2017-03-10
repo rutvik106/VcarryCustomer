@@ -2,6 +2,7 @@ package api;
 
 import java.util.List;
 
+import apimodels.AccountSummary;
 import apimodels.Area;
 import apimodels.City;
 import apimodels.FromLocation;
@@ -80,5 +81,12 @@ public interface ApiInterface
     Call<ResponseBody> updateDeviceTokenCustomer(@Field("method") String method,
                                                  @Field("customer_id") String customerId,
                                                  @Field("device_token") String deviceToken);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<AccountSummary> getAccountSummary(@Field("method") String method,
+                                           @Field("from") String fromDate,
+                                           @Field("to") String toDate,
+                                           @Field("customer_id") String email);
 
 }

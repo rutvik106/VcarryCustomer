@@ -74,4 +74,19 @@
     <string name="one_way">One Way</string>
     <string name="return_trip">Return</string>
 
+
+    <string name="paid">ચૂકવણી</string>
+    <string name="unpaid">અવેતન</string>
+    <string name="today">આજે</string>
+    <string name="this_month">આ મહિને</string>
+    <string name="total">કુલ</string>
+    <string name="trip_completed">પૂર્ણ  ટ્રીપ:</string>
+    <string name="incomplete_trip">અધૂરું:</string>
+    <string name="day">DAY</string>
+    <string name="month">MONTH</string>
+    <string name="year">YEAR</string>
+    <string name="time">TIME</string>
+    <string name="trip_schedule">Trip Schedule</string>
+
+
 </resources>

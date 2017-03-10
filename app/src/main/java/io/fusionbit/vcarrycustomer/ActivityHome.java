@@ -1,10 +1,17 @@
 package io.fusionbit.vcarrycustomer;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -24,7 +31,11 @@ import javax.inject.Inject;
 
 import api.API;
 import api.RetrofitCallbacks;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import extra.ConnectionStateMonitor;
 import extra.LocaleHelper;
+import fragments.FragmentAccBalance;
 import fragments.FragmentHome;
 import fragments.FragmentTrips;
 import io.realm.Realm;
@@ -48,18 +59,55 @@ public class ActivityHome extends VCarryActivity
     @Inject
     Realm realm;
 
+    @BindView(R.id.cl_navActivityLayout)
+    CoordinatorLayout clNavActivityLayout;
+
+    Snackbar snackbarNoInternet;
+
+    private BroadcastReceiver mNetworkDetectReceiver;
+
+    private void checkInternetConnection()
+    {
+        if (!Utils.isDeviceOnline(this))
+        {
+            showNoInternetView();
+        } else
+        {
+            if (snackbarNoInternet != null)
+            {
+                if (snackbarNoInternet.isShown())
+                {
+                    snackbarNoInternet.dismiss();
+                }
+            }
+        }
+    }
+
+    private void showNoInternetView()
+    {
+        snackbarNoInternet = Snackbar
+                .make(clNavActivityLayout, "No Internet", Snackbar.LENGTH_INDEFINITE);
+
+        snackbarNoInternet.show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
+
+        ButterKnife.bind(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         setActionBarTitle("V-Carry");
 
         ((App) getApplication()).getUser().inject(this);
+
+        setupConnectionMonitor();
 
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
 
@@ -98,6 +146,31 @@ public class ActivityHome extends VCarryActivity
         {
             finish();
         }
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        mNetworkDetectReceiver = new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                checkInternetConnection();
+            }
+        };
+        registerReceiver(mNetworkDetectReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    protected void onStop()
+    {
+        if (mNetworkDetectReceiver != null)
+        {
+            unregisterReceiver(mNetworkDetectReceiver);
+        }
+        super.onStop();
     }
 
     private void tryToGetCustomerIdFromCustomerEmail(String email)
@@ -252,7 +325,8 @@ public class ActivityHome extends VCarryActivity
             setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
         } else if (id == R.id.nav_accountBalance)
         {
-
+            fragment = FragmentAccBalance.newInstance(2);
+            setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
         } else if (id == R.id.nav_tripsOnOffer)
         {
 
@@ -310,4 +384,14 @@ public class ActivityHome extends VCarryActivity
             startActivity(i);
         }
     }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setupConnectionMonitor()
+    {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            new ConnectionStateMonitor().enable(this);
+        }
+    }
+
 }

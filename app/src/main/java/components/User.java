@@ -3,6 +3,7 @@ package components;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import fragments.FragmentAccBalance;
 import io.fusionbit.vcarrycustomer.ActivityBookTrip;
 import io.fusionbit.vcarrycustomer.ActivityDriverLocation;
 import io.fusionbit.vcarrycustomer.ActivityHome;
@@ -29,6 +30,8 @@ public interface User
     void inject(ActivityRegistrationForm activityBookTrip);
 
     void inject(ActivityDriverLocation activityDriverLocation);
+
+    void inject(FragmentAccBalance fragmentAccBalance);
 
     RealmConfiguration getRealmConfiguration();
 }

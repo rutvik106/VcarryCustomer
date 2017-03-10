@@ -36,17 +36,4 @@ public class NetworkConnectionDetector extends BroadcastReceiver
 
     }
 
-    public static boolean isInternetOn(final Context context)
-    {
-        final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected())
-        {
-            return true;
-        } else
-        {
-            return false;
-        }
-    }
-
 }

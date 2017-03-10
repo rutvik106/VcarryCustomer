@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -104,6 +105,10 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     Realm realm;
     @Inject
     UserActivities userActivities;
+    @BindView(R.id.tv_tripSchedule)
+    TextView tvTripSchedule;
+    @BindView(R.id.ll_tripScheduleDetails)
+    LinearLayout llTripScheduleDetails;
     private String fromShippingLocationId = null;
     private String toShippingLocationId = null;
     private int vehicleTypeId = 0;
@@ -124,10 +129,23 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
         validator = new Validator(this);
         validator.setValidationListener(this);
 
+        final boolean isSchedulingTrip = getIntent().getBooleanExtra(Constants.IS_SCHEDULING_TRIP, false);
+
+        if (isSchedulingTrip)
+        {
+            getScheduleDetails(getIntent().getBundleExtra(Constants.SCHEDULE_DETAILS));
+        }
+
         if (getSupportActionBar() != null)
         {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(getResources().getString(R.string.book_a_trip));
+            if (isSchedulingTrip)
+            {
+                getSupportActionBar().setTitle(getResources().getString(R.string.schedule_trip));
+            } else
+            {
+                getSupportActionBar().setTitle(getResources().getString(R.string.book_a_trip));
+            }
         }
 
         rgTripType.check(rbOneWay.getId());
@@ -274,6 +292,42 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
     }
 
+    private void getScheduleDetails(Bundle scheduleDetails)
+    {
+        llTripScheduleDetails.setVisibility(View.VISIBLE);
+        final int day = scheduleDetails.getInt(Constants.DAY);
+        final int month = scheduleDetails.getInt(Constants.MONTH);
+        final int year = scheduleDetails.getInt(Constants.YEAR);
+        final int hour = scheduleDetails.getInt(Constants.HOUR);
+        final int minute = scheduleDetails.getInt(Constants.MINUTE);
+
+        String sMinute;
+
+        if (minute == 0)
+        {
+            sMinute = "00";
+        } else if (minute < 10)
+        {
+            sMinute = "0" + minute;
+        } else
+        {
+            sMinute = minute + "";
+        }
+
+        final boolean isPm = scheduleDetails.getBoolean(Constants.IS_PM);
+
+        if (isPm)
+        {
+            tvTripSchedule.setText(day + "/" + (month + 1) + "/" + year +
+                    " " + ((hour % 12) == 0 ? 12 : (hour % 12)) + ":" + sMinute + " PM");
+        } else
+        {
+            tvTripSchedule.setText(day + "/" + (month + 1) + "/" + year +
+                    " " + ((hour % 12) == 0 ? 12 : (hour % 12)) + ":" + sMinute + " AM");
+        }
+
+    }
+
     private void getFair()
     {
         pbLoadingTripCost.setVisibility(View.VISIBLE);
@@ -345,13 +399,13 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
         final List<FromLocation> shippingLocationList = new ArrayList<>();
         shippingLocationList.addAll(realm.copyFromRealm(realmFromLocations));
 
-        CustomListAdapter<FromLocation> fromAdaoter = new CustomListAdapter<FromLocation>(this,
+        CustomListAdapter<FromLocation> fromAdapter = new CustomListAdapter<FromLocation>(this,
                 android.R.layout.simple_list_item_1, shippingLocationList);
 
         CustomListAdapter<FromLocation> toAdapter = new CustomListAdapter<FromLocation>(this,
                 android.R.layout.simple_list_item_1, shippingLocationList);
 
-        actFrom.setAdapter(fromAdaoter);
+        actFrom.setAdapter(fromAdapter);
         actTo.setAdapter(toAdapter);
 
         final AdapterView.OnItemClickListener actFromListener = new AdapterView.OnItemClickListener()

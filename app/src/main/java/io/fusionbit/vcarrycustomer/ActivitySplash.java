@@ -26,4 +26,10 @@ public class ActivitySplash extends VCarryActivity
         }, 1200);
 
     }
+
+    @Override
+    public void onBackPressed()
+    {
+    }
+
 }

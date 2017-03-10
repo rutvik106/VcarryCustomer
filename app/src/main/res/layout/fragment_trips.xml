@@ -1,163 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
-    android:layout_row="2">
+    android:orientation="vertical">
 
-
-    <TableRow
-        android:id="@+id/ll_top"
+    <LinearLayout
+        android:id="@+id/ll_homeEmpty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_margin="50dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="100dp">
 
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            app:cardCornerRadius="5dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/ic_sentiment_dissatisfied_black_36dp"/>
 
-            <LinearLayout
-                android:id="@+id/ll_ongoingTrip"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/currently_you_have_no_booked_trips"
+            android:textSize="16sp"/>
 
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/ic_near_me_black_48dp"/>
+    </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="@string/ongoing_trip"
-                    android:textSize="15sp"
-                    android:textStyle="bold"/>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-
-            app:cardCornerRadius="5dp">
-
-            <LinearLayout
-                android:id="@+id/ll_bookTrip"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/ic_local_shipping_black_48dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="@string/book_a_trip"
-                    android:textSize="15sp"
-                    android:textStyle="bold"/>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-    </TableRow>
-
-
-    <TableRow
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_userActivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:weightSum="2">
+        android:clipToPadding="false"
+        android:padding="10dp"/>
 
-        <android.support.v7.widget.CardView
-
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            app:cardCornerRadius="5dp">
-
-            <LinearLayout
-                android:id="@+id/ll_scheduleTrip"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/ic_schedule_black_48dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="@string/schedule_trip"
-                    android:textSize="15sp"
-                    android:textStyle="bold"/>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            app:cardCornerRadius="5dp">
-
-            <LinearLayout
-                android:id="@+id/ll_tripSummary"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/ic_description_black_48dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="@string/trip_summary"
-                    android:textSize="15sp"
-                    android:textStyle="bold"/>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-    </TableRow>
-
-
-</TableLayout>
+</RelativeLayout>

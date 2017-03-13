@@ -69,11 +69,11 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
     @NotEmpty
     @BindView(R.id.act_from)
-    AutoCompleteTextView actFrom;
+    CustomAutoCompleteTextView actFrom;
 
     @NotEmpty
     @BindView(R.id.act_to)
-    AutoCompleteTextView actTo;
+    CustomAutoCompleteTextView actTo;
 
     @BindView(R.id.pb_loadingTripCost)
     ProgressBar pbLoadingTripCost;
@@ -234,6 +234,24 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                 {
                     Toast.makeText(ActivityBookTrip.this, "Please enter from and to", Toast.LENGTH_SHORT).show();
                 }*/
+            }
+        });
+
+        actTo.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+            @Override
+            public void onFocusChange(View view, boolean inFocus)
+            {
+                Utils.hideSoftKeyboard(ActivityBookTrip.this);
+            }
+        });
+
+        actFrom.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+            @Override
+            public void onFocusChange(View view, boolean inFocus)
+            {
+                Utils.hideSoftKeyboard(ActivityBookTrip.this);
             }
         });
 
@@ -419,6 +437,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                 getFair();
                 fromPlace = null;
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
+                actTo.requestFocus();
             }
         };
 

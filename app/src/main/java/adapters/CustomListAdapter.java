@@ -81,7 +81,7 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
         label.setTextSize(15f);
 
         // And finally return your dynamic (or custom) view for each spinner item
-        return label;
+        return convertView;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
         label.setTextColor(Color.BLACK);
         label.setText(spinnerModelList.get(position).getLabel());
 
-        return label;
+        return convertView;
     }
 
     @NonNull

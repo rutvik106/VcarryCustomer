@@ -54,25 +54,25 @@
     <string name="trip_cost">ટ્રીપ નો ભાવ</string>
 
     <string name="rs">\u20B9</string>
-    <string name="map">Map</string>
-    <string name="simple_alert_title">Alert!</string>
-    <string name="search_location">Search location...</string>
+    <string name="map">નકશો</string>
+    <string name="simple_alert_title">ચેતવણી!</string>
+    <string name="search_location">સ્થાન શોધ...</string>
     <string name="fetching_location">Fetching location...</string>
-    <string name="book_trip">BOOK TRIP</string>
-    <string name="book_trip_prompt_msg">Are you sure you want to book this trip?</string>
-    <string name="booking_request_success_message">Your trip request was submitted successfully, Please wait for booking confirmation from V-Carry!</string>
-    <string name="something_went_wrong">Something went wrong, Please try again later</string>
-    <string name="check_internet">Please check internet connection</string>
-    <string name="driver_name">Driver Name</string>
-    <string name="trip_confirmed">Trip Confirmed</string>
-    <string name="driver_allocated">Driver Allocated</string>
-    <string name="pending_confirmation">Pending Confirmation</string>
-    <string name="driver_location">Driver Location</string>
-    <string name="getting_driver_location">Getting Driver Location...</string>
+    <string name="book_trip">બુક ટ્રીપ</string>
+    <string name="book_trip_prompt_msg">તમે આ સફર બુક કરવા માંગો છો શું તમને ખાતરી છે?</string>
+    <string name="booking_request_success_message">તમારી સફર વિનંતી સફળતાપૂર્વક જમા થઇ ગયું, તો કૃપા કરીને V-Carry માંથી પુષ્ટિ બુકિંગ માટે રાહ જોવો!</string>
+    <string name="something_went_wrong">કંઈક ખોટું થયું. પછીથી ફરી પ્રયત્ન કરો</string>
+    <string name="check_internet">ઇન્ટરનેટ કનેક્શન તપાસો</string>
+    <string name="driver_name">મોટરચાલક નામ</string>
+    <string name="trip_confirmed">ટ્રીપ પુષ્ટિ</string>
+    <string name="driver_allocated">મોટરચાલક સોંપાયેલ</string>
+    <string name="pending_confirmation">ખાતરી બાકી</string>
+    <string name="driver_location">મોટરચાલક સ્થાન</string>
+    <string name="getting_driver_location">મોટરચાલક સ્થાન મેળવી...</string>
     <string name="currently_you_have_no_booked_trips">Currently you have no booked trips</string>
-    <string name="trip_type">Trip Type</string>
-    <string name="one_way">One Way</string>
-    <string name="return_trip">Return</string>
+    <string name="trip_type">ટ્રીપનો પ્રકાર</string>
+    <string name="one_way">વન વે</string>
+    <string name="return_trip">રીટર્ન</string>
 
 
     <string name="paid">ચૂકવણી</string>
@@ -82,11 +82,11 @@
     <string name="total">કુલ</string>
     <string name="trip_completed">પૂર્ણ  ટ્રીપ:</string>
     <string name="incomplete_trip">અધૂરું:</string>
-    <string name="day">DAY</string>
-    <string name="month">MONTH</string>
-    <string name="year">YEAR</string>
-    <string name="time">TIME</string>
-    <string name="trip_schedule">Trip Schedule</string>
+    <string name="day">દિવસ</string>
+    <string name="month">મહિનો</string>
+    <string name="year">વર્ષ</string>
+    <string name="time">સમય</string>
+    <string name="trip_schedule">ટ્રીપ સૂચિ</string>
 
 
 </resources>

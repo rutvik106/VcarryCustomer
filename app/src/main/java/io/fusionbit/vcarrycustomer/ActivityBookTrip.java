@@ -40,6 +40,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import components.DaggerFirebaseOperations;
 import components.FirebaseOperations;
+import extra.LocaleHelper;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -416,6 +417,14 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     {
         final List<FromLocation> shippingLocationList = new ArrayList<>();
         shippingLocationList.addAll(realm.copyFromRealm(realmFromLocations));
+
+        if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu"))
+        {
+            for (FromLocation location : shippingLocationList)
+            {
+                location.setReturnGujaratiAddress(true);
+            }
+        }
 
         CustomListAdapter<FromLocation> fromAdapter = new CustomListAdapter<FromLocation>(this,
                 android.R.layout.simple_list_item_1, shippingLocationList);

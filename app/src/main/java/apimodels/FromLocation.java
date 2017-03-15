@@ -2,6 +2,8 @@ package apimodels;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.UnsupportedEncodingException;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -65,6 +67,19 @@ public class FromLocation extends RealmObject implements SpinnerModel
     private String customerId;
     @SerializedName("primary_location")
     private String primaryLocation;
+    /**
+     * gujarati_address :
+     */
+
+    @SerializedName("gujarati_address")
+    private String gujaratiAddress;
+
+    private boolean returnGujaratiAddress;
+
+    public void setReturnGujaratiAddress(boolean returnGujaratiAddress)
+    {
+        this.returnGujaratiAddress = returnGujaratiAddress;
+    }
 
     public String getShippingLocationId()
     {
@@ -88,7 +103,7 @@ public class FromLocation extends RealmObject implements SpinnerModel
 
     public String getShippingAddress()
     {
-        return shippingAddress;
+        return shippingAddress + ", " + getAreaName() + ", " + getCityName();
     }
 
     public void setShippingAddress(String shippingAddress)
@@ -235,6 +250,43 @@ public class FromLocation extends RealmObject implements SpinnerModel
     @Override
     public String getLabel()
     {
-        return getShippingAddress() + ", " + getAreaName() + ", " + getCityName();
+        if (returnGujaratiAddress)
+        {
+            return getGujaratiAddress();
+        }
+        return getShippingAddress();
+    }
+
+    public String getGujaratiAddress()
+    {
+        try
+        {
+            if (gujaratiAddress != null)
+            {
+                if (!gujaratiAddress.isEmpty())
+                {
+                    // Convert from Unicode to UTF-8
+                    String string = gujaratiAddress;
+                    byte[] utf8 = string.getBytes("UTF-8");
+
+                    // Convert from UTF-8 to Unicode
+                    return new String(utf8, "UTF-8");
+                } else
+                {
+                    return getShippingAddress();
+                }
+            } else
+            {
+                return getShippingAddress();
+            }
+        } catch (UnsupportedEncodingException e)
+        {
+            return getShippingAddress();
+        }
+    }
+
+    public void setGujaratiAddress(String gujaratiAddress)
+    {
+        this.gujaratiAddress = gujaratiAddress;
     }
 }

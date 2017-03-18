@@ -6,6 +6,7 @@ import apimodels.AccountSummary;
 import apimodels.Area;
 import apimodels.City;
 import apimodels.FromLocation;
+import apimodels.TripByCustomerId;
 import apimodels.Vehicle;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -88,5 +89,19 @@ public interface ApiInterface
                                            @Field("from") String fromDate,
                                            @Field("to") String toDate,
                                            @Field("customer_id") String email);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<TripByCustomerId>> getTripsByCustomerId(@Field("method") String method,
+                                                      @Field("customer_id") String customerId);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<TripByCustomerId>> getTripSummary(@Field("method") String method,
+                                                @Field("customer_id") String customerId,
+                                                @Field("trip_status") String tripStatus,
+                                                @Field("from_date") String fromDate,
+                                                @Field("to_date") String toDate,
+                                                @Field("unactioned_driver_email") String unActionedByEmail);
 
 }

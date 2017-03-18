@@ -16,24 +16,36 @@ import android.net.NetworkInfo;
 
 public class NetworkConnectionDetector extends BroadcastReceiver
 {
+    public static ConnectivityReceiverListener connectivityReceiverListener;
 
-    public static final String CONNECTIVITY_CHANGED = "io.fusionbit.khalaiyo.CONNECTIVITY_CHANGED";
+    public NetworkConnectionDetector()
+    {
+        super();
+    }
 
     @Override
     public void onReceive(Context context, Intent intent)
     {
-
-
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        final ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isConnected())
         {
-            context.sendBroadcast(new Intent(CONNECTIVITY_CHANGED).putExtra("is_active", true));
+            if (connectivityReceiverListener != null)
+            {
+                connectivityReceiverListener.onNetworkConnectionChanged(true);
+            }
         } else
         {
-            context.sendBroadcast(new Intent(CONNECTIVITY_CHANGED).putExtra("is_active", false));
+            if (connectivityReceiverListener != null)
+            {
+                connectivityReceiverListener.onNetworkConnectionChanged(false);
+            }
         }
-
     }
 
+    public interface ConnectivityReceiverListener
+    {
+        void onNetworkConnectionChanged(boolean isConnected);
+    }
 }

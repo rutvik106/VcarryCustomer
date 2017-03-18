@@ -1,10 +1,6 @@
 package viewholder;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Parcelable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +8,14 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import apimodels.AccountSummary;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import extra.EasingConstants;
+import io.fusionbit.vcarrycustomer.ActivityTrips;
 import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
 
@@ -28,14 +26,37 @@ import io.fusionbit.vcarrycustomer.R;
 public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements View.OnClickListener
 {
     private final Context context;
+    @BindView(R.id.tv_completedTripToday)
+    TextView tvCompletedTripToday;
+    @BindView(R.id.tv_incompleteTripToday)
+    TextView tvIncompleteTripToday;
+    @BindView(R.id.tv_accountPaidToday)
+    TextView tvAccountPaidToday;
+    @BindView(R.id.tv_accountUnpaidToday)
+    TextView tvAccountUnpaidToday;
+    @BindView(R.id.ll_accountToday)
+    LinearLayout llAccountToday;
+    @BindView(R.id.tv_completedTripThisMonth)
+    TextView tvCompletedTripThisMonth;
+    @BindView(R.id.tv_incompleteTripThisMonth)
+    TextView tvIncompleteTripThisMonth;
+    @BindView(R.id.tv_accountPaidThisMonth)
+    TextView tvAccountPaidThisMonth;
+    @BindView(R.id.tv_accountUnpaidThisMonth)
+    TextView tvAccountUnpaidThisMonth;
+    @BindView(R.id.ll_accountThisMonth)
+    LinearLayout llAccountThisMonth;
+    @BindView(R.id.tv_completedTripTotal)
+    TextView tvCompletedTripTotal;
+    @BindView(R.id.tv_incompleteTripTotal)
+    TextView tvIncompleteTripTotal;
+    @BindView(R.id.tv_accountPaidTotal)
+    TextView tvAccountPaidTotal;
+    @BindView(R.id.tv_accountUnpaidTotal)
+    TextView tvAccountUnpaidTotal;
+    @BindView(R.id.ll_accountTotal)
+    LinearLayout llAccountTotal;
 
-    private TextView tvAccountPaidToday, tvAccountUnpaidToday,
-            tvAccountPaidThisMonth, tvAccountUnpaidThisMonth, tvAccountPaidTotal,
-            tvAccountUnpaidTotal, tvCompletedTripToday, tvCompletedTripThisMonth,
-            tvCompletedTripTotal, tvIncompleteTripToday, tvIncompleteTripThisMonth,
-            tvIncompleteTripTotal;
-
-    private CardView cvAccountToday, cvAccountThisMonth, cvAccountTotal;
 
     private AccountSummary accountSummary;
 
@@ -44,28 +65,11 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
         super(itemView);
         this.context = context;
 
-        tvAccountPaidToday = (TextView) itemView.findViewById(R.id.tv_accountPaidToday);
-        tvAccountUnpaidToday = (TextView) itemView.findViewById(R.id.tv_accountUnpaidToday);
-        tvAccountPaidThisMonth = (TextView) itemView.findViewById(R.id.tv_accountPaidThisMonth);
-        tvAccountUnpaidThisMonth = (TextView) itemView.findViewById(R.id.tv_accountUnpaidThisMonth);
-        tvAccountPaidTotal = (TextView) itemView.findViewById(R.id.tv_accountPaidTotal);
-        tvAccountUnpaidTotal = (TextView) itemView.findViewById(R.id.tv_accountUnpaidTotal);
+        ButterKnife.bind(this, itemView);
 
-        tvCompletedTripToday = (TextView) itemView.findViewById(R.id.tv_completedTripToday);
-        tvCompletedTripThisMonth = (TextView) itemView.findViewById(R.id.tv_completedTripThisMonth);
-        tvCompletedTripTotal = (TextView) itemView.findViewById(R.id.tv_completedTripTotal);
-
-        tvIncompleteTripToday = (TextView) itemView.findViewById(R.id.tv_incompleteTripToday);
-        tvIncompleteTripThisMonth = (TextView) itemView.findViewById(R.id.tv_incompleteTripThisMonth);
-        tvIncompleteTripTotal = (TextView) itemView.findViewById(R.id.tv_incompleteTripTotal);
-
-        cvAccountToday = (CardView) itemView.findViewById(R.id.cv_accountToday);
-        cvAccountThisMonth = (CardView) itemView.findViewById(R.id.cv_accountThisMonth);
-        cvAccountTotal = (CardView) itemView.findViewById(R.id.cv_accountTotal);
-
-        /*cvAccountToday.setOnClickListener(this);
-        cvAccountThisMonth.setOnClickListener(this);
-        cvAccountTotal.setOnClickListener(this);*/
+        llAccountToday.setOnClickListener(this);
+        llAccountThisMonth.setOnClickListener(this);
+        llAccountTotal.setOnClickListener(this);
 
     }
 
@@ -79,13 +83,13 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
     {
         vh.accountSummary = accountSummary;
 
-        if (accountSummary.isBusyLoading())
+        /*if (accountSummary.isBusyLoading())
         {
             vh.setFadeAnimation(vh.itemView);
         } else
         {
             vh.itemView.clearAnimation();
-        }
+        }*/
 
         //TODAY
         vh.tvCompletedTripToday.setText(vh.context.getResources().getString(R.string.trip_completed) + " " +
@@ -120,8 +124,8 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
 
 
         //TOTAL
-        vh.tvIncompleteTripThisMonth.setText(vh.context.getResources().getString(R.string.incomplete_trip) + " " +
-                accountSummary.getThisMonthIncompleteTrips());
+        vh.tvCompletedTripTotal.setText(vh.context.getResources().getString(R.string.trip_completed) + " " +
+                accountSummary.getTotalCompletedTrips());
 
         vh.tvIncompleteTripTotal.setText(vh.context.getResources().getString(R.string.incomplete_trip) + " " +
                 accountSummary.getTotalIncompleteTrips());
@@ -139,28 +143,21 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
     @Override
     public void onClick(View view)
     {
-        final Intent i = new Intent(context, AppCompatActivity.class);
         switch (view.getId())
         {
-            case R.id.cv_accountToday:
-                i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.TODAY);
-                i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
-                        new ArrayList<Parcelable>(accountSummary.getTripToday()));
-                context.startActivity(i);
+            case R.id.ll_accountToday:
+                ActivityTrips.start(context, Constants.AccountTripType.TODAY
+                        , accountSummary.getTripToday());
                 break;
 
-            case R.id.cv_accountThisMonth:
-                i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.THIS_MONTH);
-                i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
-                        new ArrayList<Parcelable>(accountSummary.getTripThisMonth()));
-                context.startActivity(i);
+            case R.id.ll_accountThisMonth:
+                ActivityTrips.start(context, Constants.AccountTripType.THIS_MONTH
+                        , accountSummary.getTripThisMonth());
                 break;
 
-            case R.id.cv_accountTotal:
-                i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.TOTAL);
-                i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
-                        new ArrayList<Parcelable>(accountSummary.getTotalTrips()));
-                context.startActivity(i);
+            case R.id.ll_accountTotal:
+                ActivityTrips.start(context, Constants.AccountTripType.TOTAL
+                        , accountSummary.getTotalTrips());
                 break;
 
         }

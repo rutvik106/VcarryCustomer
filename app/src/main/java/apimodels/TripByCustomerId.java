@@ -6,32 +6,36 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.UnsupportedEncodingException;
+
 import io.fusionbit.vcarrycustomer.Constants;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import models.BookedTrip;
 
 /**
  * Created by rutvik on 11/27/2016 at 3:54 PM.
  */
 
-public class TripsByDriverMail extends RealmObject implements Comparable<TripsByDriverMail>, Parcelable
+public class TripByCustomerId extends RealmObject implements Comparable<TripByCustomerId>, Parcelable
 {
 
 
-    public static final Creator<TripsByDriverMail> CREATOR = new Creator<TripsByDriverMail>()
+    public static final Creator<TripByCustomerId> CREATOR = new Creator<TripByCustomerId>()
     {
         @Override
-        public TripsByDriverMail createFromParcel(Parcel source)
+        public TripByCustomerId createFromParcel(Parcel source)
         {
-            return new TripsByDriverMail(source);
+            return new TripByCustomerId(source);
         }
 
         @Override
-        public TripsByDriverMail[] newArray(int size)
+        public TripByCustomerId[] newArray(int size)
         {
-            return new TripsByDriverMail[size];
+            return new TripByCustomerId[size];
         }
     };
+    BookedTrip bookedTrip;
     /**
      * trip_id : 2
      * trip_datetime : 2016-09-07 16:17:18
@@ -135,12 +139,22 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     private String customerContactNo;
     @SerializedName("trip_no")
     private String tripNo;
+    /**
+     * from_gujarati_address : આ એક કસોટી છે
+     * to_gujarati_address : આ એક કસોટી છે
+     */
 
-    public TripsByDriverMail()
+    @SerializedName("from_gujarati_address")
+    private String fromGujaratiAddress;
+    @SerializedName("to_gujarati_address")
+    private String toGujaratiAddress;
+    private boolean returnGujaratiAddress;
+
+    public TripByCustomerId()
     {
     }
 
-    protected TripsByDriverMail(Parcel in)
+    protected TripByCustomerId(Parcel in)
     {
         this.tripId = in.readString();
         this.tripDatetime = in.readString();
@@ -174,6 +188,28 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         this.toAreaName = in.readString();
         this.customerContactNo = in.readString();
         this.tripNo = in.readString();
+        this.fromGujaratiAddress = in.readString();
+        this.toGujaratiAddress = in.readString();
+    }
+
+    public BookedTrip getBookedTrip()
+    {
+        return bookedTrip;
+    }
+
+    public void setBookedTrip(BookedTrip bookedTrip)
+    {
+        this.bookedTrip = bookedTrip;
+    }
+
+    public boolean isReturnGujaratiAddress()
+    {
+        return returnGujaratiAddress;
+    }
+
+    public void setReturnGujaratiAddress(boolean returnGujaratiAddress)
+    {
+        this.returnGujaratiAddress = returnGujaratiAddress;
     }
 
     public String getTripId()
@@ -403,7 +439,7 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     }
 
     @Override
-    public int compareTo(@NonNull TripsByDriverMail tripDetails)
+    public int compareTo(@NonNull TripByCustomerId tripDetails)
     {
         int status = Integer.valueOf(tripDetails.getTripStatus());
         if (status <= Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED))
@@ -566,5 +602,93 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         dest.writeString(this.toAreaName);
         dest.writeString(this.customerContactNo);
         dest.writeString(this.tripNo);
+        dest.writeString(this.fromGujaratiAddress);
+        dest.writeString(this.toGujaratiAddress);
+    }
+
+    public String getFromGujaratiAddress()
+    {
+        try
+        {
+            if (fromGujaratiAddress != null)
+            {
+                if (!fromGujaratiAddress.isEmpty())
+                {
+                    // Convert from Unicode to UTF-8
+                    String string = fromGujaratiAddress;
+                    byte[] utf8 = string.getBytes("UTF-8");
+
+                    // Convert from UTF-8 to Unicode
+                    return new String(utf8, "UTF-8");
+                } else
+                {
+                    return getFromAddressLine1() + ", " +
+                            getFromAddressLine2() + ", " +
+                            getFromAreaName() + ", " +
+                            getFromCityName();
+                }
+            } else
+            {
+                return getFromAddressLine1() + ", " +
+                        getFromAddressLine2() + ", " +
+                        getFromAreaName() + ", " +
+                        getFromCityName();
+            }
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+            return getFromAddressLine1() + ", " +
+                    getFromAddressLine2() + ", " +
+                    getFromAreaName() + ", " +
+                    getFromCityName();
+        }
+    }
+
+    public void setFromGujaratiAddress(String fromGujaratiAddress)
+    {
+        this.fromGujaratiAddress = fromGujaratiAddress;
+    }
+
+    public String getToGujaratiAddress()
+    {
+        try
+        {
+            if (toGujaratiAddress != null)
+            {
+                if (!toGujaratiAddress.isEmpty())
+                {
+                    // Convert from Unicode to UTF-8
+                    String string = toGujaratiAddress;
+                    byte[] utf8 = string.getBytes("UTF-8");
+
+                    // Convert from UTF-8 to Unicode
+                    return new String(utf8, "UTF-8");
+                } else
+                {
+                    return getToAddressLine1() + ", " +
+                            getToAddressLine2() + ", " +
+                            getToAreaName() + ", " +
+                            getToCityName();
+                }
+            } else
+            {
+                return getToAddressLine1() + ", " +
+                        getToAddressLine2() + ", " +
+                        getToAreaName() + ", " +
+                        getToCityName();
+            }
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+            return getToAddressLine1() + ", " +
+                    getToAddressLine2() + ", " +
+                    getToAreaName() + ", " +
+                    getToCityName();
+        }
+    }
+
+    public void setToGujaratiAddress(String toGujaratiAddress)
+    {
+        this.toGujaratiAddress = toGujaratiAddress;
     }
 }

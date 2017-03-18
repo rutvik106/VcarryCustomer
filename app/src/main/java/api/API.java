@@ -10,6 +10,7 @@ import apimodels.AccountSummary;
 import apimodels.Area;
 import apimodels.City;
 import apimodels.FromLocation;
+import apimodels.TripByCustomerId;
 import apimodels.Vehicle;
 import io.fusionbit.vcarrycustomer.App;
 import okhttp3.ResponseBody;
@@ -156,10 +157,33 @@ public class API
 
     public void getAccountSummary(final String customerId,
                                   final String fromDate,
-                                  final String toDate, final RetrofitCallbacks<AccountSummary> callback)
+                                  final String toDate,
+                                  final RetrofitCallbacks<AccountSummary> callback)
     {
         Call<AccountSummary> call = apiService.getAccountSummary("get_customer_balance",
                 fromDate, toDate, customerId);
+
+        call.enqueue(callback);
+    }
+
+    public void getTripsByCustomerId(final String customerId,
+                                     final RetrofitCallbacks<List<TripByCustomerId>> callback)
+    {
+        Call<List<TripByCustomerId>> call = apiService
+                .getTripsByCustomerId("get_trips_by_customer_id", customerId);
+
+        call.enqueue(callback);
+    }
+
+    public void getTripSummary(final String customerId,
+                               final String tripStatus,
+                               final String fromDate,
+                               final String toDate,
+                               final String unActionedByEmail,
+                               final RetrofitCallbacks<List<TripByCustomerId>> callback)
+    {
+        Call<List<TripByCustomerId>> call = apiService.getTripSummary("get_trips_by_trip_status",
+                customerId, tripStatus, fromDate, toDate, unActionedByEmail);
 
         call.enqueue(callback);
     }

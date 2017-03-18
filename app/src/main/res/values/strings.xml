@@ -87,5 +87,8 @@
     <string name="year">YEAR</string>
     <string name="time">TIME</string>
     <string name="trip_schedule">Trip Schedule</string>
+    <string name="trips_today">Trips Today</string>
+    <string name="trips_this_month">Trips This Month</string>
+    <string name="total_trips">Total Trips</string>
 
 </resources>

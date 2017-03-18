@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
 import android.view.inputmethod.InputMethodManager;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -64,5 +65,20 @@ public class Utils
         return (networkInfo != null && networkInfo.isConnected());
     }
 
+    public static Date convertToDate(String stringDate)
+    {
+        Date date = null;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        try
+        {
+            date = sdf.parse(stringDate);
+        } catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+
+        return date;
+    }
 
 }

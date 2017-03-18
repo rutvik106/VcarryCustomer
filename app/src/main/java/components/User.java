@@ -8,6 +8,7 @@ import io.fusionbit.vcarrycustomer.ActivityBookTrip;
 import io.fusionbit.vcarrycustomer.ActivityDriverLocation;
 import io.fusionbit.vcarrycustomer.ActivityHome;
 import io.fusionbit.vcarrycustomer.ActivityRegistrationForm;
+import io.fusionbit.vcarrycustomer.ActivityTrips;
 import io.realm.RealmConfiguration;
 import module.ApiModule;
 import module.AppModule;
@@ -32,6 +33,8 @@ public interface User
     void inject(ActivityDriverLocation activityDriverLocation);
 
     void inject(FragmentAccBalance fragmentAccBalance);
+
+    void inject(ActivityTrips activityTrips);
 
     RealmConfiguration getRealmConfiguration();
 }

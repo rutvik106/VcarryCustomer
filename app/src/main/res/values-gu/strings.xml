@@ -69,7 +69,7 @@
     <string name="pending_confirmation">ખાતરી બાકી</string>
     <string name="driver_location">મોટરચાલક સ્થાન</string>
     <string name="getting_driver_location">મોટરચાલક સ્થાન મેળવી...</string>
-    <string name="currently_you_have_no_booked_trips">Currently you have no booked trips</string>
+    <string name="currently_you_have_no_booked_trips">હાલમાં તમે કોઈ ટ્રીપ નક્કી નથી કરી</string>
     <string name="trip_type">ટ્રીપનો પ્રકાર</string>
     <string name="one_way">વન વે</string>
     <string name="return_trip">રીટર્ન</string>
@@ -87,6 +87,9 @@
     <string name="year">વર્ષ</string>
     <string name="time">સમય</string>
     <string name="trip_schedule">ટ્રીપ સૂચિ</string>
+    <string name="trips_today">>આજની ટ્રિપ્સ</string>
+    <string name="trips_this_month">આ મહિના ની ટ્રિપ્સ</string>
+    <string name="total_trips">કુલ ટ્રિપ્સ</string>
 
 
 </resources>

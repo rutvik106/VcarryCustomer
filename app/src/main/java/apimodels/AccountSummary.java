@@ -16,9 +16,9 @@ public class AccountSummary
 {
 
 
-    private final List<TripsByDriverMail> tripToday = new ArrayList<>();
-    private final List<TripsByDriverMail> tripThisMonth = new ArrayList<>();
-    private final List<TripsByDriverMail> totalTrips = new ArrayList<>();
+    private final List<TripByCustomerId> tripToday = new ArrayList<>();
+    private final List<TripByCustomerId> tripThisMonth = new ArrayList<>();
+    private final List<TripByCustomerId> totalTrips = new ArrayList<>();
     boolean busyLoading = true;
     /**
      * received : 300
@@ -57,17 +57,17 @@ public class AccountSummary
         totalReceivable = 0;
     }
 
-    public List<TripsByDriverMail> getTripToday()
+    public List<TripByCustomerId> getTripToday()
     {
         return tripToday;
     }
 
-    public List<TripsByDriverMail> getTripThisMonth()
+    public List<TripByCustomerId> getTripThisMonth()
     {
         return tripThisMonth;
     }
 
-    public List<TripsByDriverMail> getTotalTrips()
+    public List<TripByCustomerId> getTotalTrips()
     {
         return totalTrips;
     }

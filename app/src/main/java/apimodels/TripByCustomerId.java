@@ -150,6 +150,9 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     private String toGujaratiAddress;
     private boolean returnGujaratiAddress;
 
+    @SerializedName("vehicle_type")
+    private String vehicleType;
+
     public TripByCustomerId()
     {
     }
@@ -190,6 +193,7 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
         this.tripNo = in.readString();
         this.fromGujaratiAddress = in.readString();
         this.toGujaratiAddress = in.readString();
+        this.vehicleType = in.readString();
     }
 
     public BookedTrip getBookedTrip()
@@ -425,7 +429,7 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
         }
 
         TripsByDriverMail that = (TripsByDriverMail) c;
-        return this.getTripId().equals(that.getTripId());
+        return this.getCustomerTripId().equals(that.getCustomerTripId());
     }*/
 
     public String getCustomerName()
@@ -561,6 +565,16 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
         this.tripNo = tripNo;
     }
 
+    public String getVehicleType()
+    {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType)
+    {
+        this.vehicleType = vehicleType;
+    }
+
     @Override
     public int describeContents()
     {
@@ -604,6 +618,7 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
         dest.writeString(this.tripNo);
         dest.writeString(this.fromGujaratiAddress);
         dest.writeString(this.toGujaratiAddress);
+        dest.writeString(this.vehicleType);
     }
 
     public String getFromGujaratiAddress()

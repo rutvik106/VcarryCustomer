@@ -90,6 +90,11 @@
     <string name="trips_today">>આજની ટ્રિપ્સ</string>
     <string name="trips_this_month">આ મહિના ની ટ્રિપ્સ</string>
     <string name="total_trips">કુલ ટ્રિપ્સ</string>
+    <string name="company_name">કંપની નું નામ: </string>
+    <string name="trip_finished">ટ્રીપ સમાપ્ત</string>
+    <string name="cancelled_by_you">તમે રદ કરેલ</string>
+    <string name="cancelled_by_motorist">મોટરચાલક દ્વારા કરેલ</string>
+    <string name="trip_started">ટ્રીપ શરૂ</string>
 
 
 </resources>

@@ -78,11 +78,17 @@ public class ActivityTrips extends BaseActivity
         for (TripByCustomerId trip : trips)
         {
             final BookedTrip bookedTrip = realm.where(BookedTrip.class)
-                    .equalTo("tripId", Integer.parseInt(trip.getTripId())).findFirst();
+                    .equalTo("tripId", trip.getTripId()).findFirst();
 
             if (bookedTrip != null)
             {
-                trip.setBookedTrip(realm.copyToRealm(bookedTrip));
+                realm.beginTransaction();
+                bookedTrip.setStatus(Integer.valueOf(trip.getTripStatus()));
+                bookedTrip.setTripCost(trip.getFare());
+                trip.setBookedTrip(realm
+                        .copyFromRealm(realm
+                                .copyToRealmOrUpdate(bookedTrip)));
+                realm.commitTransaction();
             }
 
             adapter.addTrip(trip);

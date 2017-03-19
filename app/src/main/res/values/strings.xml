@@ -90,5 +90,10 @@
     <string name="trips_today">Trips Today</string>
     <string name="trips_this_month">Trips This Month</string>
     <string name="total_trips">Total Trips</string>
+    <string name="company_name">Company Name: </string>
+    <string name="trip_finished">Trip Finished</string>
+    <string name="cancelled_by_you">Cancelled By You</string>
+    <string name="cancelled_by_motorist">Cancelled By Motorist</string>
+    <string name="trip_started">Trip Started</string>
 
 </resources>

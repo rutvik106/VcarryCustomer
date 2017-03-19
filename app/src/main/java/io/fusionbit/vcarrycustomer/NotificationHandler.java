@@ -109,7 +109,7 @@ public class NotificationHandler
             final String driverName = extra.getString("driver_name");
 
             final BookedTrip bookedTrip = realm.where(BookedTrip.class)
-                    .equalTo("tripId", customerTripId).findFirst();
+                    .equalTo("customerTripId", customerTripId).findFirst();
             realm.beginTransaction();
             bookedTrip.setStatus(Constants.DRIVER_ALLOCATED);
             bookedTrip.setDriverName(driverName);
@@ -133,9 +133,10 @@ public class NotificationHandler
         {
             int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
             final BookedTrip bookedTrip = realm.where(BookedTrip.class)
-                    .equalTo("tripId", customerTripId).findFirst();
+                    .equalTo("customerTripId", customerTripId).findFirst();
             realm.beginTransaction();
             bookedTrip.setStatus(Constants.TRIP_CONFIRMED);
+            bookedTrip.setTripId(extra.getString("trip_id"));
             realm.copyToRealmOrUpdate(bookedTrip);
             realm.commitTransaction();
             Log.i(TAG, "Customer Trip ID: " + customerTripId);

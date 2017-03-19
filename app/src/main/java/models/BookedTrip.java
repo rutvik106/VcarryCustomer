@@ -27,7 +27,7 @@ public class BookedTrip extends RealmObject implements Parcelable
         }
     };
     @PrimaryKey
-    int tripId;
+    int customerTripId;
     String tripFrom;
     String tripTo;
     String tripCost = "N/A";
@@ -37,19 +37,23 @@ public class BookedTrip extends RealmObject implements Parcelable
     String driverTripId;
     String driverDeviceToken;
 
+    String tripNumber = "";
+
+    String tripId;
+
     public BookedTrip()
     {
 
     }
 
-    public BookedTrip(int tripId)
+    public BookedTrip(int customerTripId)
     {
-        this.tripId = tripId;
+        this.customerTripId = customerTripId;
     }
 
-    public BookedTrip(int tripId, String tripFrom, String tripTo, String tripCost, String tripVehicle)
+    public BookedTrip(int customerTripId, String tripFrom, String tripTo, String tripCost, String tripVehicle)
     {
-        this.tripId = tripId;
+        this.customerTripId = customerTripId;
         this.tripFrom = tripFrom;
         this.tripTo = tripTo;
         this.tripCost = tripCost;
@@ -58,7 +62,7 @@ public class BookedTrip extends RealmObject implements Parcelable
 
     protected BookedTrip(Parcel in)
     {
-        this.tripId = in.readInt();
+        this.customerTripId = in.readInt();
         this.tripFrom = in.readString();
         this.tripTo = in.readString();
         this.tripCost = in.readString();
@@ -67,11 +71,13 @@ public class BookedTrip extends RealmObject implements Parcelable
         this.driverName = in.readString();
         this.driverTripId = in.readString();
         this.driverDeviceToken = in.readString();
+        this.tripNumber = in.readString();
+        this.tripId = in.readString();
     }
 
-    public int getTripId()
+    public int getCustomerTripId()
     {
-        return tripId;
+        return customerTripId;
     }
 
     public String getTripFrom()
@@ -144,6 +150,26 @@ public class BookedTrip extends RealmObject implements Parcelable
         this.driverDeviceToken = driverDeviceToken;
     }
 
+    public String getTripNumber()
+    {
+        return tripNumber;
+    }
+
+    public void setTripNumber(String tripNumber)
+    {
+        this.tripNumber = tripNumber;
+    }
+
+    public String getTripId()
+    {
+        return tripId;
+    }
+
+    public void setTripId(String tripId)
+    {
+        this.tripId = tripId;
+    }
+
     @Override
     public int describeContents()
     {
@@ -153,7 +179,7 @@ public class BookedTrip extends RealmObject implements Parcelable
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
-        dest.writeInt(this.tripId);
+        dest.writeInt(this.customerTripId);
         dest.writeString(this.tripFrom);
         dest.writeString(this.tripTo);
         dest.writeString(this.tripCost);
@@ -162,6 +188,8 @@ public class BookedTrip extends RealmObject implements Parcelable
         dest.writeString(this.driverName);
         dest.writeString(this.driverTripId);
         dest.writeString(this.driverDeviceToken);
+        dest.writeString(this.tripNumber);
+        dest.writeString(this.tripId);
     }
 }
 

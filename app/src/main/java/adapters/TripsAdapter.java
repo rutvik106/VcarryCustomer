@@ -39,7 +39,7 @@ public class TripsAdapter extends RecyclerView.Adapter
         if (!tripsByDriverMailList.contains(tripsByDriverMail))
         {
             tripsByDriverMailList.add(tripsByDriverMail);
-            //tripsByDriverMailList.put(Integer.valueOf(tripsByDriverMail.getTripId()), tripsByDriverMail);
+            //tripsByDriverMailList.put(Integer.valueOf(tripsByDriverMail.getCustomerTripId()), tripsByDriverMail);
             Collections.sort(tripsByDriverMailList);
             Collections.sort(tripsByDriverMailList, new Comparator<TripByCustomerId>()
             {

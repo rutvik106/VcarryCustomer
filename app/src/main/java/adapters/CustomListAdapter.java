@@ -117,10 +117,9 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
 
             if (charSequence != null)
             {
-
                 for (SpinnerModel model : spinnerModelList)
                 {
-                    if (model.getLabel().toLowerCase().contains(charSequence))
+                    if (model.getLabel().toLowerCase().contains(charSequence.toString().trim().toLowerCase()))
                     {
                         queryResult.add(model);
                     }
@@ -139,10 +138,11 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
             suggestedSpinnerModelList = (List<T>) filterResults.values;
             if (suggestedSpinnerModelList != null)
             {
-                if (suggestedSpinnerModelList.size() > 0)
-                {
-                    notifyDataSetChanged();
-                } else
+                /*if (suggestedSpinnerModelList.size() > 0)
+                {*/
+                notifyDataSetChanged();
+                /*} else*/
+                if (charSequence == null)
                 {
                     suggestedSpinnerModelList = spinnerModelList;
                     notifyDataSetChanged();

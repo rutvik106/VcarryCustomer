@@ -54,6 +54,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
     @BindView(R.id.ll_singleTripDriverDetailsContainer)
     LinearLayout llSingleTripDriverDetailsContainer;
 
+
     BookedTrip model;
 
     TripByCustomerId tripDetails;
@@ -70,7 +71,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             public void onClick(View view)
             {
                 Intent i = new Intent(context, ActivityDriverLocation.class);
-                i.putExtra(Constants.BOOKED_TRIP_ID, model.getTripId());
+                i.putExtra(Constants.BOOKED_TRIP_ID, model.getCustomerTripId());
                 context.startActivity(i);
             }
         });
@@ -110,21 +111,52 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
         }
 
-        switch (model.getStatus())
+        switch (model.getStatus() + "")
         {
-            case Constants.TRIP_CONFIRMED:
+            case Constants.TRIP_STATUS_NEW:
                 vh.tvSingleTripStatus.setText(R.string.trip_confirmed);
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_orange_light));
                 break;
 
-            case Constants.DRIVER_ALLOCATED:
+            case Constants.TRIP_STATUS_DRIVER_ALLOCATED:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
                 vh.tvSingleTripStatus.setText(R.string.driver_allocated);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_green_light));
                 break;
 
+            case Constants.TRIP_STATUS_FINISHED:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.trip_finished);
+                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
+                        .getColor(android.R.color.black));
+                break;
+
+            case Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.cancelled_by_you);
+                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
+                        .getColor(android.R.color.holo_red_light));
+                break;
+
+            case Constants.TRIP_STATUS_CANCELLED_BY_DRIVER:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.cancelled_by_motorist);
+                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
+                        .getColor(android.R.color.holo_red_light));
+                break;
+
+            case Constants.TRIP_STATUS_TRIP_STARTED:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
+                vh.tvSingleTripStatus.setText(R.string.trip_started);
+                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
+                        .getColor(android.R.color.holo_green_light));
+                break;
+
             default:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
                 vh.tvSingleTripStatus.setText(R.string.pending_confirmation);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_red_light));
@@ -140,12 +172,10 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
 
         vh.tvSingleTripFrom.setText(model.getFromShippingLocation());
         vh.tvSingleTripTo.setText(model.getToShippingLocation());
-        if (model.getBookedTrip() != null)
-        {
-            vh.tvSingleTripVehicle.setText(model.getBookedTrip().getTripVehicle());
-            vh.tvSingleTripCost.setText(vh.context.getResources().getString(R.string.rs) +
-                    " " + model.getBookedTrip().getTripCost());
-        }
+
+        vh.tvSingleTripVehicle.setText(model.getVehicleType());
+        vh.tvSingleTripCost.setText(vh.context.getResources().getString(R.string.rs) +
+                " " + model.getFare());
 
 
         if (model.getBookedTrip() != null)
@@ -165,41 +195,48 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
         {
             case Constants.TRIP_STATUS_NEW:
                 vh.tvSingleTripStatus.setText(R.string.trip_confirmed);
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_orange_light));
                 break;
 
             case Constants.TRIP_STATUS_DRIVER_ALLOCATED:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
                 vh.tvSingleTripStatus.setText(R.string.driver_allocated);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_green_light));
                 break;
 
             case Constants.TRIP_STATUS_FINISHED:
-                vh.tvSingleTripStatus.setText(R.string.driver_allocated);
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.trip_finished);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.black));
                 break;
 
             case Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER:
-                vh.tvSingleTripStatus.setText("Cancelled By You");
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.cancelled_by_you);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_red_light));
                 break;
 
             case Constants.TRIP_STATUS_CANCELLED_BY_DRIVER:
-                vh.tvSingleTripStatus.setText("Cancelled By Driver");
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.cancelled_by_motorist);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_red_light));
                 break;
 
             case Constants.TRIP_STATUS_TRIP_STARTED:
-                vh.tvSingleTripStatus.setText("Trip Started");
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
+                vh.tvSingleTripStatus.setText(R.string.trip_started);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_green_light));
                 break;
 
             default:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
                 vh.tvSingleTripStatus.setText(R.string.pending_confirmation);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_red_light));

@@ -3,12 +3,18 @@ package io.fusionbit.vcarrycustomer;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -53,51 +59,36 @@ import retrofit2.Response;
 public class ActivityBookTrip extends VCarryActivity implements Validator.ValidationListener
 {
 
+    final Handler mHandler = new Handler();
     @BindView(R.id.btn_requestTrip)
     Button btnRequestTrip;
-
     @BindView(R.id.iv_selectFrom)
     ImageView ivSelectFrom;
-
     @BindView(R.id.iv_selectTo)
     ImageView ivSelectTo;
-
     @BindView(R.id.spin_vehicle)
     AppCompatSpinner spinVehicle;
-
     @BindView(R.id.tv_tripFare)
     TextView tvTripFare;
-
     @NotEmpty
     @BindView(R.id.act_from)
     CustomAutoCompleteTextView actFrom;
-
     @NotEmpty
     @BindView(R.id.act_to)
     CustomAutoCompleteTextView actTo;
-
     @BindView(R.id.pb_loadingTripCost)
     ProgressBar pbLoadingTripCost;
-
     @BindView(R.id.rg_tripType)
     RadioGroup rgTripType;
-
     @BindView(R.id.rb_oneWay)
     RadioButton rbOneWay;
-
     @BindView(R.id.rb_return)
     RadioButton rbReturn;
-
     String fromPlace, fromLat, fromLng;
-
     String toPlace, toLat, toLng;
-
     FirebaseOperations firebaseOperations;
-
     RealmResults<Vehicle> realmVehicles;
-
     RealmResults<FromLocation> realmFromLocations;
-
     Validator validator;
     Call<Integer> getFare;
     @Inject
@@ -114,7 +105,6 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     private String toShippingLocationId = null;
     private int vehicleTypeId = 0;
     private String vehicleName = "N/A";
-
     private String tripFare = "N/A";
 
     @Override
@@ -210,34 +200,27 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             @Override
             public void onClick(View view)
             {
-
                 validator.validate();
-
-                /*if (!actFrom.getText().toString().isEmpty() && !actTo.getText().toString().isEmpty())
-                {
-                    btnRequestTrip.setEnabled(false);
-                    firebaseOperations.tripOperations().bookTrip(actFrom.getText().toString(), actTo.getText().toString(), new TripOperations.TripOperationListener()
-                    {
-                        @Override
-                        public void tripBookedSuccessfully()
-                        {
-                            Toast.makeText(ActivityBookTrip.this, "Trip Booked Successfully", Toast.LENGTH_SHORT).show();
-                            btnRequestTrip.setEnabled(true);
-                        }
-
-                        @Override
-                        public void failedToBookTrip(DatabaseError databaseError)
-                        {
-                            btnRequestTrip.setEnabled(true);
-                        }
-                    });
-                } else
-                {
-                    Toast.makeText(ActivityBookTrip.this, "Please enter from and to", Toast.LENGTH_SHORT).show();
-                }*/
             }
         });
 
+        setListenersForAutoCompleteTextView();
+
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.CUSTOMER_ID, null);
+
+        getShippingLocationsFromRealm();
+        setShippingLocationListAdapter();
+        getShippingLocations(customerId);
+
+        getVehiclesFromRealm();
+        setVehicleListAdapter();
+        getVehiclesFromApi();
+
+    }
+
+    private void setListenersForAutoCompleteTextView()
+    {
         actTo.setOnFocusChangeListener(new View.OnFocusChangeListener()
         {
             @Override
@@ -298,17 +281,64 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             }
         });
 
-        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Constants.CUSTOMER_ID, null);
+        actTo.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)
+            {
+            }
 
-        getShippingLocationsFromRealm();
-        setShippingLocationListAdapter();
-        getShippingLocations(customerId);
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
+            {
+                if (charSequence.length() == 0)
+                {
+                    mHandler.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            actTo.showDropDown();
+                        }
+                    });
+                }
+            }
 
-        getVehiclesFromRealm();
-        setVehicleListAdapter();
-        getVehiclesFromApi();
+            @Override
+            public void afterTextChanged(Editable editable)
+            {
+            }
+        });
 
+        actFrom.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)
+            {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
+            {
+                if (charSequence.length() == 0)
+                {
+                    Toast.makeText(ActivityBookTrip.this, "Empty", Toast.LENGTH_SHORT).show();
+                    mHandler.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            actFrom.showDropDown();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable)
+            {
+            }
+        });
     }
 
     private void getScheduleDetails(Bundle scheduleDetails)
@@ -387,6 +417,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                     public void onFailure(Call<Integer> call, Throwable t)
                     {
                         super.onFailure(call, t);
+                        tripFare = "N/A";
                         tvTripFare.setText("N/A");
                         pbLoadingTripCost.setVisibility(View.GONE);
                     }
@@ -427,10 +458,119 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
         }
 
         CustomListAdapter<FromLocation> fromAdapter = new CustomListAdapter<FromLocation>(this,
-                android.R.layout.simple_list_item_1, shippingLocationList);
+                android.R.layout.simple_list_item_1, shippingLocationList)
+        {
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent)
+            {
+                // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
+                if (convertView == null)
+                {
+                    convertView = LayoutInflater.from(ActivityBookTrip.this)
+                            .inflate(R.layout.single_address_with_company_name, parent, false);
+                }
+
+                TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
+                companyName.setText(getString(R.string.company_name) + " " +
+                        shippingLocationList.get(position).getShippingName());
+                companyName.setTextColor(Color.DKGRAY);
+                companyName.setTextSize(13f);
+
+                TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
+                label.setText(shippingLocationList.get(position).getLabel());
+                label.setTextColor(Color.BLACK);
+                label.setTextSize(16f);
+
+
+                // And finally return your dynamic (or custom) view for each spinner item
+                return convertView;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent)
+            {
+                // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
+                if (convertView == null)
+                {
+                    convertView = LayoutInflater.from(ActivityBookTrip.this)
+                            .inflate(R.layout.single_address_with_company_name, parent, false);
+                }
+
+                TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
+                companyName.setText(getString(R.string.company_name) + " " +
+                        shippingLocationList.get(position).getShippingName());
+                companyName.setTextColor(Color.DKGRAY);
+                companyName.setTextSize(13f);
+
+                TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
+                label.setText(shippingLocationList.get(position).getLabel());
+                label.setTextColor(Color.BLACK);
+                label.setTextSize(16f);
+
+
+                // And finally return your dynamic (or custom) view for each spinner item
+                return convertView;
+            }
+        };
 
         CustomListAdapter<FromLocation> toAdapter = new CustomListAdapter<FromLocation>(this,
-                android.R.layout.simple_list_item_1, shippingLocationList);
+                android.R.layout.simple_list_item_1, shippingLocationList)
+        {
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent)
+            {
+                // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
+                if (convertView == null)
+                {
+                    convertView = LayoutInflater.from(ActivityBookTrip.this)
+                            .inflate(R.layout.single_address_with_company_name, parent, false);
+                }
+
+                TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
+                companyName.setText(getString(R.string.company_name) + " " +
+                        shippingLocationList.get(position).getShippingName());
+                companyName.setTextColor(Color.DKGRAY);
+                companyName.setTextSize(13f);
+
+                TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
+                label.setText(shippingLocationList.get(position).getLabel());
+                label.setTextColor(Color.BLACK);
+                label.setTextSize(16f);
+
+
+                // And finally return your dynamic (or custom) view for each spinner item
+                return convertView;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent)
+            {
+                // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
+                if (convertView == null)
+                {
+                    convertView = LayoutInflater.from(ActivityBookTrip.this)
+                            .inflate(R.layout.single_address_with_company_name, parent, false);
+                }
+
+                TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
+                companyName.setText(getString(R.string.company_name) + " " +
+                        shippingLocationList.get(position).getShippingName());
+                companyName.setTextColor(Color.DKGRAY);
+                companyName.setTextSize(13f);
+
+                TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
+                label.setText(shippingLocationList.get(position).getLabel());
+                label.setTextColor(Color.BLACK);
+                label.setTextSize(16f);
+
+
+                // And finally return your dynamic (or custom) view for each spinner item
+                return convertView;
+            }
+
+        };
 
         actFrom.setAdapter(fromAdapter);
         actTo.setAdapter(toAdapter);

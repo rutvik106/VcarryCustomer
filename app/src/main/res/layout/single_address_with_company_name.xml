@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/tv_spinnerItemCompanyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="5dp"
+        android:ellipsize="none"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textSize="13sp"
+        tools:text="Company Name: Vcarry"/>
+
+
+    <TextView
+        android:id="@+id/tv_spinnerItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="none"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="5dp"
+        android:maxLines="3"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textSize="16sp"
+        tools:text="52,53 Jodhpur Park Soc Near RamdevNagar, Satellite 380015"/>
+
+</LinearLayout>

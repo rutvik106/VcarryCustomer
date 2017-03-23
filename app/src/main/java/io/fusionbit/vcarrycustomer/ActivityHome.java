@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -63,7 +64,7 @@ public class ActivityHome extends VCarryActivity
     CoordinatorLayout clNavActivityLayout;
 
     Snackbar snackbarNoInternet;
-
+    boolean exitApp = false;
     private BroadcastReceiver mNetworkDetectReceiver;
 
     private void checkInternetConnection()
@@ -277,7 +278,21 @@ public class ActivityHome extends VCarryActivity
             drawer.closeDrawer(GravityCompat.START);
         } else
         {
-            super.onBackPressed();
+            if (exitApp)
+            {
+                super.onBackPressed();
+            }
+            exitApp = true;
+            Toast.makeText(this, "Press BACK again to exit", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    exitApp = false;
+                }
+            }, 2000);
+
         }
     }
 

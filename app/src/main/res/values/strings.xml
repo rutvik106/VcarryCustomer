@@ -95,5 +95,7 @@
     <string name="cancelled_by_you">Cancelled By You</string>
     <string name="cancelled_by_motorist">Cancelled By Motorist</string>
     <string name="trip_started">Trip Started</string>
+    <string name="no_trips_found">No Trips Found.</string>
+    <string name="no_internet">No Internet</string>
 
 </resources>

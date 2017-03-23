@@ -75,7 +75,7 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
     {
         bookedTrip = realm
                 .copyFromRealm(realm.
-                        where(BookedTrip.class).equalTo("tripId", customerTripId).findFirst());
+                        where(BookedTrip.class).equalTo("customerTripId", customerTripId).findFirst());
     }
 
     private void loadMapNow()

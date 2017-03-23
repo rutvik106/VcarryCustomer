@@ -79,6 +79,34 @@ public class NotificationHandler
                 case Constants.NotificationType.DRIVER_CURRENT_LOCATION:
                     sendBroadcastForDriverCurrentLocation();
                     break;
+                case Constants.NotificationType.TRIP_FINISHED:
+                    finishTrip();
+                    break;
+            }
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void finishTrip()
+    {
+        try
+        {
+            try
+            {
+                int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
+                final BookedTrip bookedTrip = realm.where(BookedTrip.class)
+                        .equalTo("customerTripId", customerTripId).findFirst();
+                realm.beginTransaction();
+                bookedTrip.setStatus(Constants.TRIP_FINISHED);
+                realm.copyToRealmOrUpdate(bookedTrip);
+                realm.commitTransaction();
+                Log.i(TAG, "Customer Trip ID: " + customerTripId);
+                showNotification(customerTripId, data.getString("title"), data.getString("message"));
+            } catch (NumberFormatException e)
+            {
+                showNotification(0, data.getString("title"), data.getString("message"));
             }
         } catch (JSONException e)
         {
@@ -104,23 +132,31 @@ public class NotificationHandler
     {
         try
         {
-            final int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
-            final int driverTripId = Integer.parseInt(extra.getString("trip_id"));
-            final String driverName = extra.getString("driver_name");
+            try
+            {
+                final int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
+                final int driverTripId = Integer.parseInt(extra.getString("trip_id"));
+                final String driverName = extra.getString("driver_name");
 
-            final BookedTrip bookedTrip = realm.where(BookedTrip.class)
-                    .equalTo("customerTripId", customerTripId).findFirst();
-            realm.beginTransaction();
-            bookedTrip.setStatus(Constants.DRIVER_ALLOCATED);
-            bookedTrip.setDriverName(driverName);
-            bookedTrip.setDriverTripId(extra.getString("trip_id"));
-            bookedTrip.setDriverDeviceToken(extra.getString("driver_device_token"));
-            realm.copyToRealmOrUpdate(bookedTrip);
-            realm.commitTransaction();
-            Log.i(TAG, "Customer Trip ID: " + customerTripId);
-            showBigNotification(driverTripId, data.getString("title"), "Driver " + driverName +
-                    "has been allocated to your trip. From " + bookedTrip.getTripFrom() +
-                    " To " + bookedTrip.getTripTo());
+                final BookedTrip bookedTrip = realm.where(BookedTrip.class)
+                        .equalTo("customerTripId", customerTripId).findFirst();
+                realm.beginTransaction();
+                bookedTrip.setStatus(Constants.DRIVER_ALLOCATED);
+                bookedTrip.setDriverName(driverName);
+                bookedTrip.setDriverTripId(extra.getString("trip_id"));
+                bookedTrip.setDriverDeviceToken(extra.getString("driver_device_token"));
+                realm.copyToRealmOrUpdate(bookedTrip);
+                realm.commitTransaction();
+                Log.i(TAG, "Customer Trip ID: " + customerTripId);
+
+                showBigNotification(driverTripId, data.getString("title"), "Driver " + driverName +
+                        "has been allocated to your trip. From " + bookedTrip.getTripFrom() +
+                        " To " + bookedTrip.getTripTo());
+            } catch (NumberFormatException e)
+            {
+                showNotification(0, data.getString("title"), data.getString("message"));
+            }
+
         } catch (JSONException e)
         {
             e.printStackTrace();
@@ -131,16 +167,22 @@ public class NotificationHandler
     {
         try
         {
-            int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
-            final BookedTrip bookedTrip = realm.where(BookedTrip.class)
-                    .equalTo("customerTripId", customerTripId).findFirst();
-            realm.beginTransaction();
-            bookedTrip.setStatus(Constants.TRIP_CONFIRMED);
-            bookedTrip.setTripId(extra.getString("trip_id"));
-            realm.copyToRealmOrUpdate(bookedTrip);
-            realm.commitTransaction();
-            Log.i(TAG, "Customer Trip ID: " + customerTripId);
-            showNotification(customerTripId, data.getString("title"), data.getString("message"));
+            try
+            {
+                int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
+                final BookedTrip bookedTrip = realm.where(BookedTrip.class)
+                        .equalTo("customerTripId", customerTripId).findFirst();
+                realm.beginTransaction();
+                bookedTrip.setStatus(Constants.TRIP_CONFIRMED);
+                bookedTrip.setTripId(extra.getString("trip_id"));
+                realm.copyToRealmOrUpdate(bookedTrip);
+                realm.commitTransaction();
+                Log.i(TAG, "Customer Trip ID: " + customerTripId);
+                showNotification(customerTripId, data.getString("title"), data.getString("message"));
+            } catch (NumberFormatException e)
+            {
+                showNotification(0, data.getString("title"), data.getString("message"));
+            }
         } catch (JSONException e)
         {
             e.printStackTrace();

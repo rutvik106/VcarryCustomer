@@ -45,6 +45,8 @@ public class Constants
 
     public static final int TRIP_CONFIRMED = 1;
     public static final int DRIVER_ALLOCATED = 2;
+    public static final int TRIP_FINISHED = 6;
+
 
     public static final String TRIP_STATUS_NEW = "1";
     public static final String TRIP_STATUS_DRIVER_ALLOCATED = "2";
@@ -74,6 +76,7 @@ public class Constants
         public static final String DRIVER_ALLOCATED = "driver_allocated";
         public static final String GET_DRIVER_LOCATION = "get_driver_location";
         public static final String DRIVER_CURRENT_LOCATION = "driver_current_location";
+        public static final String TRIP_FINISHED = "trip_finished";
     }
 
     public static class AccountTripType

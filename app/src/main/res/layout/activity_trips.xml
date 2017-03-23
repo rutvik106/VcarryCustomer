@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_activityTrips"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="io.fusionbit.vcarrycustomer.ActivityTrips">
@@ -12,5 +13,48 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:padding="10dp"/>
+
+    <FrameLayout
+        android:id="@+id/fl_loadingTrips"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_noTripsFound"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/no_trips_found"
+            android:textSize="16sp"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_somethingWentWrong"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/something_went_wrong"
+            android:textSize="16sp"/>
+
+    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

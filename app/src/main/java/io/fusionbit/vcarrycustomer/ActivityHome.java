@@ -65,6 +65,7 @@ public class ActivityHome extends VCarryActivity
 
     Snackbar snackbarNoInternet;
     boolean exitApp = false;
+    Fragment currentFragment = null;
     private BroadcastReceiver mNetworkDetectReceiver;
 
     private void checkInternetConnection()
@@ -326,21 +327,20 @@ public class ActivityHome extends VCarryActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item)
     {
-        Fragment fragment = null;
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_home)
         {
-            fragment = FragmentHome.newInstance(0);
+            currentFragment = FragmentHome.newInstance(0);
             setActionBarTitle("V-Carry");
         } else if (id == R.id.nav_trips)
         {
-            fragment = FragmentTrips.newInstance(1);
+            currentFragment = FragmentTrips.newInstance(1);
             setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
         } else if (id == R.id.nav_accountBalance)
         {
-            fragment = FragmentAccBalance.newInstance(2);
+            currentFragment = FragmentAccBalance.newInstance(2);
             setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
         } else if (id == R.id.nav_tripsOnOffer)
         {
@@ -353,10 +353,10 @@ public class ActivityHome extends VCarryActivity
 
         }
 
-        if (fragment != null)
+        if (currentFragment != null)
         {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container, fragment);
+            ft.replace(R.id.fragment_container, currentFragment);
             ft.commitAllowingStateLoss();
         }
 
@@ -372,8 +372,6 @@ public class ActivityHome extends VCarryActivity
         {
             switch (requestCode)
             {
-
-
                 case Constants.CHANGE_LANGUAGE:
                     boolean wasChanged = data.getExtras().getBoolean(WAS_LANGUAGE_CHANGED, false);
                     if (wasChanged)
@@ -381,8 +379,6 @@ public class ActivityHome extends VCarryActivity
                         this.recreate();
                     }
                     break;
-
-
             }
         }
     }
@@ -409,4 +405,13 @@ public class ActivityHome extends VCarryActivity
         }
     }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        if (currentFragment != null)
+        {
+            getSupportFragmentManager().beginTransaction().detach(currentFragment).attach(currentFragment).commit();
+        }
+    }
 }

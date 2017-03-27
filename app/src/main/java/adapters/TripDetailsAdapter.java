@@ -51,4 +51,10 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
     {
         return bookedTripList.size();
     }
+
+    public void clear()
+    {
+        bookedTripList.clear();
+        notifyDataSetChanged();
+    }
 }

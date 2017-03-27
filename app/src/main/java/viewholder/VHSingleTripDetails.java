@@ -2,6 +2,7 @@ package viewholder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +62,10 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
     BookedTrip model;
 
     TripByCustomerId tripDetails;
+    @BindView(R.id.tv_tripNumber)
+    TextView tvTripNumber;
+    @BindView(R.id.ll_tripNumberContainer)
+    LinearLayout llTripNumberContainer;
 
     public VHSingleTripDetails(final Context context, View itemView)
     {
@@ -84,7 +89,15 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             @Override
             public void onClick(View view)
             {
-                Toast.makeText(context, "Feature Coming Soon...", Toast.LENGTH_SHORT).show();
+                if (model.getDriverNumber() != null)
+                {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:" + model.getDriverNumber()));
+                    context.startActivity(intent);
+                } else
+                {
+                    Toast.makeText(context, "Driver contact number not found", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -112,6 +125,16 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
         {
             vh.tvSingleTripDriverName.setText("");
             vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+        }
+
+        if (model.getTripNumber() != null)
+        {
+            vh.llTripNumberContainer.setVisibility(View.VISIBLE);
+            vh.tvTripNumber.setText(model.getTripNumber());
+        } else
+        {
+            vh.llTripNumberContainer.setVisibility(View.GONE);
+            vh.tvTripNumber.setText("");
         }
 
         switch (model.getStatus() + "")
@@ -206,6 +229,16 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                 vh.tvSingleTripDriverName.setText("");
                 vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
             }
+        }
+
+        if (model.getTripNo() != null)
+        {
+            vh.llTripNumberContainer.setVisibility(View.VISIBLE);
+            vh.tvTripNumber.setText(model.getTripNo());
+        } else
+        {
+            vh.llTripNumberContainer.setVisibility(View.GONE);
+            vh.tvTripNumber.setText("");
         }
 
         switch (model.getTripStatus())

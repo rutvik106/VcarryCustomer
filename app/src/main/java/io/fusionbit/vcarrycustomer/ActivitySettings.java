@@ -24,6 +24,8 @@ public class ActivitySettings extends VCarryActivity
 
     boolean isChanged = false;
 
+    int currentSelected;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -56,9 +58,11 @@ public class ActivitySettings extends VCarryActivity
         if (language.equals("en"))
         {
             spinSelectLanguage.setSelection(0);
+            currentSelected = 0;
         } else if (language.equals("gu"))
         {
             spinSelectLanguage.setSelection(1);
+            currentSelected = 1;
         }
 
         spinSelectLanguage.post(new Runnable()
@@ -92,13 +96,20 @@ public class ActivitySettings extends VCarryActivity
         super.finish();
     }
 
+    public void selected(int selection)
+    {
+        if ((currentSelected - selection) != 0)
+        {
+            isChanged = true;
+        }
+    }
+
     class ChangeLanguage implements AdapterView.OnItemSelectedListener
     {
 
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
         {
-            isChanged = true;
             switch (adapterView.getSelectedItemPosition())
             {
 
@@ -106,6 +117,7 @@ public class ActivitySettings extends VCarryActivity
                 case 0:
                     LocaleHelper.setLocale(ActivitySettings.this, "en");
                     //ActivitySettings.this.recreate();
+                    selected(0);
                     break;
 
 
@@ -113,6 +125,7 @@ public class ActivitySettings extends VCarryActivity
                 case 1:
                     LocaleHelper.setLocale(ActivitySettings.this, "gu");
                     //ActivitySettings.this.recreate();
+                    selected(1);
                     break;
 
             }
@@ -125,4 +138,5 @@ public class ActivitySettings extends VCarryActivity
 
         }
     }
+
 }

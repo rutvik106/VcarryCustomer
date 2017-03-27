@@ -3,12 +3,15 @@ package fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import javax.inject.Inject;
 
 import adapters.TripDetailsAdapter;
 import butterknife.BindView;
@@ -24,7 +27,7 @@ import models.BookedTrip;
  * Created by rutvik on 11/20/2016 at 11:16 AM.
  */
 
-public class FragmentTrips extends Fragment
+public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
 
     @BindView(R.id.rv_userActivity)
@@ -33,8 +36,12 @@ public class FragmentTrips extends Fragment
     @BindView(R.id.ll_homeEmpty)
     LinearLayout llHomeEmpty;
 
+    @BindView(R.id.srl_refreshTrips)
+    SwipeRefreshLayout srlRefreshTrips;
+
     TripDetailsAdapter adapter;
 
+    @Inject
     Realm realm;
 
     public static FragmentTrips newInstance(int index)
@@ -55,11 +62,15 @@ public class FragmentTrips extends Fragment
 
         ButterKnife.bind(this, view);
 
+        ((App) getActivity().getApplication()).getUser().inject(this);
+
         adapter = new TripDetailsAdapter(getActivity());
 
         rvUserActivity.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvUserActivity.setHasFixedSize(true);
         rvUserActivity.setAdapter(adapter);
+
+        srlRefreshTrips.setOnRefreshListener(this);
 
         getTripsFromRealm();
 
@@ -68,13 +79,9 @@ public class FragmentTrips extends Fragment
 
     private void getTripsFromRealm()
     {
+        adapter.clear();
 
-        if (realm == null)
-        {
-            realm = Realm.getInstance(((App) getActivity().getApplication()).getUser().getRealmConfiguration());
-        }
-
-        RealmResults<BookedTrip> bookedTripRealmResults =
+        final RealmResults<BookedTrip> bookedTripRealmResults =
                 realm.where(BookedTrip.class).findAll();
 
         bookedTripRealmResults.addChangeListener(new RealmChangeListener<RealmResults<BookedTrip>>()
@@ -91,11 +98,24 @@ public class FragmentTrips extends Fragment
             adapter.addBookedTrip(bookedTrip);
         }
 
-        if (adapter.getItemCount() > 0)
+        if (adapter.getItemCount() != 0)
         {
             llHomeEmpty.setVisibility(View.GONE);
+        } else
+        {
+            llHomeEmpty.setVisibility(View.VISIBLE);
+        }
+
+        if (srlRefreshTrips.isRefreshing())
+        {
+            srlRefreshTrips.setRefreshing(false);
         }
 
     }
 
+    @Override
+    public void onRefresh()
+    {
+        getTripsFromRealm();
+    }
 }

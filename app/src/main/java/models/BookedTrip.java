@@ -41,6 +41,8 @@ public class BookedTrip extends RealmObject implements Parcelable
 
     String tripId;
 
+    String driverNumber;
+
     public BookedTrip()
     {
 
@@ -168,6 +170,16 @@ public class BookedTrip extends RealmObject implements Parcelable
     public void setTripId(String tripId)
     {
         this.tripId = tripId;
+    }
+
+    public String getDriverNumber()
+    {
+        return driverNumber;
+    }
+
+    public void setDriverNumber(String driverNumber)
+    {
+        this.driverNumber = driverNumber;
     }
 
     @Override

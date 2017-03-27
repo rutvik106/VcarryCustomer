@@ -29,11 +29,18 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_userActivity"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl_refreshTrips"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:padding="10dp"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_userActivity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="10dp"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 </RelativeLayout>

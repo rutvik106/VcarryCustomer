@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import fragments.FragmentAccBalance;
+import fragments.FragmentTrips;
 import io.fusionbit.vcarrycustomer.ActivityBookTrip;
 import io.fusionbit.vcarrycustomer.ActivityDriverLocation;
 import io.fusionbit.vcarrycustomer.ActivityHome;
@@ -36,5 +37,8 @@ public interface User
 
     void inject(ActivityTrips activityTrips);
 
+    void inject(FragmentTrips fragmentTrips);
+
     RealmConfiguration getRealmConfiguration();
+
 }

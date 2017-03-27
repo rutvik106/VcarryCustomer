@@ -95,6 +95,33 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/ll_tripNumberContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:drawableLeft="@drawable/ic_local_offer_black_18dp"
+                    android:drawablePadding="5dp"
+                    android:text="@string/trip_number"/>
+
+                <TextView
+                    android:id="@+id/tv_tripNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="2dp"
+                    android:textColor="#333333"
+                    tools:text="35783460576"/>
+
+            </LinearLayout>
+
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

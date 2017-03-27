@@ -97,6 +97,7 @@
     <string name="trip_started">ટ્રીપ શરૂ</string>
     <string name="no_trips_found">No Trips Found.</string>
     <string name="no_internet">ઇન્ટરનેટ સાથે જોડાયેલ નથી</string>
+    <string name="trip_number">ટ્રીપ નંબર</string>
 
 
 </resources>

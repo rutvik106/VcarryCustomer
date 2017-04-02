@@ -16,7 +16,10 @@ import android.widget.Toast;
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import extra.Log;
 import io.fusionbit.vcarrycustomer.ActivityDriverLocation;
+import io.fusionbit.vcarrycustomer.ActivityTripDetails;
+import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
 import models.BookedTrip;
@@ -27,6 +30,8 @@ import models.BookedTrip;
 
 public class VHSingleTripDetails extends RecyclerView.ViewHolder
 {
+    private static final String TAG = App.APP_TAG + VHSingleTripDetails.class.getSimpleName();
+
     final Context context;
 
     @BindView(R.id.tv_singleTripCost)
@@ -97,6 +102,28 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                 } else
                 {
                     Toast.makeText(context, "Driver contact number not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        rlTripRowItem.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if (tripDetails != null)
+                {
+                    Log.i(TAG, "tripDetails is not NULL");
+                    Log.i(TAG, "tripDetails tripId is: " + tripDetails.getTripId());
+                    ActivityTripDetails.start(context, tripDetails.getTripId());
+                } else if (model != null)
+                {
+                    Log.i(TAG, "BookedTrip is not NULL");
+                    Log.i(TAG, "BookedTrip tripId is: " + model.getTripId());
+                    Log.i(TAG, "BookedTrip driverTripId is: " + model.getDriverTripId());
+                    Log.i(TAG, "BookedTrip customerTripId is: " + model.getCustomerTripId());
+                    ActivityTripDetails.start(context, model.getTripId() != null ?
+                            model.getTripId() : model.getDriverTripId());
                 }
             }
         });

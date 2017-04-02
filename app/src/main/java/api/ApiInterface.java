@@ -104,4 +104,9 @@ public interface ApiInterface
                                                 @Field("to_date") String toDate,
                                                 @Field("unactioned_driver_email") String unActionedByEmail);
 
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<TripByCustomerId> getTripDetailsByTripId(@Field("method") String method,
+                                                  @Field("trip_id") String tripId);
+
 }

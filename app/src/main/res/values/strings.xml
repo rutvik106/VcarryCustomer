@@ -98,5 +98,15 @@
     <string name="no_trips_found">No Trips Found.</string>
     <string name="no_internet">No Internet</string>
     <string name="trip_number">Trip Number</string>
+    <string name="trip_time">Trip Time</string>
+    <string name="customer_name">Customer Name</string>
+    <string name="request_from">From</string>
+    <string name="request_to">To</string>
+    <string name="trip_status">Trip Status</string>
+    <string name="fare">Trip Fare</string>
+    <string name="request_from_company_name">From Company Name</string>
+    <string name="to_compant_name">To Company Name</string>
+    <string name="driver_licence_no">Motorist Licence No</string>
+    <string name="vehicel_no">Vehicle No</string>
 
 </resources>

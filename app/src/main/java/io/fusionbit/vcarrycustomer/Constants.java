@@ -49,7 +49,6 @@ public class Constants
     public static final int TRIP_STARTED = 4;
 
 
-
     public static final String TRIP_STATUS_NEW = "1";
     public static final String TRIP_STATUS_DRIVER_ALLOCATED = "2";
     public static final String TRIP_STATUS_LOADING = "3";
@@ -70,6 +69,8 @@ public class Constants
     public static final String IS_PM = "IS_PM";
     public static final String IS_SCHEDULING_TRIP = "IS_SCHEDULING_TRIP";
     public static final String SCHEDULE_DETAILS = "SCHEDULE_DETAILS";
+    public static final String INTENT_EXTRA_TRIP_ID = "INTENT_EXTRA_TRIP_ID";
+    public static final String TRIP_ID = "TRIP_ID";
 
     public static final class NotificationType
     {

@@ -188,4 +188,13 @@ public class API
         call.enqueue(callback);
     }
 
+    public void getTripDetailsByTripId(final String tripId,
+                                       final RetrofitCallbacks<TripByCustomerId> callback)
+    {
+        Call<TripByCustomerId> call = apiService.getTripDetailsByTripId("get_trip_details_by_trip_id",
+                tripId);
+
+        call.enqueue(callback);
+    }
+
 }

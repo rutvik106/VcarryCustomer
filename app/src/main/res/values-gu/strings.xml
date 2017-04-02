@@ -18,9 +18,9 @@
     <string name="nav_share">શેર</string>
     <string name="nav_sendFeedback">સેન્ડ ફીડબેક</string>
 
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+    <!--<string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyCVa5aEoKbZQjYvhkvPav-XtGsL3F3E7zs
-    </string>
+    </string>-->
 
     <string name="hindi">हिंदी</string>
 
@@ -98,6 +98,16 @@
     <string name="no_trips_found">No Trips Found.</string>
     <string name="no_internet">ઇન્ટરનેટ સાથે જોડાયેલ નથી</string>
     <string name="trip_number">ટ્રીપ નંબર</string>
+    <string name="trip_time">ટ્રીપ નો સમય</string>
+    <string name="customer_name">ગ્રાહક નું નામ</string>
+    <string name="request_from">પ્રારંભ સ્થળ</string>
+    <string name="request_to">ગંતવ્ય</string>
+    <string name="trip_status">ટ્રીપ ની સ્થિતિ</string>
+    <string name="fare">Trip Fare</string>
+    <string name="request_from_company_name">From Company Name</string>
+    <string name="to_compant_name">To Company Name</string>
+    <string name="driver_licence_no">Motorist Licence No</string>
+    <string name="vehicel_no">Vehicle No</string>
 
 
 </resources>

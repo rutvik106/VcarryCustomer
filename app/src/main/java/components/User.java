@@ -9,6 +9,7 @@ import io.fusionbit.vcarrycustomer.ActivityBookTrip;
 import io.fusionbit.vcarrycustomer.ActivityDriverLocation;
 import io.fusionbit.vcarrycustomer.ActivityHome;
 import io.fusionbit.vcarrycustomer.ActivityRegistrationForm;
+import io.fusionbit.vcarrycustomer.ActivityTripDetails;
 import io.fusionbit.vcarrycustomer.ActivityTrips;
 import io.realm.RealmConfiguration;
 import module.ApiModule;
@@ -38,6 +39,8 @@ public interface User
     void inject(ActivityTrips activityTrips);
 
     void inject(FragmentTrips fragmentTrips);
+
+    void inject(ActivityTripDetails activityTripDetails);
 
     RealmConfiguration getRealmConfiguration();
 

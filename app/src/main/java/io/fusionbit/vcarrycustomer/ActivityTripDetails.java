@@ -48,7 +48,7 @@ public class ActivityTripDetails extends BaseActivity
     @BindView(R.id.tv_tripFare)
     TextView tvTripFare;
 
-    String tripId;
+    String tripId, tripNumber;
 
     TripByCustomerId tripDetails;
 
@@ -65,11 +65,19 @@ public class ActivityTripDetails extends BaseActivity
         context.startActivity(i);
     }
 
+    public static void start(String tripNumber, Context context)
+    {
+        Intent i = new Intent(context, ActivityTripDetails.class);
+        i.putExtra(Constants.INTENT_EXTRA_TRIP_NUMBER, tripNumber);
+        context.startActivity(i);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
+        tripNumber = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_NUMBER);
         ((App) getApplication()).getUser().inject(this);
         if (getSupportActionBar() != null)
         {
@@ -82,55 +90,84 @@ public class ActivityTripDetails extends BaseActivity
     protected void onStart()
     {
         super.onStart();
-        if (tripId != null)
-        {
-            tryToGetFromRealm();
-            getTripDetails();
-        }
+
+        tryToGetFromRealm();
+        getTripDetails();
+
     }
 
     private void getTripDetails()
     {
-        api.getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripByCustomerId>()
+        if (tripId != null)
         {
-
-            @Override
-            public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response)
+            api.getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripByCustomerId>()
             {
-                super.onResponse(call, response);
-                if (response.isSuccessful())
+
+                @Override
+                public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response)
                 {
-                    if (response.body() != null)
+                    super.onResponse(call, response);
+                    if (response.isSuccessful())
                     {
-                        tripDetails = response.body();
-
-                        final BookedTrip bookedTrip = realm.where(BookedTrip.class)
-                                .equalTo("tripId", tripDetails.getTripId()).findFirst();
-
-                        realm.beginTransaction();
-
-                        if (bookedTrip != null)
-                        {
-                            bookedTrip.setStatus(Integer.valueOf(tripDetails.getTripStatus()));
-                            bookedTrip.setTripCost(tripDetails.getFare());
-                            tripDetails.setBookedTrip(realm.copyFromRealm(realm
-                                    .copyToRealmOrUpdate(bookedTrip)));
-                        }
-
-                        realm.copyToRealmOrUpdate(tripDetails);
-
-                        realm.commitTransaction();
-
-                        bindDataToUi();
+                        handleResponse(response);
                     }
                 }
+            });
+        } else if (tripNumber != null)
+        {
+            api.getTripDetailsByTripNo(tripNumber, new RetrofitCallbacks<TripByCustomerId>()
+            {
+
+                @Override
+                public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response)
+                {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful())
+                    {
+                        handleResponse(response);
+                    }
+                }
+            });
+        }
+    }
+
+    private void handleResponse(Response<TripByCustomerId> response)
+    {
+        if (response.body() != null)
+        {
+            tripDetails = response.body();
+
+            final BookedTrip bookedTrip = realm.where(BookedTrip.class)
+                    .equalTo("tripId", tripDetails.getTripId()).findFirst();
+
+            realm.beginTransaction();
+
+            if (bookedTrip != null)
+            {
+                bookedTrip.setStatus(Integer.valueOf(tripDetails.getTripStatus()));
+                bookedTrip.setTripCost(tripDetails.getFare());
+                tripDetails.setBookedTrip(realm.copyFromRealm(realm
+                        .copyToRealmOrUpdate(bookedTrip)));
             }
-        });
+
+            realm.copyToRealmOrUpdate(tripDetails);
+
+            realm.commitTransaction();
+
+            bindDataToUi();
+        }
     }
 
     private void tryToGetFromRealm()
     {
-        tripDetails = realm.where(TripByCustomerId.class).equalTo("tripId", tripId).findFirst();
+        if (tripId != null)
+        {
+            tripDetails = realm.where(TripByCustomerId.class).equalTo("tripId", tripId).findFirst();
+        } else if (tripNumber != null)
+        {
+            tripDetails = realm.where(TripByCustomerId.class).equalTo("tripNo", tripNumber).findFirst();
+        }
+
 
         if (tripDetails != null)
         {
@@ -160,20 +197,18 @@ public class ActivityTripDetails extends BaseActivity
 
         tvTripDetailTime.setText(tripDetails.getTripDatetimeDmy());
 
-        final BookedTrip bookedTrip = tripDetails.getBookedTrip();
-        if (bookedTrip != null)
+        if (tripDetails.getDriverName() != null)
         {
-            if (bookedTrip.getDriverName() != null)
-            {
-                tvDriverName.setText(bookedTrip.getDriverName());
-            } else
-            {
-                llTripStartedDetails.setVisibility(View.GONE);
-            }
+            tvDriverName.setText(tripDetails.getDriverName());
+            tvVehicleNo.setText(tripDetails.getVehicleRegNo() != null ?
+                    !tripDetails.getVehicleRegNo().isEmpty() ? tripDetails.getVehicleRegNo() : "NA" : "NA");
+            tvTripDriverLicenceNo.setText(tripDetails.getLicenceNo() != null ?
+                    !tripDetails.getLicenceNo().isEmpty() ? tripDetails.getLicenceNo() : "NA" : "NA");
         } else
         {
             llTripStartedDetails.setVisibility(View.GONE);
         }
+
 
         if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu"))
         {
@@ -185,7 +220,15 @@ public class ActivityTripDetails extends BaseActivity
             tvTripDestination.setText(tripDetails.getToShippingLocation());
         }
 
-        //tvTripFromCompanyName.setText(tripDetails.getna);
+        if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu"))
+        {
+            tvTripFromCompanyName.setText(tripDetails.getFromGujaratiName());
+            tvTripToCompanyName.setText(tripDetails.getToGujaratiName());
+        } else
+        {
+            tvTripFromCompanyName.setText(tripDetails.getFromCompanyName());
+            tvTripToCompanyName.setText(tripDetails.getToCompantName());
+        }
 
         tvTripFare.setText(getString(R.string.rs) + " " + tripDetails.getFare());
 

@@ -329,7 +329,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                 {
                     e.printStackTrace();
                 }
-            } else
+            } /*else
             {
                 getActivity().runOnUiThread(new Runnable()
                 {
@@ -339,7 +339,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
                     }
                 });
-            }
+            }*/
         }
     }
 

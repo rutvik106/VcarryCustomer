@@ -1,7 +1,5 @@
 package apimodels;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -17,24 +15,10 @@ import models.BookedTrip;
  * Created by rutvik on 11/27/2016 at 3:54 PM.
  */
 
-public class TripByCustomerId extends RealmObject implements Comparable<TripByCustomerId>, Parcelable
+public class TripByCustomerId extends RealmObject implements Comparable<TripByCustomerId>
 {
 
 
-    public static final Creator<TripByCustomerId> CREATOR = new Creator<TripByCustomerId>()
-    {
-        @Override
-        public TripByCustomerId createFromParcel(Parcel source)
-        {
-            return new TripByCustomerId(source);
-        }
-
-        @Override
-        public TripByCustomerId[] newArray(int size)
-        {
-            return new TripByCustomerId[size];
-        }
-    };
     BookedTrip bookedTrip;
     /**
      * trip_id : 2
@@ -152,48 +136,78 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
 
     @SerializedName("vehicle_type")
     private String vehicleType;
+    /**
+     * 0 : 422
+     * 1 : 2017-02-09 14:00:00
+     * 2 : 09/02/2017 02:00:00 PM
+     * 3 : 29
+     * 4 : 30
+     * 5 : Pioneer Hydraulics
+     * 6 : 21,Shayam Ind.Estate
+     * 7 : Near Soni Ni Chali BRTS, NH.No - 8
+     * 8 :  ૨૧ ,શયમ  ઇન્ડ .એસ્ટેટ  નેર  સોની  ની ચાલી  BRTS , NH.નો  - ૮
+     * 9 :
+     * from_gujarati_name :
+     * 10 : 2
+     * 11 : Ahmedabad
+     * 12 : 580
+     * 13 : Soni ani chali
+     * 14 : Perfect Honing
+     * 15 : 36 Gopinath Estate II,
+     * 16 : Near Soni Ni Chali BRTS, NH.No - 8
+     * 17 : ૩૬  ગોપીનાથ  એસ્ટેટ  II,   Near સોની  ની  ચાલી  BRTS, NH.No - 8
+     * 18 :
+     * to_gujarati_name :
+     * 19 : 2
+     * 20 : Ahmedabad
+     * 21 : 580
+     * 22 : Soni ani chali
+     * 23 : 2
+     * 24 : Atul Loading
+     * 25 : 9
+     * 26 : Desai Govind D
+     * driver_name : Desai Govind D
+     * 27 :
+     * vehicle_reg_no :
+     * 28 :
+     * licence_no :
+     * 29 : 50
+     * 30 : 27
+     * 31 : 27
+     * 32 : 2017-02-09 13:48:41
+     * 33 : 2017-02-09 13:49:46
+     * 34 : 6
+     * 35 : 1667
+     * 36 : Finished
+     * 37 : Pioneer Hydraulics
+     * 38 : 9879017267
+     * 39 : 090220170000063
+     * 40 :
+     * cancel_desc :
+     * 41 : 0
+     * weight : 0
+     * 42 :
+     * dimensions :
+     */
+
+    @SerializedName("from_gujarati_name")
+    private String fromGujaratiName;
+    @SerializedName("to_gujarati_name")
+    private String toGujaratiName;
+    @SerializedName("driver_name")
+    private String driverName;
+    @SerializedName("vehicle_reg_no")
+    private String vehicleRegNo;
+    @SerializedName("licence_no")
+    private String licenceNo;
+    @SerializedName("weight")
+    private String weight;
+    @SerializedName("dimensions")
+    private String dimensions;
+
 
     public TripByCustomerId()
     {
-    }
-
-    protected TripByCustomerId(Parcel in)
-    {
-        this.tripId = in.readString();
-        this.tripDatetime = in.readString();
-        this.fromShippingLocationId = in.readString();
-        this.fromShippingLocation = in.readString();
-        this.fromCityId = in.readString();
-        this.fromAreaId = in.readString();
-        this.toShippingLocationId = in.readString();
-        this.toShippingLocation = in.readString();
-        this.toCityId = in.readString();
-        this.toAreaId = in.readString();
-        this.vehicleTypeId = in.readString();
-        this.driverId = in.readString();
-        this.fare = in.readString();
-        this.createdBy = in.readString();
-        this.lastModifiedBy = in.readString();
-        this.dateAdded = in.readString();
-        this.dateModified = in.readString();
-        this.tripStatus = in.readString();
-        this.customerId = in.readString();
-        this.status = in.readString();
-        this.customerName = in.readString();
-        this.tripDatetimeDmy = in.readString();
-        this.fromAddressLine1 = in.readString();
-        this.fromAddressLine2 = in.readString();
-        this.fromCityName = in.readString();
-        this.fromAreaName = in.readString();
-        this.toAddressLine1 = in.readString();
-        this.toAddressLine2 = in.readString();
-        this.toCityName = in.readString();
-        this.toAreaName = in.readString();
-        this.customerContactNo = in.readString();
-        this.tripNo = in.readString();
-        this.fromGujaratiAddress = in.readString();
-        this.toGujaratiAddress = in.readString();
-        this.vehicleType = in.readString();
     }
 
     public BookedTrip getBookedTrip()
@@ -575,51 +589,6 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
         this.vehicleType = vehicleType;
     }
 
-    @Override
-    public int describeContents()
-    {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags)
-    {
-        dest.writeString(this.tripId);
-        dest.writeString(this.tripDatetime);
-        dest.writeString(this.fromShippingLocationId);
-        dest.writeString(this.fromShippingLocation);
-        dest.writeString(this.fromCityId);
-        dest.writeString(this.fromAreaId);
-        dest.writeString(this.toShippingLocationId);
-        dest.writeString(this.toShippingLocation);
-        dest.writeString(this.toCityId);
-        dest.writeString(this.toAreaId);
-        dest.writeString(this.vehicleTypeId);
-        dest.writeString(this.driverId);
-        dest.writeString(this.fare);
-        dest.writeString(this.createdBy);
-        dest.writeString(this.lastModifiedBy);
-        dest.writeString(this.dateAdded);
-        dest.writeString(this.dateModified);
-        dest.writeString(this.tripStatus);
-        dest.writeString(this.customerId);
-        dest.writeString(this.status);
-        dest.writeString(this.customerName);
-        dest.writeString(this.tripDatetimeDmy);
-        dest.writeString(this.fromAddressLine1);
-        dest.writeString(this.fromAddressLine2);
-        dest.writeString(this.fromCityName);
-        dest.writeString(this.fromAreaName);
-        dest.writeString(this.toAddressLine1);
-        dest.writeString(this.toAddressLine2);
-        dest.writeString(this.toCityName);
-        dest.writeString(this.toAreaName);
-        dest.writeString(this.customerContactNo);
-        dest.writeString(this.tripNo);
-        dest.writeString(this.fromGujaratiAddress);
-        dest.writeString(this.toGujaratiAddress);
-        dest.writeString(this.vehicleType);
-    }
 
     public String getFromGujaratiAddress()
     {
@@ -705,5 +674,98 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     public void setToGujaratiAddress(String toGujaratiAddress)
     {
         this.toGujaratiAddress = toGujaratiAddress;
+    }
+
+    public String getFromCompanyName()
+    {
+        return fromShippingLocation;
+    }
+
+    public String getToCompantName()
+    {
+        return toShippingLocation;
+    }
+
+    public String getFromGujaratiName()
+    {
+        return fromGujaratiName != null ? !fromGujaratiName.isEmpty() ? fromGujaratiName :
+                getFromCompanyName() : getFromCompanyName();
+    }
+
+    public void setFromGujaratiName(String fromGujaratiName)
+    {
+        this.fromGujaratiName = fromGujaratiName;
+    }
+
+    public String getToGujaratiName()
+    {
+        if (toGujaratiName != null)
+        {
+            if (!toGujaratiName.isEmpty())
+            {
+                return toGujaratiName;
+            } else
+            {
+                return getToCompantName();
+            }
+        } else
+        {
+            return getToCompantName();
+        }
+    }
+
+    public void setToGujaratiName(String toGujaratiName)
+    {
+        this.toGujaratiName = toGujaratiName;
+    }
+
+    public String getDriverName()
+    {
+        return driverName;
+    }
+
+    public void setDriverName(String driverName)
+    {
+        this.driverName = driverName;
+    }
+
+    public String getVehicleRegNo()
+    {
+        return vehicleRegNo;
+    }
+
+    public void setVehicleRegNo(String vehicleRegNo)
+    {
+        this.vehicleRegNo = vehicleRegNo;
+    }
+
+    public String getLicenceNo()
+    {
+        return licenceNo;
+    }
+
+    public void setLicenceNo(String licenceNo)
+    {
+        this.licenceNo = licenceNo;
+    }
+
+    public String getWeight()
+    {
+        return weight;
+    }
+
+    public void setWeight(String weight)
+    {
+        this.weight = weight;
+    }
+
+    public String getDimensions()
+    {
+        return dimensions;
+    }
+
+    public void setDimensions(String dimensions)
+    {
+        this.dimensions = dimensions;
     }
 }

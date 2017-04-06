@@ -197,4 +197,28 @@ public class API
         call.enqueue(callback);
     }
 
+    public Call<TripByCustomerId> getTripDetailsByTripNo(final String tripNo,
+                                                         final RetrofitCallbacks<TripByCustomerId> callback)
+    {
+        Call<TripByCustomerId> call =
+                apiService.getTripDetailsByTripNo("get_trip_details_by_trip_no",
+                        tripNo);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<List<String>> getTripNumberLike(final String tripNo,
+                                                final String customerId,
+                                                final RetrofitCallbacks<List<String>> callback)
+    {
+        Call<List<String>> call =
+                apiService.getTripNumberLike("get_trip_nos_like_no", null, customerId, tripNo);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
 }

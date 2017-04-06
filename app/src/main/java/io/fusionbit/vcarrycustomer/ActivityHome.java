@@ -2,22 +2,30 @@ package io.fusionbit.vcarrycustomer;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +35,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -66,7 +76,13 @@ public class ActivityHome extends VCarryActivity
     Snackbar snackbarNoInternet;
     boolean exitApp = false;
     Fragment currentFragment = null;
+    MenuItem searchMenu;
+    SearchView searchView;
+    Call<List<String>> tripSearchCall;
+    String customerId;
     private BroadcastReceiver mNetworkDetectReceiver;
+    private SimpleCursorAdapter tripSearchResultCursorAdapter;
+    private String[] strArrData = {"No Suggestions"};
 
     private void checkInternetConnection()
     {
@@ -112,6 +128,13 @@ public class ActivityHome extends VCarryActivity
         setupConnectionMonitor();
 
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
+
+        final String[] from = new String[]{"tripNumber"};
+        final int[] to = new int[]{android.R.id.text1};
+
+        tripSearchResultCursorAdapter =
+                new SimpleCursorAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+                        null, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -196,6 +219,8 @@ public class ActivityHome extends VCarryActivity
                                         .putString(Constants.CUSTOMER_ID, String.valueOf(response.body()))
                                         .apply();
 
+                                customerId = String.valueOf(response.body());
+
                                 updateFcmDeviceToken(String.valueOf(response.body()));
 
                             } else
@@ -219,6 +244,7 @@ public class ActivityHome extends VCarryActivity
                         super.onFailure(call, t);
                         final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                                 .getString(Constants.CUSTOMER_ID, null);
+                        ActivityHome.this.customerId = customerId;
                         if (customerId == null)
                         {
                             promptForRegistration();
@@ -302,6 +328,86 @@ public class ActivityHome extends VCarryActivity
     {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_home, menu);
+
+        // Retrieve the SearchView and plug it into SearchManager
+        searchMenu = menu.findItem(R.id.action_search);
+        searchMenu.setVisible(false);
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSuggestionsAdapter(tripSearchResultCursorAdapter);
+
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener()
+        {
+            @Override
+            public boolean onSuggestionClick(int position)
+            {
+                // Add clicked text to search box
+                CursorAdapter ca = searchView.getSuggestionsAdapter();
+                Cursor cursor = ca.getCursor();
+                cursor.moveToPosition(position);
+                searchView.setQuery(cursor.getString(cursor.getColumnIndex("tripNumber")), false);
+
+                ActivityTripDetails.start(cursor.getString(cursor.getColumnIndex("tripNumber")),
+                        ActivityHome.this);
+
+                return true;
+            }
+
+            @Override
+            public boolean onSuggestionSelect(int position)
+            {
+                return true;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
+            @Override
+            public boolean onQueryTextSubmit(String s)
+            {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String s)
+            {
+                if (tripSearchCall != null)
+                {
+                    tripSearchCall.cancel();
+                }
+
+                tripSearchCall = api.getTripNumberLike(s, customerId, new RetrofitCallbacks<List<String>>()
+                {
+
+                    @Override
+                    public void onResponse(Call<List<String>> call, Response<List<String>> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() == null)
+                            {
+                                return;
+                            }
+                            strArrData = response.body().toArray(new String[0]);
+                            // Filter data
+                            final MatrixCursor mc = new MatrixCursor(new String[]{BaseColumns._ID, "tripNumber"});
+                            for (int i = 0; i < strArrData.length; i++)
+                            {
+                                if (strArrData[i].toLowerCase().contains(s.toLowerCase()))
+                                {
+                                    mc.addRow(new Object[]{i, strArrData[i]});
+                                }
+                            }
+                            tripSearchResultCursorAdapter.changeCursor(mc);
+                            tripSearchResultCursorAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -334,14 +440,17 @@ public class ActivityHome extends VCarryActivity
         {
             currentFragment = FragmentHome.newInstance(0);
             setActionBarTitle("V-Carry");
+            searchMenu.setVisible(false);
         } else if (id == R.id.nav_trips)
         {
             currentFragment = FragmentTrips.newInstance(1);
             setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
+            searchMenu.setVisible(true);
         } else if (id == R.id.nav_accountBalance)
         {
             currentFragment = FragmentAccBalance.newInstance(2);
             setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
+            searchMenu.setVisible(false);
         } else if (id == R.id.nav_tripsOnOffer)
         {
 

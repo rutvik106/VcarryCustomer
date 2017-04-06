@@ -109,4 +109,16 @@ public interface ApiInterface
     Call<TripByCustomerId> getTripDetailsByTripId(@Field("method") String method,
                                                   @Field("trip_id") String tripId);
 
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<TripByCustomerId> getTripDetailsByTripNo(@Field("method") String method,
+                                                  @Field("trip_no") String tripNo);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<String>> getTripNumberLike(@Field("method") String method,
+                                         @Field("driver_id") String driverId,
+                                         @Field("customer_id") String customerId,
+                                         @Field("no") String tripNo);
+
 }

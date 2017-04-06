@@ -71,6 +71,7 @@ public class Constants
     public static final String SCHEDULE_DETAILS = "SCHEDULE_DETAILS";
     public static final String INTENT_EXTRA_TRIP_ID = "INTENT_EXTRA_TRIP_ID";
     public static final String TRIP_ID = "TRIP_ID";
+    public static final String INTENT_EXTRA_TRIP_NUMBER = "INTENT_EXTRA_TRIP_NUMBER";
 
     public static final class NotificationType
     {

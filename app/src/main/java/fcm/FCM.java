@@ -23,7 +23,9 @@ public class FCM
     private static final String TAG = App.APP_TAG + FCM.class.getSimpleName();
 
     public static void sendPushNotification(final String type, final String title,
-                                            final String message, final String deviceId, final JSONObject extra) throws IllegalArgumentException
+                                            final String message, final String deviceId,
+                                            final JSONObject extra,
+                                            final FCMCallbackListener listener) throws IllegalArgumentException
     {
 
         URL url;
@@ -94,6 +96,8 @@ public class FCM
 
             Log.i(TAG, "RESPONSE from server: " + status);
 
+            listener.sentNotificationHttpStatus(status);
+
         } catch (IOException e)
         {
             throw new IllegalArgumentException("failed to send push notification");
@@ -106,4 +110,10 @@ public class FCM
 
         }
     }
+
+    public interface FCMCallbackListener
+    {
+        void sentNotificationHttpStatus(int statusCode);
+    }
+
 }

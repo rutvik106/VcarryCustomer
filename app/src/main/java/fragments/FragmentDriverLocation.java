@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,18 +40,21 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
 
     public GoogleMap mMap;
     public boolean isReady = false;
-    TripByCustomerId bookedTrip;
+    TripByCustomerId trip;
     Realm realm;
+    FCM.FCMCallbackListener listener;
     private SyncedMapFragment mapFragment;
     private Context context;
-    private String customerTripId;
+    private String tripId;
 
-    public static FragmentDriverLocation newInstance(String customerTripId, Context context, Realm realm)
+    public static FragmentDriverLocation newInstance(String tripId, Context context, Realm realm,
+                                                     FCM.FCMCallbackListener listener)
     {
         FragmentDriverLocation fragmentDriverLocation = new FragmentDriverLocation();
         fragmentDriverLocation.context = context;
-        fragmentDriverLocation.customerTripId = customerTripId;
+        fragmentDriverLocation.tripId = tripId;
         fragmentDriverLocation.realm = realm;
+        fragmentDriverLocation.listener = listener;
         return fragmentDriverLocation;
     }
 
@@ -73,9 +77,9 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
 
     private void getTripDetailsFromRealm()
     {
-        bookedTrip = realm
+        trip = realm
                 .copyFromRealm(realm.
-                        where(TripByCustomerId.class).equalTo("customerTripId", customerTripId).findFirst());
+                        where(TripByCustomerId.class).equalTo("tripId", tripId).findFirst());
     }
 
     private void loadMapNow()
@@ -101,7 +105,7 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
 
     private void sendPushRequestForDriverLocation()
     {
-        if (bookedTrip != null)
+        if (trip != null)
         {
             final String customerDeviceToken = PreferenceManager.getDefaultSharedPreferences(context)
                     .getString(Constants.FCM_INSTANCE_ID, null);
@@ -115,21 +119,50 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
                 e.printStackTrace();
             }
 
-            new AsyncTask<Void, Void, Void>()
+            if (trip.getDriverLocationLastAccess() > 0)
             {
-                @Override
-                protected Void doInBackground(Void... voids)
+                if (System.currentTimeMillis() > trip.getDriverLocationLastAccess() + (1000 * 60))
                 {
-                    FCM.sendPushNotification(Constants.NotificationType.GET_DRIVER_LOCATION,
-                            "Location Request", "Sending your location to customer",
-                            bookedTrip.getDriverDeviceToken(), extra);
-                    return null;
+                    new AsyncTask<Void, Void, Void>()
+                    {
+                        @Override
+                        protected Void doInBackground(Void... voids)
+                        {
+                            FCM.sendPushNotification(Constants.NotificationType.GET_DRIVER_LOCATION,
+                                    "Location Request", "Sending your location to customer",
+                                    trip.getDriverDeviceToken(), extra, listener);
+                            return null;
+                        }
+                    }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                } else
+                {
+                    Toast.makeText(context, "You can only view new location after one minute, Please try after one minute.", Toast.LENGTH_SHORT).show();
                 }
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            } else
+            {
+                new AsyncTask<Void, Void, Void>()
+                {
+                    @Override
+                    protected Void doInBackground(Void... voids)
+                    {
+                        FCM.sendPushNotification(Constants.NotificationType.GET_DRIVER_LOCATION,
+                                "Location Request", "Sending your location to customer",
+                                trip.getDeviceToken(), extra, listener);
+                        return null;
+                    }
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
+            if (trip.getDriverLastKnownLocation() != null)
+            {
+                showDriverLocation(trip.getDriverLastKnownLocation());
+            }
 
         } else
         {
             Log.i(TAG, "BOOKED TRIP WAS NOT FOUND IN REALM");
+            Toast.makeText(context, "This tip was not found, Cannot get location.", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -138,9 +171,16 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
     {
         MarkerOptions m = new MarkerOptions();
         m.position(latLng);
-        m.title(bookedTrip.getDriverName());
+        m.title(trip.getDriverName());
         final Marker marker = mMap.addMarker(m);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
         marker.showInfoWindow();
+
+        trip.setLastKnownDriverLocation(latLng.latitude, latLng.longitude);
+        trip.setDriverLocationLastAccessTime(System.currentTimeMillis());
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(trip);
+        realm.commitTransaction();
     }
+
 }

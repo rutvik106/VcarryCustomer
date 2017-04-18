@@ -15,10 +15,11 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fcm.FCM;
 import fragments.FragmentDriverLocation;
 import io.realm.Realm;
 
-public class ActivityDriverLocation extends AppCompatActivity
+public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCMCallbackListener
 {
 
     final OnReceiveDriverLocation onReceiveDriverLocation = new OnReceiveDriverLocation();
@@ -45,7 +46,7 @@ public class ActivityDriverLocation extends AppCompatActivity
         }
 
         fragmentDriverLocation = FragmentDriverLocation
-                .newInstance(getIntent().getStringExtra(Constants.BOOKED_TRIP_ID), this, realm);
+                .newInstance(getIntent().getStringExtra(Constants.TRIP_ID), this, realm, this);
 
 
         getSupportFragmentManager().beginTransaction()
@@ -79,6 +80,25 @@ public class ActivityDriverLocation extends AppCompatActivity
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void sentNotificationHttpStatus(int statusCode)
+    {
+        if (statusCode > 300)
+        {
+            runOnUiThread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if (getSupportActionBar() != null)
+                    {
+                        getSupportActionBar().setTitle("Cannot Get Location");
+                    }
+                }
+            });
+        }
     }
 
     class OnReceiveDriverLocation extends BroadcastReceiver

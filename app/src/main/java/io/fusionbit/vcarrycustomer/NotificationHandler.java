@@ -90,14 +90,14 @@ public class NotificationHandler
                 case Constants.NotificationType.DRIVER_ALLOCATED:
                     confirmDriver();
                     break;
-                case Constants.NotificationType.DRIVER_CURRENT_LOCATION:
-                    sendBroadcastForDriverCurrentLocation();
-                    break;
                 case Constants.NotificationType.TRIP_STARTED:
                     tripStarted();
                     break;
                 case Constants.NotificationType.TRIP_FINISHED:
                     finishTrip();
+                    break;
+                case Constants.NotificationType.DRIVER_CURRENT_LOCATION:
+                    sendBroadcastGetDriverCurrentLocation();
                     break;
 
             }
@@ -107,7 +107,7 @@ public class NotificationHandler
         }
     }
 
-    private void sendBroadcastForDriverCurrentLocation()
+    private void sendBroadcastGetDriverCurrentLocation()
     {
         try
         {

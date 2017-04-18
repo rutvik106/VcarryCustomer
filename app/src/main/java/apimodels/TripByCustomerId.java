@@ -2,6 +2,7 @@ package apimodels;
 
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.UnsupportedEncodingException;
@@ -209,6 +210,96 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     @SerializedName("dimensions")
     private String dimensions;
 
+
+    private double driverLastKnownLat = 0, driverLastKnownLng = 0;
+    /**
+     * 0 : 1019
+     * 1 : 2017-04-18 15:18:52
+     * 2 : 18/04/2017 03:18:52 PM
+     * 3 : 25
+     * 4 : Amishi Mehta
+     * 5 : Jodhpur park society
+     * 6 : Jodhpur park society Near Ramdev Nagar BRTS Bus stop
+     * 7 :
+     * 8 : 2
+     * 9 : Ahmedabad
+     * 10 : 567
+     * 11 : Kankriya
+     * 12 : 35
+     * 13 : jeet patel
+     * 14 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
+     * 15 : Rangin Park Soc
+     * 16 :
+     * 17 : 2
+     * 18 : Ahmedabad
+     * 19 : 566
+     * 20 : S g highway
+     * 21 : 3
+     * 22 : Pickup Bolero
+     * 23 : 2
+     * 24 : Rutvik Mehta
+     * 25 : 9824143009
+     * contact_no_1 : 9824143009
+     * 26 : f5YxGZ2qyGI:APA91bE71ZjUy02hHUVYF4yOZgwJFLafcpoy0im6dJetGXRFcxLixpVCYHAGIPixicZWRL7i3ywNW_Rl4Z8dqZulF5hJ0nCF0AOOU-ZNROPeUwJN8f4WdjAaMSZp4rQxvQU-g5cAE2W8
+     * device_token : f5YxGZ2qyGI:APA91bE71ZjUy02hHUVYF4yOZgwJFLafcpoy0im6dJetGXRFcxLixpVCYHAGIPixicZWRL7i3ywNW_Rl4Z8dqZulF5hJ0nCF0AOOU-ZNROPeUwJN8f4WdjAaMSZp4rQxvQU-g5cAE2W8
+     * 27 : 235
+     * 28 : 27
+     * 29 : 27
+     * 30 : 2017-04-18 15:19:12
+     * 31 : 2017-04-18 15:25:44
+     * 32 : 2
+     * 33 : 1664
+     * 34 : Motorist Allocated
+     * 35 : Amishi Mehta
+     * 36 : 9409210477
+     * 37 : 201704180000660
+     * 38 : null
+     * trip_start_time : null
+     * 39 : null
+     * trip_stop_time : null
+     * 40 : null
+     * trip_start_latlong : null
+     * 41 : null
+     * trip_stop_latlong : null
+     * 42 : null
+     * trip_distance : null
+     * 43 : null
+     * memo_amount : null
+     * 44 : null
+     * labour_amount : null
+     * 45 : null
+     * cash_received : null
+     * 46 : 23.0265273,72.5147981
+     * lat_long : 23.0333222,72.5104536
+     * 47 : 23.0333222,72.5104536
+     * 48 : 0
+     * 49 :
+     */
+
+    @SerializedName("contact_no_1")
+    private String contactNo1;
+    @SerializedName("device_token")
+    private String deviceToken;
+    @SerializedName("trip_start_time")
+    private String tripStartTime;
+    @SerializedName("trip_stop_time")
+    private String tripStopTime;
+    @SerializedName("trip_start_latlong")
+    private String tripStartLatlong;
+    @SerializedName("trip_stop_latlong")
+    private String tripStopLatlong;
+    @SerializedName("trip_distance")
+    private String tripDistance;
+    @SerializedName("memo_amount")
+    private String memoAmount;
+    @SerializedName("labour_amount")
+    private String labourAmount;
+    @SerializedName("cash_received")
+    private String cashReceived;
+    @SerializedName("lat_long")
+    private String latLong;
+    private long driverLocationLastAccess = 0;
+
     public TripByCustomerId()
     {
     }
@@ -220,6 +311,11 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
         this.bookedToLocation = tripTo;
         this.fare = tripCost;
         this.vehicleType = tripVehicle;
+    }
+
+    public long getDriverLocationLastAccess()
+    {
+        return driverLocationLastAccess;
     }
 
     public String getBookedFromLocation()
@@ -828,4 +924,136 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     }
 
 
+    public void setLastKnownDriverLocation(double latitude, double longitude)
+    {
+        driverLastKnownLat = latitude;
+        driverLastKnownLng = longitude;
+    }
+
+
+    public LatLng getDriverLastKnownLocation()
+    {
+        if (driverLastKnownLat > 0 && driverLastKnownLng > 0)
+        {
+            return new LatLng(driverLastKnownLat, driverLastKnownLng);
+        } else
+        {
+            return null;
+        }
+    }
+
+    public void setDriverLocationLastAccessTime(long mills)
+    {
+        driverLocationLastAccess = mills;
+    }
+
+    public String getContactNo1()
+    {
+        return contactNo1;
+    }
+
+    public void setContactNo1(String contactNo1)
+    {
+        this.contactNo1 = contactNo1;
+    }
+
+    public String getDeviceToken()
+    {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken)
+    {
+        this.deviceToken = deviceToken;
+    }
+
+    public String getTripStartTime()
+    {
+        return tripStartTime;
+    }
+
+    public void setTripStartTime(String tripStartTime)
+    {
+        this.tripStartTime = tripStartTime;
+    }
+
+    public String getTripStopTime()
+    {
+        return tripStopTime;
+    }
+
+    public void setTripStopTime(String tripStopTime)
+    {
+        this.tripStopTime = tripStopTime;
+    }
+
+    public String getTripStartLatlong()
+    {
+        return tripStartLatlong;
+    }
+
+    public void setTripStartLatlong(String tripStartLatlong)
+    {
+        this.tripStartLatlong = tripStartLatlong;
+    }
+
+    public String getTripStopLatlong()
+    {
+        return tripStopLatlong;
+    }
+
+    public void setTripStopLatlong(String tripStopLatlong)
+    {
+        this.tripStopLatlong = tripStopLatlong;
+    }
+
+    public String getTripDistance()
+    {
+        return tripDistance;
+    }
+
+    public void setTripDistance(String tripDistance)
+    {
+        this.tripDistance = tripDistance;
+    }
+
+    public String getMemoAmount()
+    {
+        return memoAmount;
+    }
+
+    public void setMemoAmount(String memoAmount)
+    {
+        this.memoAmount = memoAmount;
+    }
+
+    public String getLabourAmount()
+    {
+        return labourAmount;
+    }
+
+    public void setLabourAmount(String labourAmount)
+    {
+        this.labourAmount = labourAmount;
+    }
+
+    public String getCashReceived()
+    {
+        return cashReceived;
+    }
+
+    public void setCashReceived(String cashReceived)
+    {
+        this.cashReceived = cashReceived;
+    }
+
+    public String getLatLong()
+    {
+        return latLong;
+    }
+
+    public void setLatLong(String latLong)
+    {
+        this.latLong = latLong;
+    }
 }

@@ -81,7 +81,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             public void onClick(View view)
             {
                 Intent i = new Intent(context, ActivityDriverLocation.class);
-                i.putExtra(Constants.BOOKED_TRIP_ID, tripDetails.getCustomerTripId());
+                i.putExtra(Constants.TRIP_ID, tripDetails.getTripId());
                 context.startActivity(i);
             }
         });

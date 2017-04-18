@@ -22,7 +22,6 @@ import io.fusionbit.vcarrycustomer.ActivityTripDetails;
 import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
-import models.BookedTrip;
 
 /**
  * Created by rutvik on 1/26/2017 at 10:44 AM.
@@ -64,8 +63,6 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
     @BindView(R.id.rl_tripRowItem)
     RelativeLayout rlTripRowItem;
 
-    BookedTrip model;
-
     TripByCustomerId tripDetails;
     @BindView(R.id.tv_tripNumber)
     TextView tvTripNumber;
@@ -84,7 +81,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             public void onClick(View view)
             {
                 Intent i = new Intent(context, ActivityDriverLocation.class);
-                i.putExtra(Constants.BOOKED_TRIP_ID, model.getCustomerTripId());
+                i.putExtra(Constants.BOOKED_TRIP_ID, tripDetails.getCustomerTripId());
                 context.startActivity(i);
             }
         });
@@ -94,10 +91,10 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             @Override
             public void onClick(View view)
             {
-                if (model.getDriverNumber() != null)
+                if (tripDetails.getDriverNumber() != null)
                 {
                     Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse("tel:" + model.getDriverNumber()));
+                    intent.setData(Uri.parse("tel:" + tripDetails.getDriverNumber()));
                     context.startActivity(intent);
                 } else
                 {
@@ -111,19 +108,26 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             @Override
             public void onClick(View view)
             {
+
+                if (tripDetails.getStatus().equals(Constants.TRIP_STATUS_PENDING))
+                {
+                    Toast.makeText(context, R.string.trip_not_confirmed, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (tripDetails != null)
                 {
                     Log.i(TAG, "tripDetails is not NULL");
                     Log.i(TAG, "tripDetails tripId is: " + tripDetails.getTripId());
                     ActivityTripDetails.start(context, tripDetails.getTripId());
-                } else if (model != null)
+                } else if (tripDetails != null)
                 {
                     Log.i(TAG, "BookedTrip is not NULL");
-                    Log.i(TAG, "BookedTrip tripId is: " + model.getTripId());
-                    Log.i(TAG, "BookedTrip driverTripId is: " + model.getDriverTripId());
-                    Log.i(TAG, "BookedTrip customerTripId is: " + model.getCustomerTripId());
-                    ActivityTripDetails.start(context, model.getTripId() != null ?
-                            model.getTripId() : model.getDriverTripId());
+                    Log.i(TAG, "BookedTrip tripId is: " + tripDetails.getTripId());
+                    Log.i(TAG, "BookedTrip driverTripId is: " + tripDetails.getTripId());
+                    Log.i(TAG, "BookedTrip customerTripId is: " + tripDetails.getCustomerTripId());
+                    ActivityTripDetails.start(context, tripDetails.getTripId() != null ?
+                            tripDetails.getTripId() : tripDetails.getTripId());
                 }
             }
         });
@@ -136,7 +140,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                 .inflate(R.layout.single_trip_row_item, parent, false));
     }
 
-    public static void bind(final VHSingleTripDetails vh, BookedTrip model)
+    /*public static void bind(final VHSingleTripDetails vh, BookedTrip model)
     {
         vh.model = model;
         vh.tvSingleTripFrom.setText(model.getTripFrom());
@@ -230,31 +234,33 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                 break;
         }
 
-    }
+    }*/
 
     public static void bind(final VHSingleTripDetails vh, TripByCustomerId model)
     {
         vh.tripDetails = model;
-        vh.model = model.getBookedTrip();
 
-        vh.tvSingleTripFrom.setText(model.getFromShippingLocation());
-        vh.tvSingleTripTo.setText(model.getToShippingLocation());
+        if (model.getTripStatus().equals(Constants.TRIP_STATUS_PENDING))
+        {
+            vh.tvSingleTripFrom.setText(model.getBookedFromLocation());
+            vh.tvSingleTripTo.setText(model.getBookedToLocation());
+        } else
+        {
+            vh.tvSingleTripFrom.setText(model.getFromShippingLocation());
+            vh.tvSingleTripTo.setText(model.getToShippingLocation());
+        }
 
         vh.tvSingleTripVehicle.setText(model.getVehicleType());
         vh.tvSingleTripCost.setText(vh.context.getResources().getString(R.string.rs) +
                 " " + model.getFare());
 
 
-        if (model.getBookedTrip() != null)
+        if (model.getDriverName() != null)
         {
-            if (model.getBookedTrip().getDriverTripId() != null)
+            if (!model.getDriverName().isEmpty())
             {
                 vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
-                vh.tvSingleTripDriverName.setText(model.getBookedTrip().getDriverName());
-            } else
-            {
-                vh.tvSingleTripDriverName.setText("");
-                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripDriverName.setText(model.getDriverName());
             }
         }
 
@@ -272,7 +278,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
         {
             case Constants.TRIP_STATUS_NEW:
                 vh.tvSingleTripStatus.setText(R.string.trip_confirmed);
-                vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_orange_light));
                 vh.rlTripRowItem.setBackground(vh.context.getResources()
@@ -324,7 +330,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                         .getDrawable(R.drawable.trip_card_bg_green));
                 break;
 
-            default:
+            case Constants.TRIP_STATUS_PENDING:
                 vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
                 vh.tvSingleTripStatus.setText(R.string.pending_confirmation);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()

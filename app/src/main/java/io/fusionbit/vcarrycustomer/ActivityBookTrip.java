@@ -767,9 +767,12 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                         {
                             if (response.body() > 0)
                             {
-                                userActivities.addBookedTrip(new BookedTrip(response.body(),
+                                realm.beginTransaction();
+                                realm.copyToRealmOrUpdate(new BookedTrip(response.body().toString(),
                                         actFrom.getText().toString(), actTo.getText().toString(),
                                         tripFare, vehicleName));
+                                realm.commitTransaction();
+
                                 Utils.showSimpleAlertBox(ActivityBookTrip.this,
                                         getString(R.string.booking_request_success_message),
                                         new DialogInterface.OnClickListener()

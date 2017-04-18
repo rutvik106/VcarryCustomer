@@ -1,6 +1,7 @@
 package fragments;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,18 +11,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import adapters.TripDetailsAdapter;
+import api.API;
+import api.RetrofitCallbacks;
+import apimodels.TripByCustomerId;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fusionbit.vcarrycustomer.App;
+import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-import models.BookedTrip;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by rutvik on 11/20/2016 at 11:16 AM.
@@ -43,6 +52,10 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Inject
     Realm realm;
+
+    @Inject
+    API api;
+    private RealmResults<TripByCustomerId> bookedTripRealmResults;
 
     public static FragmentTrips newInstance(int index)
     {
@@ -73,27 +86,29 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
         srlRefreshTrips.setOnRefreshListener(this);
 
         getTripsFromRealm();
+        getTrips();
 
         return view;
     }
+
 
     private void getTripsFromRealm()
     {
         adapter.clear();
 
-        final RealmResults<BookedTrip> bookedTripRealmResults =
-                realm.where(BookedTrip.class).findAll();
+        bookedTripRealmResults =
+                realm.where(TripByCustomerId.class).findAll();
 
-        bookedTripRealmResults.addChangeListener(new RealmChangeListener<RealmResults<BookedTrip>>()
+        bookedTripRealmResults.addChangeListener(new RealmChangeListener<RealmResults<TripByCustomerId>>()
         {
             @Override
-            public void onChange(RealmResults<BookedTrip> element)
+            public void onChange(RealmResults<TripByCustomerId> element)
             {
                 adapter.notifyDataSetChanged();
             }
         });
 
-        for (BookedTrip bookedTrip : bookedTripRealmResults)
+        for (TripByCustomerId bookedTrip : bookedTripRealmResults)
         {
             adapter.addBookedTrip(bookedTrip);
         }
@@ -105,17 +120,55 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
         {
             llHomeEmpty.setVisibility(View.VISIBLE);
         }
+    }
 
-        if (srlRefreshTrips.isRefreshing())
+
+    private void getTrips()
+    {
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getString(Constants.CUSTOMER_ID, null);
+        api.getTripsByCustomerId(customerId, new RetrofitCallbacks<List<TripByCustomerId>>()
         {
-            srlRefreshTrips.setRefreshing(false);
-        }
 
+            @Override
+            public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
+            {
+                super.onResponse(call, response);
+                if (response.isSuccessful())
+                {
+                    realm.beginTransaction();
+                    for (TripByCustomerId trip : response.body())
+                    {
+                        realm.copyToRealmOrUpdate(trip);
+                    }
+                    realm.commitTransaction();
+                    getTripsFromRealm();
+                } else
+                {
+                    Toast.makeText(getActivity(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                }
+                if (srlRefreshTrips.isRefreshing())
+                {
+                    srlRefreshTrips.setRefreshing(false);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TripByCustomerId>> call, Throwable t)
+            {
+                super.onFailure(call, t);
+                Toast.makeText(getActivity(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                if (srlRefreshTrips.isRefreshing())
+                {
+                    srlRefreshTrips.setRefreshing(false);
+                }
+            }
+        });
     }
 
     @Override
     public void onRefresh()
     {
-        getTripsFromRealm();
+        getTrips();
     }
 }

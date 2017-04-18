@@ -49,6 +49,7 @@ public class Constants
     public static final int TRIP_STARTED = 4;
 
 
+    public static final String TRIP_STATUS_PENDING = "0";
     public static final String TRIP_STATUS_NEW = "1";
     public static final String TRIP_STATUS_DRIVER_ALLOCATED = "2";
     public static final String TRIP_STATUS_LOADING = "3";

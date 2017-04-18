@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import apimodels.TripByCustomerId;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -16,13 +17,13 @@ public class UserActivities
 {
 
     Realm realm;
-    private List<BookedTrip> bookedTripRealmList;
+    private List<TripByCustomerId> bookedTripRealmList;
 
     @Inject
     public UserActivities(Realm realm)
     {
         this.realm = realm;
-        RealmResults<BookedTrip> result = realm.where(BookedTrip.class).findAll();
+        RealmResults<TripByCustomerId> result = realm.where(TripByCustomerId.class).findAll();
         if (result.size() > 0)
         {
             bookedTripRealmList = realm.copyFromRealm(result);
@@ -32,7 +33,7 @@ public class UserActivities
         }
     }
 
-    public void addBookedTrip(BookedTrip trip)
+    public void addBookedTrip(TripByCustomerId trip)
     {
         bookedTripRealmList.add(trip);
         realm.beginTransaction();

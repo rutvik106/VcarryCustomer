@@ -24,7 +24,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         Map data = message.getData();
         Log.i(TAG, "DATA: " + data.toString() + " FROM: " + from);
 
-        new NotificationHandler(this, ((App) getApplication()).getUser().getRealmConfiguration(), message)
+        new NotificationHandler(this, ((App) getApplication()).getUser().getRealmConfiguration(),
+                ((App) getApplication()).getUser().getAPI(),
+                message)
                 .handleNotification();
     }
 

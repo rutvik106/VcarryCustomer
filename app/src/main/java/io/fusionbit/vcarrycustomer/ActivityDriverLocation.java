@@ -45,7 +45,7 @@ public class ActivityDriverLocation extends AppCompatActivity
         }
 
         fragmentDriverLocation = FragmentDriverLocation
-                .newInstance(getIntent().getIntExtra(Constants.BOOKED_TRIP_ID, 0), this, realm);
+                .newInstance(getIntent().getStringExtra(Constants.BOOKED_TRIP_ID), this, realm);
 
 
         getSupportFragmentManager().beginTransaction()

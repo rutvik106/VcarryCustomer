@@ -20,13 +20,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import apimodels.TripByCustomerId;
 import extra.Log;
 import fcm.FCM;
 import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
 import io.realm.Realm;
-import models.BookedTrip;
 
 /**
  * Created by rutvik on 1/26/2017 at 4:52 PM.
@@ -39,13 +39,13 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
 
     public GoogleMap mMap;
     public boolean isReady = false;
-    BookedTrip bookedTrip;
+    TripByCustomerId bookedTrip;
     Realm realm;
     private SyncedMapFragment mapFragment;
     private Context context;
-    private int customerTripId;
+    private String customerTripId;
 
-    public static FragmentDriverLocation newInstance(int customerTripId, Context context, Realm realm)
+    public static FragmentDriverLocation newInstance(String customerTripId, Context context, Realm realm)
     {
         FragmentDriverLocation fragmentDriverLocation = new FragmentDriverLocation();
         fragmentDriverLocation.context = context;
@@ -75,7 +75,7 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
     {
         bookedTrip = realm
                 .copyFromRealm(realm.
-                        where(BookedTrip.class).equalTo("customerTripId", customerTripId).findFirst());
+                        where(TripByCustomerId.class).equalTo("customerTripId", customerTripId).findFirst());
     }
 
     private void loadMapNow()

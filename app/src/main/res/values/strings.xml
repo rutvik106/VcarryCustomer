@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">V-Carry Customer</string>
+    <string name="app_name">V-Carry</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -108,5 +108,8 @@
     <string name="to_compant_name">To Company Name</string>
     <string name="driver_licence_no">Motorist Licence No</string>
     <string name="vehicel_no">Vehicle No</string>
+    <string name="weight">Weight</string>
+    <string name="dimension">Dimension</string>
+    <string name="trip_not_confirmed">This trip is not Confirmed</string>
 
 </resources>

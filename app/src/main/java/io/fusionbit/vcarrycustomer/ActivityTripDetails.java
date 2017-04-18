@@ -3,10 +3,15 @@ package io.fusionbit.vcarrycustomer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import javax.inject.Inject;
 
@@ -17,7 +22,7 @@ import butterknife.BindView;
 import extra.LocaleHelper;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import models.BookedTrip;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -57,6 +62,16 @@ public class ActivityTripDetails extends BaseActivity
 
     @Inject
     API api;
+    @BindView(R.id.tv_tripWeight)
+    TextView tvTripWeight;
+    @BindView(R.id.tv_tripDimension)
+    TextView tvTripDimension;
+    @BindView(R.id.iv_driverPhoto)
+    ImageView ivDriverPhoto;
+    @BindView(R.id.cl_ActivityTripDetails)
+    CoordinatorLayout clActivityTripDetails;
+
+    Snackbar sbNoInternet;
 
     public static void start(Context context, String tripId)
     {
@@ -84,6 +99,12 @@ public class ActivityTripDetails extends BaseActivity
             getSupportActionBar().setTitle("Trip Details");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        Glide.with(this)
+                .load(R.drawable.driver_photo_placeholder)
+                .bitmapTransform(new CropCircleTransformation(this))
+                .into(ivDriverPhoto);
+
     }
 
     @Override
@@ -135,23 +156,8 @@ public class ActivityTripDetails extends BaseActivity
     {
         if (response.body() != null)
         {
-            tripDetails = response.body();
-
-            final BookedTrip bookedTrip = realm.where(BookedTrip.class)
-                    .equalTo("tripId", tripDetails.getTripId()).findFirst();
-
             realm.beginTransaction();
-
-            if (bookedTrip != null)
-            {
-                bookedTrip.setStatus(Integer.valueOf(tripDetails.getTripStatus()));
-                bookedTrip.setTripCost(tripDetails.getFare());
-                tripDetails.setBookedTrip(realm.copyFromRealm(realm
-                        .copyToRealmOrUpdate(bookedTrip)));
-            }
-
-            realm.copyToRealmOrUpdate(tripDetails);
-
+            realm.copyToRealmOrUpdate(response.body());
             realm.commitTransaction();
 
             bindDataToUi();
@@ -162,7 +168,8 @@ public class ActivityTripDetails extends BaseActivity
     {
         if (tripId != null)
         {
-            tripDetails = realm.where(TripByCustomerId.class).equalTo("tripId", tripId).findFirst();
+            tripDetails =
+                    realm.where(TripByCustomerId.class).equalTo("tripId", tripId).findFirst();
         } else if (tripNumber != null)
         {
             tripDetails = realm.where(TripByCustomerId.class).equalTo("tripNo", tripNumber).findFirst();
@@ -230,7 +237,15 @@ public class ActivityTripDetails extends BaseActivity
             tvTripToCompanyName.setText(tripDetails.getToCompantName());
         }
 
-        tvTripFare.setText(getString(R.string.rs) + " " + tripDetails.getFare());
+        tvTripWeight.setText(tripDetails.getWeight() != null ? !tripDetails.getWeight().isEmpty()
+                ? tripDetails.getWeight() : "NA" : "NA");
+
+        tvTripDimension.setText(tripDetails.getDimensions() != null ? !tripDetails.getDimensions().isEmpty()
+                ? tripDetails.getDimensions() : "NA" : "NA");
+
+
+        tvTripFare.setText(tripDetails.getFare() != null ? !tripDetails.getFare().isEmpty() ?
+                getString(R.string.rs) + " " + tripDetails.getFare() : "NA" : "NA");
 
 
     }
@@ -244,13 +259,24 @@ public class ActivityTripDetails extends BaseActivity
     @Override
     protected void internetNotAvailable()
     {
-
+        if (sbNoInternet == null)
+        {
+            sbNoInternet = Snackbar.make(clActivityTripDetails, R.string.no_internet, Snackbar.LENGTH_INDEFINITE);
+            sbNoInternet.show();
+        }
     }
 
     @Override
     protected void internetAvailable()
     {
-
+        if (sbNoInternet != null)
+        {
+            if (sbNoInternet.isShown())
+            {
+                sbNoInternet.dismiss();
+                sbNoInternet = null;
+            }
+        }
     }
 
 

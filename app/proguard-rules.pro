@@ -90,3 +90,6 @@
     @com.squareup.otto.Subscribe public *;
     @com.squareup.otto.Produce public *;
 }
+
+#FOR SEARCH VIEW
+-keep class android.support.v7.widget.SearchView { *; }

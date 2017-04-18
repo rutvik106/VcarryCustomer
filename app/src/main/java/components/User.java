@@ -2,6 +2,7 @@ package components;
 
 import javax.inject.Singleton;
 
+import api.API;
 import dagger.Component;
 import fragments.FragmentAccBalance;
 import fragments.FragmentTrips;
@@ -43,5 +44,7 @@ public interface User
     void inject(ActivityTripDetails activityTripDetails);
 
     RealmConfiguration getRealmConfiguration();
+
+    API getAPI();
 
 }

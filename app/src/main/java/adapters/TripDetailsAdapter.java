@@ -5,9 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import models.BookedTrip;
+import apimodels.TripByCustomerId;
 import viewholder.VHSingleTripDetails;
 
 /**
@@ -17,7 +18,7 @@ import viewholder.VHSingleTripDetails;
 public class TripDetailsAdapter extends RecyclerView.Adapter
 {
 
-    private final List<BookedTrip> bookedTripList;
+    private final List<TripByCustomerId> bookedTripList;
 
     private final Context context;
 
@@ -27,9 +28,10 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
         bookedTripList = new ArrayList<>();
     }
 
-    public void addBookedTrip(BookedTrip bookedTrip)
+    public void addBookedTrip(TripByCustomerId bookedTrip)
     {
         bookedTripList.add(0, bookedTrip);
+        Collections.sort(bookedTripList);
         notifyItemInserted(bookedTripList.size());
     }
 

@@ -6,10 +6,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.UnsupportedEncodingException;
 
-import io.fusionbit.vcarrycustomer.Constants;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import models.BookedTrip;
+
+import static io.fusionbit.vcarrycustomer.Constants.TRIP_STATUS_PENDING;
 
 /**
  * Created by rutvik on 11/27/2016 at 3:54 PM.
@@ -19,7 +19,12 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
 {
 
 
-    BookedTrip bookedTrip;
+    //BookedTrip bookedTrip;
+    String bookedFromLocation;
+    String bookedToLocation;
+    String driverDeviceToken;
+    String driverNumber;
+    String customerTripId;
     /**
      * trip_id : 2
      * trip_datetime : 2016-09-07 16:17:18
@@ -133,7 +138,6 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     @SerializedName("to_gujarati_address")
     private String toGujaratiAddress;
     private boolean returnGujaratiAddress;
-
     @SerializedName("vehicle_type")
     private String vehicleType;
     /**
@@ -205,12 +209,35 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     @SerializedName("dimensions")
     private String dimensions;
 
-
     public TripByCustomerId()
     {
     }
 
-    public BookedTrip getBookedTrip()
+    public TripByCustomerId(String customerTripId, String tripFrom, String tripTo, String tripCost, String tripVehicle)
+    {
+        this.customerTripId = customerTripId;
+        this.bookedFromLocation = tripFrom;
+        this.bookedToLocation = tripTo;
+        this.fare = tripCost;
+        this.vehicleType = tripVehicle;
+    }
+
+    public String getBookedFromLocation()
+    {
+        return bookedFromLocation;
+    }
+
+    public String getBookedToLocation()
+    {
+        return bookedToLocation;
+    }
+
+    public String getCustomerTripId()
+    {
+        return customerTripId;
+    }
+
+    /*public BookedTrip getBookedTrip()
     {
         return bookedTrip;
     }
@@ -218,7 +245,7 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     public void setBookedTrip(BookedTrip bookedTrip)
     {
         this.bookedTrip = bookedTrip;
-    }
+    }*/
 
     public boolean isReturnGujaratiAddress()
     {
@@ -406,7 +433,7 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
 
     public String getTripStatus()
     {
-        return tripStatus;
+        return tripStatus == null ? TRIP_STATUS_PENDING : tripStatus;
     }
 
     public void setTripStatus(String tripStatus)
@@ -459,14 +486,24 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     @Override
     public int compareTo(@NonNull TripByCustomerId tripDetails)
     {
+
         int status = Integer.valueOf(tripDetails.getTripStatus());
-        if (status <= Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED))
+        if (status == Integer.valueOf(getTripStatus()))
+        {
+            return 0;
+        } else if (status < Integer.valueOf(getTripStatus()))
         {
             return 1;
         } else
         {
             return -1;
         }
+
+        //Integer.compare(status,Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED));
+
+        /*Date date1 = Utils.convertToDate(tripDetails.getTripDatetime());
+        Date date2 = Utils.convertToDate(getTripDatetime());
+        return date1.compareTo(date2);*/
     }
 
     public String getTripDatetimeDmy()
@@ -768,4 +805,27 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     {
         this.dimensions = dimensions;
     }
+
+
+    public String getDriverDeviceToken()
+    {
+        return driverDeviceToken;
+    }
+
+    public void setDriverDeviceToken(String driverDeviceToken)
+    {
+        this.driverDeviceToken = driverDeviceToken;
+    }
+
+    public String getDriverNumber()
+    {
+        return driverNumber;
+    }
+
+    public void setDriverNumber(String driverNumber)
+    {
+        this.driverNumber = driverNumber;
+    }
+
+
 }

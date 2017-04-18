@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">V-Carry Customer</string>
+    <string name="app_name">V-Carry</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -45,6 +45,8 @@
     <string name="select_destination">ગંતવ્ય</string>
 
     <string name="select_this_location">પસંદ કરો</string>
+    <string name="full_name">પૂરું નામ</string>
+    <string name="contact_no">સંપર્ક નં</string>
     <string name="address_one">સરનામું લાઇન 1</string>
     <string name="address_two">સરનામું લાઇન 2</string>
     <string name="prefix">પૂર્વગ</string>
@@ -108,6 +110,9 @@
     <string name="to_compant_name">To Company Name</string>
     <string name="driver_licence_no">Motorist Licence No</string>
     <string name="vehicel_no">Vehicle No</string>
+    <string name="weight">Weight</string>
+    <string name="dimension">Dimension</string>
+    <string name="trip_not_confirmed">આ સફર પુષ્ટિ કરવામાં આવી નથી</string>
 
 
 </resources>

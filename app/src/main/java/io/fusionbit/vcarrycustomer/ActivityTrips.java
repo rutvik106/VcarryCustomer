@@ -25,7 +25,6 @@ import api.RetrofitCallbacks;
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
 import io.realm.Realm;
-import models.BookedTrip;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -248,20 +247,6 @@ public class ActivityTrips extends BaseActivity
         }
         for (TripByCustomerId trip : trips)
         {
-            final BookedTrip bookedTrip = realm.where(BookedTrip.class)
-                    .equalTo("tripId", trip.getTripId()).findFirst();
-
-            if (bookedTrip != null)
-            {
-                realm.beginTransaction();
-                bookedTrip.setStatus(Integer.valueOf(trip.getTripStatus()));
-                bookedTrip.setTripCost(trip.getFare());
-                trip.setBookedTrip(realm
-                        .copyFromRealm(realm
-                                .copyToRealmOrUpdate(bookedTrip)));
-                realm.commitTransaction();
-            }
-
             adapter.addTrip(trip);
         }
     }

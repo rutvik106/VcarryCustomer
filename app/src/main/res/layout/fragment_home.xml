@@ -39,7 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:text="@string/ongoing_trip"
+                    android:text="@string/active_trips"
                     android:textSize="15sp"
                     android:textStyle="bold"/>
 

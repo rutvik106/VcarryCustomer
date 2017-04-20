@@ -276,6 +276,15 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
 
         switch (model.getTripStatus())
         {
+            case Constants.TRIP_STATUS_PENDING:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.pending_confirmation);
+                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
+                        .getColor(android.R.color.holo_red_light));
+                vh.rlTripRowItem.setBackground(vh.context.getResources()
+                        .getDrawable(R.drawable.trip_card_bg_red));
+                break;
+
             case Constants.TRIP_STATUS_NEW:
                 vh.tvSingleTripStatus.setText(R.string.trip_confirmed);
                 vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
@@ -294,31 +303,13 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                         .getDrawable(R.drawable.trip_card_bg_green));
                 break;
 
-            case Constants.TRIP_STATUS_FINISHED:
-                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
-                vh.tvSingleTripStatus.setText(R.string.trip_finished);
+            case Constants.TRIP_STATUS_LOADING:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
+                vh.tvSingleTripStatus.setText(R.string.driver_allocated);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
-                        .getColor(android.R.color.black));
+                        .getColor(android.R.color.holo_green_light));
                 vh.rlTripRowItem.setBackground(vh.context.getResources()
-                        .getDrawable(R.drawable.trip_card_bg_black));
-                break;
-
-            case Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER:
-                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
-                vh.tvSingleTripStatus.setText(R.string.cancelled_by_you);
-                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
-                        .getColor(android.R.color.holo_red_light));
-                vh.rlTripRowItem.setBackground(vh.context.getResources()
-                        .getDrawable(R.drawable.trip_card_bg_red));
-                break;
-
-            case Constants.TRIP_STATUS_CANCELLED_BY_DRIVER:
-                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
-                vh.tvSingleTripStatus.setText(R.string.cancelled_by_motorist);
-                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
-                        .getColor(android.R.color.holo_red_light));
-                vh.rlTripRowItem.setBackground(vh.context.getResources()
-                        .getDrawable(R.drawable.trip_card_bg_red));
+                        .getDrawable(R.drawable.trip_card_bg_green));
                 break;
 
             case Constants.TRIP_STATUS_TRIP_STARTED:
@@ -330,14 +321,52 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                         .getDrawable(R.drawable.trip_card_bg_green));
                 break;
 
-            case Constants.TRIP_STATUS_PENDING:
+            case Constants.TRIP_STATUS_UNLOADING:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
+                vh.tvSingleTripStatus.setText(R.string.trip_started);
+                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
+                        .getColor(android.R.color.holo_green_light));
+                vh.rlTripRowItem.setBackground(vh.context.getResources()
+                        .getDrawable(R.drawable.trip_card_bg_green));
+                break;
+
+            case Constants.TRIP_STATUS_FINISHED:
                 vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
-                vh.tvSingleTripStatus.setText(R.string.pending_confirmation);
+                vh.tvSingleTripStatus.setText(R.string.trip_finished);
+                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
+                        .getColor(android.R.color.black));
+                vh.rlTripRowItem.setBackground(vh.context.getResources()
+                        .getDrawable(R.drawable.trip_card_bg_black));
+                break;
+
+            case Constants.TRIP_STATUS_CANCELLED_BY_DRIVER:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.cancelled_by_motorist);
                 vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
                         .getColor(android.R.color.holo_red_light));
                 vh.rlTripRowItem.setBackground(vh.context.getResources()
                         .getDrawable(R.drawable.trip_card_bg_red));
                 break;
+
+            case Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.cancelled_by_you);
+                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
+                        .getColor(android.R.color.holo_red_light));
+                vh.rlTripRowItem.setBackground(vh.context.getResources()
+                        .getDrawable(R.drawable.trip_card_bg_red));
+                break;
+
+            case Constants.TRIP_STATUS_CANCELLED_BY_VCARRY:
+                vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
+                vh.tvSingleTripStatus.setText(R.string.canceled_by_vcarry);
+                vh.tvSingleTripStatus.setTextColor(vh.context.getResources()
+                        .getColor(android.R.color.holo_red_light));
+                vh.rlTripRowItem.setBackground(vh.context.getResources()
+                        .getDrawable(R.drawable.trip_card_bg_red));
+                break;
+
+
         }
     }
 

@@ -111,5 +111,7 @@
     <string name="weight">Weight</string>
     <string name="dimension">Dimension</string>
     <string name="trip_not_confirmed">This trip is not Confirmed</string>
+    <string name="active_trips">Active Trips</string>
+    <string name="canceled_by_vcarry">Canceled By V-Carry</string>
 
 </resources>

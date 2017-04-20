@@ -166,13 +166,15 @@ public class API
         call.enqueue(callback);
     }
 
-    public void getTripsByCustomerId(final String customerId,
-                                     final RetrofitCallbacks<List<TripByCustomerId>> callback)
+    public Call<List<TripByCustomerId>> getTripsByCustomerId(final String customerId,
+                                                             final RetrofitCallbacks<List<TripByCustomerId>> callback)
     {
         Call<List<TripByCustomerId>> call = apiService
                 .getTripsByCustomerId("get_trips_by_customer_id", customerId);
 
         call.enqueue(callback);
+
+        return call;
     }
 
     public void getTripSummary(final String customerId,

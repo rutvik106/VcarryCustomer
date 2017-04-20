@@ -1,6 +1,7 @@
 package models;
 
 import apimodels.TripByCustomerId;
+import io.fusionbit.vcarrycustomer.Constants;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -37,6 +38,18 @@ public class BookedTrip extends RealmObject
         this.tripTo = tripTo;
         this.tripFare = tripFare;
         this.vehicleType = vehicleType;
+        tripStatus = Constants.TRIP_STATUS_PENDING;
+    }
+
+    public static TripByCustomerId bakePendingTrip(BookedTrip bookedTrip)
+    {
+        final TripByCustomerId pendingTrip = new TripByCustomerId();
+        pendingTrip.setFare(bookedTrip.getTripFare());
+        pendingTrip.setBookedFromLocation(bookedTrip.getTripFrom());
+        pendingTrip.setBookedToLocation(bookedTrip.getTripTo());
+        pendingTrip.setVehicleType(bookedTrip.getVehicleType());
+        pendingTrip.setStatus(bookedTrip.getTripStatus());
+        return pendingTrip;
     }
 
     public String getCustomerTripId()
@@ -148,5 +161,4 @@ public class BookedTrip extends RealmObject
     {
         return tripDetails;
     }
-
 }

@@ -58,6 +58,7 @@ public class Constants
     public static final String TRIP_STATUS_FINISHED = "6";
     public static final String TRIP_STATUS_CANCELLED_BY_DRIVER = "7";
     public static final String TRIP_STATUS_CANCELLED_BY_CUSTOMER = "8";
+    public static final String TRIP_STATUS_CANCELLED_BY_VCARRY = "9";
 
     public static final String ACCOUNT_TRIP_TYPE = "ACCOUNT_TRIP_TYPE";
 

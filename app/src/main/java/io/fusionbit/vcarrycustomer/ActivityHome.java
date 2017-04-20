@@ -449,7 +449,7 @@ public class ActivityHome extends VCarryActivity
         } else if (id == R.id.nav_accountBalance)
         {
             currentFragment = FragmentAccBalance.newInstance(2);
-            setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
+            setActionBarTitle(getResources().getString(R.string.nav_accountBalance));
             searchMenu.setVisible(false);
         } else if (id == R.id.nav_tripsOnOffer)
         {

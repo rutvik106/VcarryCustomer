@@ -13,6 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dialogs.DateTimePickerDialog;
 import io.fusionbit.vcarrycustomer.ActivityBookTrip;
+import io.fusionbit.vcarrycustomer.ActivityOnGoingTrips;
 import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
 
@@ -30,6 +31,10 @@ public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDat
     LinearLayout llScheduleTrip;
 
     DateTimePickerDialog dateTimePickerDialog;
+    @BindView(R.id.ll_ongoingTrip)
+    LinearLayout llOngoingTrip;
+    @BindView(R.id.ll_tripSummary)
+    LinearLayout llTripSummary;
 
     public static FragmentHome newInstance(int index)
     {
@@ -66,6 +71,15 @@ public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDat
                 dateTimePickerDialog = new DateTimePickerDialog(getActivity(), "SELECT DATE & TIME",
                         FragmentHome.this);
                 dateTimePickerDialog.show();
+            }
+        });
+
+        llOngoingTrip.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                ActivityOnGoingTrips.start(getActivity());
             }
         });
     }

@@ -209,8 +209,6 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     private String weight;
     @SerializedName("dimensions")
     private String dimensions;
-
-
     private double driverLastKnownLat = 0, driverLastKnownLng = 0;
     /**
      * 0 : 1019
@@ -299,11 +297,9 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     @SerializedName("lat_long")
     private String latLong;
     private long driverLocationLastAccess = 0;
-
     public TripByCustomerId()
     {
     }
-
     public TripByCustomerId(String customerTripId, String tripFrom, String tripTo, String tripCost, String tripVehicle)
     {
         this.customerTripId = customerTripId;
@@ -323,9 +319,19 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
         return bookedFromLocation;
     }
 
+    public void setBookedFromLocation(String bookedFromLocation)
+    {
+        this.bookedFromLocation = bookedFromLocation;
+    }
+
     public String getBookedToLocation()
     {
         return bookedToLocation;
+    }
+
+    public void setBookedToLocation(String bookedToLocation)
+    {
+        this.bookedToLocation = bookedToLocation;
     }
 
     public String getCustomerTripId()

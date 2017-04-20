@@ -109,6 +109,8 @@
         </activity>
         <activity android:name=".ActivityTripDetails">
         </activity>
+        <activity android:name=".ActivityOnGoingTrips">
+        </activity>
     </application>
 
 </manifest>

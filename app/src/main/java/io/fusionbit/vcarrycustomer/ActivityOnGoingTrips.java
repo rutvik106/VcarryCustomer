@@ -10,6 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import java.util.List;
 
@@ -44,6 +46,8 @@ public class ActivityOnGoingTrips extends BaseActivity
     @Inject
     API api;
     TripDetailsAdapter adapter;
+    @BindView(R.id.fl_noActiveTrips)
+    FrameLayout flNoActiveTrips;
     private Call<List<TripByCustomerId>> call;
     private RealmResults<TripByCustomerId> tripByCustomerIds;
 
@@ -59,7 +63,7 @@ public class ActivityOnGoingTrips extends BaseActivity
 
         if (getSupportActionBar() != null)
         {
-            getSupportActionBar().setTitle("On Going Trips");
+            getSupportActionBar().setTitle(R.string.active_trips);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -98,6 +102,9 @@ public class ActivityOnGoingTrips extends BaseActivity
         tripByCustomerIds =
                 realm.where(TripByCustomerId.class)
                         .notEqualTo("tripStatus", Constants.TRIP_STATUS_FINISHED)
+                        .notEqualTo("tripStatus", Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER)
+                        .notEqualTo("tripStatus", Constants.TRIP_STATUS_CANCELLED_BY_DRIVER)
+                        .notEqualTo("tripStatus", Constants.TRIP_STATUS_CANCELLED_BY_VCARRY)
                         .findAll();
 
         for (TripByCustomerId trip : tripByCustomerIds)
@@ -120,12 +127,23 @@ public class ActivityOnGoingTrips extends BaseActivity
                     Log.i(TAG, "ADDING TRIP FROM ON CHANGE REALM");
                     adapter.addBookedTrip(trip);
                 }
+
                 Log.i(TAG, "ADAPTER SIZE: " + adapter.getItemCount());
+
+                if (adapter.getItemCount() > 0)
+                {
+                    flNoActiveTrips.setVisibility(View.GONE);
+                }
 
             }
         });
 
         Log.i(TAG, "ADAPTER SIZE: " + adapter.getItemCount());
+
+        if (adapter.getItemCount() > 0)
+        {
+            flNoActiveTrips.setVisibility(View.GONE);
+        }
 
     }
 

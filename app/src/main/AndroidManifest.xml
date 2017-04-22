@@ -105,11 +105,21 @@
             android:name=".ActivityDriverLocation"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ActivityTrips">
+        <activity
+            android:name=".ActivityTrips"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ActivityTripDetails">
+        <activity
+            android:name=".ActivityTripDetails"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ActivityOnGoingTrips">
+        <activity
+            android:name=".ActivityOnGoingTrips"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".ActivityTripSummary"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

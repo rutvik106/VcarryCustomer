@@ -128,7 +128,7 @@ public class NotificationHandler
         {
             try
             {
-                int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
+                String customerTripId = extra.getString("customer_trip_id");
                 int tripIdInt = Integer.parseInt(extra.getString("trip_id"));
 
                 final Realm r = Realm.getInstance(realmConfiguration);
@@ -184,8 +184,8 @@ public class NotificationHandler
                                 }
                             }
                         });
-                Log.i(TAG, "Customer Trip ID: " + customerTripId);
-                showNotification(customerTripId, data.getString("title"), data.getString("message"));
+                Log.i(TAG, "tripIdInt Trip ID: " + tripIdInt);
+                showNotification(tripIdInt, data.getString("title"), data.getString("message"));
             } catch (NumberFormatException e)
             {
                 showNotification(0, data.getString("title"), data.getString("message"));
@@ -202,7 +202,7 @@ public class NotificationHandler
         {
             try
             {
-                final int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
+                final String customerTripId = extra.getString("customer_trip_id");
                 final int tripIdInt = Integer.parseInt(extra.getString("trip_id"));
                 final String driverName = extra.getString("driver_name");
                 final String driverNumber = extra.getString("driver_contact_no");
@@ -260,7 +260,7 @@ public class NotificationHandler
 
 
                 Log.i(TAG, "Customer Trip ID: " + customerTripId);
-                showBigNotification(customerTripId, data.getString("title"), "Motorist " + driverName +
+                showBigNotification(tripIdInt, data.getString("title"), "Motorist " + driverName +
                         "has been allocated to your trip. From " + bookedTrip.getTripFrom() +
                         " To " + bookedTrip.getTripTo());
             } catch (NumberFormatException e)
@@ -280,7 +280,7 @@ public class NotificationHandler
         {
             try
             {
-                final int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
+                final String customerTripId = extra.getString("customer_trip_id");
                 final int tripIdInt = Integer.parseInt(extra.getString("trip_id"));
                 final String tripId = extra.getString("trip_id");
 
@@ -330,7 +330,7 @@ public class NotificationHandler
                         });
 
                 Log.i(TAG, "Customer Trip ID: " + customerTripId);
-                showNotification(customerTripId, data.getString("title"), data.getString("message"));
+                showNotification(tripIdInt, data.getString("title"), data.getString("message"));
             } catch (NumberFormatException e)
             {
                 showNotification(0, data.getString("title"), data.getString("message"));
@@ -347,7 +347,7 @@ public class NotificationHandler
         {
             try
             {
-                final int customerTripId = Integer.parseInt(extra.getString("customer_trip_id"));
+                final String customerTripId = extra.getString("customer_trip_id");
                 final int tripIdInt = Integer.parseInt(extra.getString("trip_id"));
                 final String tripId = extra.getString("trip_id");
 
@@ -397,8 +397,7 @@ public class NotificationHandler
                             }
                         });
 
-                Log.i(TAG, "Customer Trip ID: " + customerTripId);
-                showNotification(customerTripId, data.getString("title"), data.getString("message"));
+                showNotification(tripIdInt, data.getString("title"), data.getString("message"));
             } catch (NumberFormatException e)
             {
                 showNotification(0, data.getString("title"), data.getString("message"));

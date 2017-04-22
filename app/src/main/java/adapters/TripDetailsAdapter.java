@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import apimodels.TripByCustomerId;
+import io.fusionbit.vcarrycustomer.Constants;
 import viewholder.VHSingleTripDetails;
 
 /**
@@ -56,7 +57,15 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
 
     public void clear()
     {
-        bookedTripList.clear();
+        final List<TripByCustomerId> toBeRemoved = new ArrayList<>();
+        for (TripByCustomerId trip : bookedTripList)
+        {
+            if (!trip.getTripStatus().equals(Constants.TRIP_STATUS_PENDING))
+            {
+                toBeRemoved.add(trip);
+            }
+        }
+        bookedTripList.removeAll(toBeRemoved);
         notifyDataSetChanged();
     }
 }

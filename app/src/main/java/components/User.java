@@ -12,6 +12,7 @@ import io.fusionbit.vcarrycustomer.ActivityHome;
 import io.fusionbit.vcarrycustomer.ActivityOnGoingTrips;
 import io.fusionbit.vcarrycustomer.ActivityRegistrationForm;
 import io.fusionbit.vcarrycustomer.ActivityTripDetails;
+import io.fusionbit.vcarrycustomer.ActivityTripSummary;
 import io.fusionbit.vcarrycustomer.ActivityTrips;
 import io.realm.RealmConfiguration;
 import module.ApiModule;
@@ -50,4 +51,5 @@ public interface User
 
     API getAPI();
 
+    void inject(ActivityTripSummary activityTripSummary);
 }

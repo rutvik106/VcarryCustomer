@@ -423,8 +423,11 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                     }
                 };
 
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.CUSTOMER_ID, null);
+
         getFare = api.getFareForVehicleTypeLocations(fromShippingLocationId + "",
-                toShippingLocationId + "", vehicleTypeId + "", onGetFairCallback);
+                toShippingLocationId + "", vehicleTypeId + "", customerId, onGetFairCallback);
 
     }
 

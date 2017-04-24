@@ -63,7 +63,8 @@ public interface ApiInterface
     Call<Integer> getFareForVehicleTypeLocations(@Field("method") String method,
                                                  @Field("from_shipping_id") String fromShippingId,
                                                  @Field("to_shipping_id") String toShippingLocation,
-                                                 @Field("vehicle_type_id") String vehicleTypeId);
+                                                 @Field("vehicle_type_id") String vehicleTypeId,
+                                                 @Field("customer_id") String customerId);
 
     @FormUrlEncoded
     @POST("webservice.php")

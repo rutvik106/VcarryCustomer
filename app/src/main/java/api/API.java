@@ -111,11 +111,12 @@ public class API
     public Call<Integer> getFareForVehicleTypeLocations(final String fromShippingId,
                                                         final String toShippingId,
                                                         final String vehicleTypeId,
+                                                        final String customerId,
                                                         RetrofitCallbacks<Integer> callback)
     {
         Call<Integer> call =
                 apiService.getFareForVehicleTypeLocations("get_fare_for_vehicle_type_locations",
-                        fromShippingId, toShippingId, vehicleTypeId);
+                        fromShippingId, toShippingId, vehicleTypeId, customerId);
 
         call.enqueue(callback);
 

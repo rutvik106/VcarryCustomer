@@ -297,9 +297,85 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     @SerializedName("lat_long")
     private String latLong;
     private long driverLocationLastAccess = 0;
+    /**
+     * 0 : 1108
+     * 1 : 2017-04-27 00:31:02
+     * 2 : 27/04/2017 12:31:02 AM
+     * 3 : 35
+     * 4 : 44
+     * 5 : jeet patel
+     * 6 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
+     * 7 : Rangin Park Soc
+     * 8 :
+     * 9 :
+     * 10 : 2
+     * 11 : Ahmedabad
+     * 12 : 566
+     * 13 : S g highway
+     * 14 : 23.0333222,72.5104536
+     * from_lat_long : 23.0333222,72.5104536
+     * 15 : address 2
+     * 16 : 109, MB Kadri Road, Raikhad, Ahmedabad, Gujarat 380001
+     * 17 :
+     * 18 :
+     * 19 :
+     * 20 : 2
+     * 21 : Ahmedabad
+     * 22 : 570
+     * 23 : Odhav
+     * 24 :
+     * to_lat_long :
+     * 25 : 3
+     * 26 : Pickup Bolero
+     * 27 : null
+     * driver_id : null
+     * 28 : null
+     * driver_name : null
+     * 29 : null
+     * vehicle_reg_no : null
+     * 30 : null
+     * licence_no : null
+     * 31 : 1
+     * 32 : 27
+     * 33 : 27
+     * 34 : 2017-04-27 00:31:05
+     * 35 : 2017-04-27 00:31:05
+     * 36 : 1
+     * 37 : 1664
+     * 38 : New
+     * 39 : Amishi Mehta
+     * 40 : 9409210477
+     * 41 : 201704270000749
+     * 42 :
+     * cancel_desc :
+     * 43 : 0
+     * 44 :
+     * 45 : 1
+     * driver_fare : 1
+     * 46 : null
+     * driver_image : null
+     * 47 : 9824143009
+     * from_contact_no : 9824143009
+     * 48 : 9558883184
+     * to_contact_no : 9558883184
+     */
+
+    @SerializedName("from_lat_long")
+    private String fromLatLong;
+    @SerializedName("to_lat_long")
+    private String toLatLong;
+    @SerializedName("driver_image")
+    private String driverImage;
+    @SerializedName("from_contact_no")
+    private String fromContactNo;
+    @SerializedName("to_contact_no")
+    private String toContactNo;
+
+
     public TripByCustomerId()
     {
     }
+
     public TripByCustomerId(String customerTripId, String tripFrom, String tripTo, String tripCost, String tripVehicle)
     {
         this.customerTripId = customerTripId;
@@ -1061,5 +1137,55 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     public void setLatLong(String latLong)
     {
         this.latLong = latLong;
+    }
+
+    public String getFromLatLong()
+    {
+        return fromLatLong;
+    }
+
+    public void setFromLatLong(String fromLatLong)
+    {
+        this.fromLatLong = fromLatLong;
+    }
+
+    public String getToLatLong()
+    {
+        return toLatLong;
+    }
+
+    public void setToLatLong(String toLatLong)
+    {
+        this.toLatLong = toLatLong;
+    }
+
+    public String getDriverImage()
+    {
+        return driverImage;
+    }
+
+    public void setDriverImage(String driverImage)
+    {
+        this.driverImage = driverImage;
+    }
+
+    public String getFromContactNo()
+    {
+        return fromContactNo;
+    }
+
+    public void setFromContactNo(String fromContactNo)
+    {
+        this.fromContactNo = fromContactNo;
+    }
+
+    public String getToContactNo()
+    {
+        return toContactNo;
+    }
+
+    public void setToContactNo(String toContactNo)
+    {
+        this.toContactNo = toContactNo;
     }
 }

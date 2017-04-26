@@ -94,7 +94,7 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private void getTripsFromRealm()
     {
-        adapter.clear();
+        adapter.clearAll();
 
         bookedTripRealmResults =
                 realm.where(TripByCustomerId.class).findAll();

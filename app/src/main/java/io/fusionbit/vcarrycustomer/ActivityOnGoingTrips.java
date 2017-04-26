@@ -99,6 +99,22 @@ public class ActivityOnGoingTrips extends BaseActivity
             adapter.addBookedTrip(BookedTrip.bakePendingTrip(bookedTrip));
         }
 
+        bookedTrips.addChangeListener(new RealmChangeListener<RealmResults<BookedTrip>>()
+        {
+            @Override
+            public void onChange(RealmResults<BookedTrip> element)
+            {
+                Log.i(TAG, "BOOKED TRIP ON CHANGED REALM");
+                if (element.isEmpty())
+                {
+                    adapter.clearPendingTrips();
+                } else
+                {
+                    Log.i(TAG, "BOOKED TRIP CHANGE SIZE: " + element.size());
+                }
+            }
+        });
+
         tripByCustomerIds =
                 realm.where(TripByCustomerId.class)
                         .notEqualTo("tripStatus", Constants.TRIP_STATUS_FINISHED)
@@ -118,7 +134,22 @@ public class ActivityOnGoingTrips extends BaseActivity
             @Override
             public void onChange(RealmResults<TripByCustomerId> element)
             {
-                adapter.clear();
+
+                adapter.clearAll();
+
+                final RealmResults<BookedTrip> bookedTrips =
+                        realm.where(BookedTrip.class)
+                                .equalTo("tripStatus", Constants.TRIP_STATUS_PENDING)
+                                .findAll();
+
+
+                for (BookedTrip bookedTrip : bookedTrips)
+                {
+                    Log.i(TAG, "REALM TRIP STATUS: " + bookedTrip.getTripStatus());
+                    adapter.addBookedTrip(BookedTrip.bakePendingTrip(bookedTrip));
+                }
+
+
                 Log.i(TAG, "tripByCustomerIds SIZE: " + tripByCustomerIds.size());
                 Log.i(TAG, "element SIZE: " + element.size());
                 for (TripByCustomerId trip : element)
@@ -133,6 +164,9 @@ public class ActivityOnGoingTrips extends BaseActivity
                 if (adapter.getItemCount() > 0)
                 {
                     flNoActiveTrips.setVisibility(View.GONE);
+                } else
+                {
+                    flNoActiveTrips.setVisibility(View.VISIBLE);
                 }
 
             }

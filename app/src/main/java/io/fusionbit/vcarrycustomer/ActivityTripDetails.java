@@ -211,6 +211,13 @@ public class ActivityTripDetails extends BaseActivity
                     !tripDetails.getVehicleRegNo().isEmpty() ? tripDetails.getVehicleRegNo() : "NA" : "NA");
             tvTripDriverLicenceNo.setText(tripDetails.getLicenceNo() != null ?
                     !tripDetails.getLicenceNo().isEmpty() ? tripDetails.getLicenceNo() : "NA" : "NA");
+            if (tripDetails.getDriverImage() != null)
+            {
+                Glide.with(this)
+                        .load(tripDetails.getDriverImage())
+                        .bitmapTransform(new CropCircleTransformation(this))
+                        .into(ivDriverPhoto);
+            }
         } else
         {
             llTripStartedDetails.setVisibility(View.GONE);
@@ -246,7 +253,6 @@ public class ActivityTripDetails extends BaseActivity
 
         tvTripFare.setText(tripDetails.getFare() != null ? !tripDetails.getFare().isEmpty() ?
                 getString(R.string.rs) + " " + tripDetails.getFare() : "NA" : "NA");
-
 
     }
 
@@ -288,5 +294,12 @@ public class ActivityTripDetails extends BaseActivity
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        tripDetails.removeChangeListeners();
+        super.onDestroy();
     }
 }

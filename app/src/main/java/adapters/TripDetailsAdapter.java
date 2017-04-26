@@ -68,4 +68,24 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
         bookedTripList.removeAll(toBeRemoved);
         notifyDataSetChanged();
     }
+
+    public void clearPendingTrips()
+    {
+        final List<TripByCustomerId> toBeRemoved = new ArrayList<>();
+        for (TripByCustomerId trip : bookedTripList)
+        {
+            if (trip.getTripStatus().equals(Constants.TRIP_STATUS_PENDING))
+            {
+                toBeRemoved.add(trip);
+            }
+        }
+        bookedTripList.removeAll(toBeRemoved);
+        notifyDataSetChanged();
+    }
+
+    public void clearAll()
+    {
+        bookedTripList.clear();
+        notifyDataSetChanged();
+    }
 }

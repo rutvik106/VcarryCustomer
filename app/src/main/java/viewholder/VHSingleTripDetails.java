@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
@@ -22,6 +25,7 @@ import io.fusionbit.vcarrycustomer.ActivityTripDetails;
 import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by rutvik on 1/26/2017 at 10:44 AM.
@@ -60,6 +64,9 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
     @BindView(R.id.ll_singleTripDriverDetailsContainer)
     LinearLayout llSingleTripDriverDetailsContainer;
 
+    @BindView(R.id.iv_driverImage)
+    ImageView ivDriverImage;
+
     @BindView(R.id.rl_tripRowItem)
     RelativeLayout rlTripRowItem;
 
@@ -69,11 +76,16 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
     @BindView(R.id.ll_tripNumberContainer)
     LinearLayout llTripNumberContainer;
 
-    public VHSingleTripDetails(final Context context, View itemView)
+    OnDriverPhotoClickListener onDriverPhotoClickListener;
+
+    public VHSingleTripDetails(final Context context, View itemView,
+                               final OnDriverPhotoClickListener onDriverPhotoClickListener)
     {
         super(itemView);
         ButterKnife.bind(this, itemView);
         this.context = context;
+
+        this.onDriverPhotoClickListener = onDriverPhotoClickListener;
 
         ibSingleTripDriverLocation.setOnClickListener(new View.OnClickListener()
         {
@@ -132,12 +144,25 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             }
         });
 
+        ivDriverImage.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if (onDriverPhotoClickListener != null)
+                {
+                    onDriverPhotoClickListener.openImageInFullView(ivDriverImage, tripDetails.getDriverImage());
+                }
+            }
+        });
+
     }
 
-    public static VHSingleTripDetails create(final Context context, final ViewGroup parent)
+    public static VHSingleTripDetails create(final Context context, final ViewGroup parent,
+                                             final OnDriverPhotoClickListener onDriverPhotoClickListener)
     {
         return new VHSingleTripDetails(context, LayoutInflater.from(context)
-                .inflate(R.layout.single_trip_row_item, parent, false));
+                .inflate(R.layout.single_trip_row_item, parent, false), onDriverPhotoClickListener);
     }
 
     /*public static void bind(final VHSingleTripDetails vh, BookedTrip model)
@@ -301,6 +326,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                         .getColor(android.R.color.holo_green_light));
                 vh.rlTripRowItem.setBackground(vh.context.getResources()
                         .getDrawable(R.drawable.trip_card_bg_green));
+                vh.loadDriverImage();
                 break;
 
             case Constants.TRIP_STATUS_LOADING:
@@ -310,6 +336,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                         .getColor(android.R.color.holo_green_light));
                 vh.rlTripRowItem.setBackground(vh.context.getResources()
                         .getDrawable(R.drawable.trip_card_bg_green));
+                vh.loadDriverImage();
                 break;
 
             case Constants.TRIP_STATUS_TRIP_STARTED:
@@ -319,6 +346,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                         .getColor(android.R.color.holo_green_light));
                 vh.rlTripRowItem.setBackground(vh.context.getResources()
                         .getDrawable(R.drawable.trip_card_bg_green));
+                vh.loadDriverImage();
                 break;
 
             case Constants.TRIP_STATUS_UNLOADING:
@@ -328,6 +356,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                         .getColor(android.R.color.holo_green_light));
                 vh.rlTripRowItem.setBackground(vh.context.getResources()
                         .getDrawable(R.drawable.trip_card_bg_green));
+                vh.loadDriverImage();
                 break;
 
             case Constants.TRIP_STATUS_FINISHED:
@@ -370,5 +399,18 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
         }
     }
 
+    private void loadDriverImage()
+    {
+        Glide.with(context)
+                .load(tripDetails.getDriverImage() != null ?
+                        tripDetails.getDriverImage() : R.drawable.driver_photo_placeholder)
+                .bitmapTransform(new CropCircleTransformation(context))
+                .into(ivDriverImage);
+    }
+
+    public interface OnDriverPhotoClickListener
+    {
+        void openImageInFullView(View view, String image);
+    }
 
 }

@@ -23,9 +23,12 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
 
     private final Context context;
 
-    public TripDetailsAdapter(Context context)
+    private VHSingleTripDetails.OnDriverPhotoClickListener onDriverPhotoClickListener;
+
+    public TripDetailsAdapter(Context context, VHSingleTripDetails.OnDriverPhotoClickListener onDriverPhotoClickListener)
     {
         this.context = context;
+        this.onDriverPhotoClickListener = onDriverPhotoClickListener;
         bookedTripList = new ArrayList<>();
     }
 
@@ -39,7 +42,7 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        return VHSingleTripDetails.create(context, parent);
+        return VHSingleTripDetails.create(context, parent, onDriverPhotoClickListener);
     }
 
     @Override

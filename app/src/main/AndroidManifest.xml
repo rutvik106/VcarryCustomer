@@ -121,6 +121,8 @@
             android:name=".ActivityTripSummary"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".ActivityImageView">
+        </activity>
     </application>
 
 </manifest>

@@ -192,7 +192,8 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                 };
 
         final String today = Utils.getDate(Calendar.getInstance().getTime());
-        final Date month = Utils.addDays(Calendar.getInstance().getTime(), -30);
+        final Date month = Utils.addDays(Calendar.getInstance().getTime(),
+                -1 * (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1));
         final String monthInString = Utils.getDate(month);
 
         api.getAccountSummary(customerId, monthInString, today, onGetAccountSummary);
@@ -304,7 +305,8 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                 };
 
         final String today = Utils.getDate(Calendar.getInstance().getTime());
-        final Date month = Utils.addDays(Calendar.getInstance().getTime(), -30);
+        final Date month = Utils.addDays(Calendar.getInstance().getTime(),
+                -1 * (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1));
         final String monthInString = Utils.getDate(month);
 
         api.getTripSummary(customerId, tripStatus, monthInString, today, null,

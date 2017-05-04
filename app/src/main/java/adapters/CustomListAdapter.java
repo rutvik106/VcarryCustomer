@@ -21,7 +21,7 @@ import io.fusionbit.vcarrycustomer.R;
  * Created by rutvik on 1/9/2017 at 3:55 PM.
  */
 
-public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter<T>
+public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter
 {
 
 

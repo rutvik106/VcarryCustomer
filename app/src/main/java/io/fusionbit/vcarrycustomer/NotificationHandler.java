@@ -132,14 +132,15 @@ public class NotificationHandler
                 int tripIdInt = Integer.parseInt(extra.getString("trip_id"));
 
                 final Realm r = Realm.getInstance(realmConfiguration);
-                final BookedTrip bookedTrip = r.copyFromRealm(r.where(BookedTrip.class)
-                        .equalTo("customerTripId", extra.getString("customer_trip_id")).findFirst());
+
+                final BookedTrip b = r.where(BookedTrip.class)
+                        .equalTo("customerTripId", extra.getString("customer_trip_id")).findFirst();
 
                 final String tripId = extra.getString("trip_id");
                 final String fare = extra.getString("fare");
                 final String tripNo = extra.getString("trip_no");
 
-                if (bookedTrip == null)
+                if (b == null)
                 {
                     showNotification(tripIdInt, data.getString("title"), data.getString("message"));
                     api.getTripDetailsByTripId(extra.getString("trip_id"),
@@ -161,6 +162,7 @@ public class NotificationHandler
                     return;
                 }
 
+                final BookedTrip bookedTrip = r.copyFromRealm(b);
 
                 api.getTripDetailsByTripId(extra.getString("trip_id"),
                         new RetrofitCallbacks<TripByCustomerId>()
@@ -210,9 +212,11 @@ public class NotificationHandler
                 final String driverDeviceToken = extra.getString("driver_device_token");
 
                 final Realm r = Realm.getInstance(realmConfiguration);
-                final BookedTrip bookedTrip = r.copyFromRealm(r.where(BookedTrip.class)
-                        .equalTo("customerTripId", extra.getString("customer_trip_id")).findFirst());
-                if (bookedTrip == null)
+
+                final BookedTrip b = r.where(BookedTrip.class)
+                        .equalTo("customerTripId", extra.getString("customer_trip_id")).findFirst();
+
+                if (b == null)
                 {
                     showNotification(tripIdInt, data.getString("title"), data.getString("message"));
                     api.getTripDetailsByTripId(tripId,
@@ -233,6 +237,8 @@ public class NotificationHandler
                             });
                     return;
                 }
+
+                final BookedTrip bookedTrip = r.copyFromRealm(b);
 
                 api.getTripDetailsByTripId(tripId,
                         new RetrofitCallbacks<TripByCustomerId>()
@@ -285,9 +291,11 @@ public class NotificationHandler
                 final String tripId = extra.getString("trip_id");
 
                 final Realm r = Realm.getInstance(realmConfiguration);
-                final BookedTrip bookedTrip = r.copyFromRealm(r.where(BookedTrip.class)
-                        .equalTo("customerTripId", customerTripId).findFirst());
-                if (bookedTrip == null)
+
+                final BookedTrip b = r.where(BookedTrip.class)
+                        .equalTo("customerTripId", customerTripId).findFirst();
+
+                if (b == null)
                 {
                     showNotification(tripIdInt, data.getString("title"), data.getString("message"));
                     api.getTripDetailsByTripId(tripId,
@@ -308,6 +316,8 @@ public class NotificationHandler
                             });
                     return;
                 }
+
+                final BookedTrip bookedTrip = r.copyFromRealm(b);
 
                 api.getTripDetailsByTripId(tripId,
                         new RetrofitCallbacks<TripByCustomerId>()
@@ -352,10 +362,10 @@ public class NotificationHandler
                 final String tripId = extra.getString("trip_id");
 
                 final Realm r = Realm.getInstance(realmConfiguration);
-                final BookedTrip bookedTrip = r.copyFromRealm(r.where(BookedTrip.class)
-                        .equalTo("customerTripId", customerTripId).findFirst());
+                final BookedTrip b = r.where(BookedTrip.class)
+                        .equalTo("customerTripId", customerTripId).findFirst();
 
-                if (bookedTrip == null)
+                if (b == null)
                 {
                     showNotification(tripIdInt, data.getString("title"), data.getString("message"));
                     api.getTripDetailsByTripId(tripId,
@@ -376,6 +386,8 @@ public class NotificationHandler
                             });
                     return;
                 }
+
+                final BookedTrip bookedTrip = r.copyFromRealm(b);
 
                 api.getTripDetailsByTripId(tripId,
                         new RetrofitCallbacks<TripByCustomerId>()
@@ -420,6 +432,8 @@ public class NotificationHandler
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.logo_small)
                 .setContentTitle(title)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(message))
                 .setContentText(message)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

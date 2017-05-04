@@ -1,7 +1,5 @@
 package apimodels;
 
-import io.realm.RealmObject;
-
 /**
  * Created by rutvik on 1/9/2017 at 4:11 PM.
  */
@@ -9,8 +7,8 @@ import io.realm.RealmObject;
 public interface SpinnerModel
 {
 
-     int getId();
+    public int getId();
 
-     String getLabel();
+    public String getLabel();
 
 }

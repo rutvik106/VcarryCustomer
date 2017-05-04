@@ -39,41 +39,36 @@ import retrofit2.Response;
 public class ActivityRegistrationForm extends VCarryActivity implements Validator.ValidationListener
 {
 
+    final List<Area> areaList = new ArrayList<Area>();
+    final List<City> cityList = new ArrayList<City>();
     @BindView(R.id.spin_prefix)
     AppCompatSpinner spinPrefix;
-
     @NotEmpty
     @BindView(R.id.et_fullName)
     EditText etFullName;
-
     @BindView(R.id.spin_city)
     AppCompatSpinner spinCity;
-
     @BindView(R.id.spin_area)
     AppCompatSpinner spinArea;
-
     @NotEmpty
     @BindView(R.id.et_addressLineOne)
     EditText etAddressLineOne;
-
     @BindView(R.id.et_addressLineTwo)
     EditText etAddressLineTwo;
-
     @NotEmpty
     @BindView(R.id.et_contact)
     EditText etContact;
-
     @BindView(R.id.btn_registerNewCustomer)
     Button btnRegisterNewCustomer;
-
     String selectedPrefixId = null;
     String selectedCityId = null;
     String selectedAreaId = null;
-
     Validator validator;
-
     @Inject
     API api;
+    private Call<List<City>> gettingCityList;
+    private Call<List<Area>> gettingAreaList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -118,12 +113,19 @@ public class ActivityRegistrationForm extends VCarryActivity implements Validato
             }
         });
 
+        getCityList();
+
+    }
+
+    private void setupSpinnerListeners()
+    {
         spinCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
             {
                 selectedCityId = ((SpinnerModel) adapterView.getSelectedItem()).getId() + "";
+                //Toast.makeText(ActivityRegistrationForm.this, "ID: " + selectedAreaId, Toast.LENGTH_SHORT).show();
                 getAreaList(selectedCityId);
             }
 
@@ -148,42 +150,67 @@ public class ActivityRegistrationForm extends VCarryActivity implements Validato
 
             }
         });
-
-        getCityList();
-
     }
 
     private void getAreaList(String cityId)
     {
-        api.getAreas(cityId, new RetrofitCallbacks<List<Area>>()
+        if (gettingAreaList != null)
         {
-            @Override
-            public void onResponse(Call<List<Area>> call, Response<List<Area>> response)
-            {
-                super.onResponse(call, response);
-                spinArea.setAdapter(new CustomListAdapter<>(ActivityRegistrationForm.this,
-                        android.R.layout.simple_list_item_1, response.body()));
-            }
-        });
+            gettingAreaList.cancel();
+        }
+        gettingAreaList =
+                api.getAreas(cityId, new RetrofitCallbacks<List<Area>>()
+                {
+                    @Override
+                    public void onResponse(Call<List<Area>> call, Response<List<Area>> response)
+                    {
+                        super.onResponse(call, response);
+                        areaList.clear();
+                        for (Area area : response.body())
+                        {
+                            if (area instanceof Area)
+                            {
+                                areaList.add(area);
+                            }
+                        }
+                        spinArea.setAdapter(new CustomListAdapter<>(ActivityRegistrationForm.this,
+                                android.R.layout.simple_spinner_item, areaList));
+                    }
+                });
     }
 
     private void getCityList()
     {
-
-        api.getCities(new RetrofitCallbacks<List<City>>()
+        if (gettingCityList != null)
         {
-
-            @Override
-            public void onResponse(Call<List<City>> call, Response<List<City>> response)
-            {
-                super.onResponse(call, response);
-                if (response.isSuccessful())
+            gettingCityList.cancel();
+        }
+        gettingCityList =
+                api.getCities(new RetrofitCallbacks<List<City>>()
                 {
-                    spinCity.setAdapter(new CustomListAdapter<>(ActivityRegistrationForm.this,
-                            android.R.layout.simple_spinner_item, response.body()));
-                }
-            }
-        });
+
+                    @Override
+                    public void onResponse(Call<List<City>> call, Response<List<City>> response)
+                    {
+                        super.onResponse(call, response);
+
+                        if (response.isSuccessful())
+                        {
+                            for (City city : response.body())
+                            {
+                                if (city instanceof City)
+                                {
+                                    cityList.add(city);
+                                }
+                            }
+                            spinCity.setAdapter(new CustomListAdapter<>(ActivityRegistrationForm.this,
+                                    android.R.layout.simple_spinner_item, cityList));
+
+                            setupSpinnerListeners();
+
+                        }
+                    }
+                });
 
     }
 

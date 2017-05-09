@@ -11,7 +11,9 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.AppCompatRatingBar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
@@ -27,6 +29,7 @@ import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
+import dialogs.DriverRatingDialog;
 import extra.LocaleHelper;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -80,6 +83,8 @@ public class ActivityTripDetails extends BaseActivity
     CoordinatorLayout clActivityTripDetails;
 
     Snackbar sbNoInternet;
+    @BindView(R.id.rb_rateDriver)
+    AppCompatRatingBar rbRateDriver;
 
     // Hold a reference to the current animator,
     // so that it can be canceled mid-way.
@@ -247,6 +252,18 @@ public class ActivityTripDetails extends BaseActivity
                         .bitmapTransform(new CropCircleTransformation(this))
                         .into(ivDriverPhoto);
             }
+
+            rbRateDriver.setOnTouchListener(new View.OnTouchListener()
+            {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent)
+                {
+                    new DriverRatingDialog(ActivityTripDetails.this, tripDetails.getDriverId(),
+                            tripDetails.getDriverName(), tripDetails.getDriverImage()).show();
+                    return false;
+                }
+            });
+
         } else
         {
             llTripStartedDetails.setVisibility(View.GONE);

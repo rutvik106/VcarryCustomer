@@ -106,19 +106,14 @@ public class FromLocation extends RealmObject implements SpinnerModel
         return shippingAddress + ", " + getAreaName() + ", " + getCityName();
     }
 
-    public String getCompanyName()
-    {
-        return shippingName;
-    }
-
-    public String getCompanyName()
-    {
-        return shippingName;
-    }
-
     public void setShippingAddress(String shippingAddress)
     {
         this.shippingAddress = shippingAddress;
+    }
+
+    public String getCompanyName()
+    {
+        return shippingName;
     }
 
     public String getShippingAddress2()

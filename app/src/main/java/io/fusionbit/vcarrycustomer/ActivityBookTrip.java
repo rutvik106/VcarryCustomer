@@ -60,6 +60,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 {
 
     final Handler mHandler = new Handler();
+    final List<FromLocation> shippingLocationList = new ArrayList<>();
     @BindView(R.id.btn_requestTrip)
     Button btnRequestTrip;
     @BindView(R.id.iv_selectFrom)
@@ -101,6 +102,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     TextView tvTripSchedule;
     @BindView(R.id.ll_tripScheduleDetails)
     LinearLayout llTripScheduleDetails;
+    int selectedFromLocation, selectedToLocation;
     private String fromShippingLocationId = null;
     private String toShippingLocationId = null;
     private int vehicleTypeId = 0;
@@ -449,7 +451,6 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
     private void setShippingLocationListAdapter()
     {
-        final List<FromLocation> shippingLocationList = new ArrayList<>();
         shippingLocationList.addAll(realm.copyFromRealm(realmFromLocations));
 
         if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu"))
@@ -587,6 +588,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                 actFrom.setText(model.getLabel());
                 fromShippingLocationId = model.getId() + "";
                 getFair();
+                selectedFromLocation = i;
                 fromPlace = null;
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
                 actTo.requestFocus();
@@ -602,6 +604,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                 actTo.setText(model.getLabel());
                 toShippingLocationId = model.getId() + "";
                 getFair();
+                selectedToLocation = i;
                 toPlace = null;
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
             }
@@ -772,7 +775,9 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                             {
                                 realm.beginTransaction();
                                 realm.copyToRealmOrUpdate(new BookedTrip(response.body().toString(),
-                                        actFrom.getText().toString(), actTo.getText().toString(),
+                                        shippingLocationList.get(selectedFromLocation)
+                                                .getCompanyName(), shippingLocationList.get(selectedToLocation)
+                                        .getCompanyName(),
                                         tripFare, vehicleName));
                                 realm.commitTransaction();
 

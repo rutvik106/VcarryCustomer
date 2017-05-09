@@ -270,7 +270,7 @@ public class ActivityTripDetails extends BaseActivity
         } else
         {
             tvTripFromCompanyName.setText(tripDetails.getFromCompanyName());
-            tvTripToCompanyName.setText(tripDetails.getToCompantName());
+            tvTripToCompanyName.setText(tripDetails.getToCompanyName());
         }
 
         tvTripWeight.setText(tripDetails.getWeight() != null ? !tripDetails.getWeight().isEmpty()

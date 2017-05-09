@@ -271,8 +271,10 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             vh.tvSingleTripTo.setText(model.getBookedToLocation());
         } else
         {
-            vh.tvSingleTripFrom.setText(model.getFromShippingLocation());
-            vh.tvSingleTripTo.setText(model.getToShippingLocation());
+            /*vh.tvSingleTripFrom.setText(model.getFromShippingLocation());
+            vh.tvSingleTripTo.setText(model.getToShippingLocation());*/
+            vh.tvSingleTripFrom.setText(model.getFromCompanyName());
+            vh.tvSingleTripTo.setText(model.getToCompanyName());
         }
 
         vh.tvSingleTripVehicle.setText(model.getVehicleType());

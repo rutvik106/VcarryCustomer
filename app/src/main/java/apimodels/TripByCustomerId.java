@@ -896,7 +896,7 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
         return fromShippingLocation;
     }
 
-    public String getToCompantName()
+    public String getToCompanyName()
     {
         return toShippingLocation;
     }
@@ -921,11 +921,11 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
                 return toGujaratiName;
             } else
             {
-                return getToCompantName();
+                return getToCompanyName();
             }
         } else
         {
-            return getToCompantName();
+            return getToCompanyName();
         }
     }
 

@@ -3,6 +3,7 @@ package api;
 import java.util.List;
 
 import apimodels.AccountSummary;
+import apimodels.AccountSummaryNew;
 import apimodels.Area;
 import apimodels.City;
 import apimodels.FromLocation;
@@ -121,5 +122,10 @@ public interface ApiInterface
                                          @Field("driver_id") String driverId,
                                          @Field("customer_id") String customerId,
                                          @Field("no") String tripNo);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<AccountSummaryNew> getAccountSummary(@Field("method") String method,
+                                              @Field("customer_id") String customerId);
 
 }

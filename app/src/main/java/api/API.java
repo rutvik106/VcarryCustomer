@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import apimodels.AccountSummary;
+import apimodels.AccountSummaryNew;
 import apimodels.Area;
 import apimodels.City;
 import apimodels.FromLocation;
@@ -221,6 +222,15 @@ public class API
 
         call.enqueue(callback);
 
+        return call;
+    }
+
+    public Call<AccountSummaryNew> getAccountSummary(final String customerId,
+                                                     final RetrofitCallbacks<AccountSummaryNew> callback)
+    {
+        Call<AccountSummaryNew> call = apiService.getAccountSummary("get_full_customer_balance_summary",
+                customerId);
+        call.enqueue(callback);
         return call;
     }
 

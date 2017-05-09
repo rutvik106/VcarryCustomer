@@ -31,6 +31,17 @@ public class AccountSummary
     private float receivable = 0;
     private float receivedToday = 0, receivableToday = 0, receivedThisMonth = 0, receivableThisMonth = 0,
             totalReceived = 0, totalReceivable = 0;
+    private AccountSummaryNew accountSummaryNew = new AccountSummaryNew();
+
+    public AccountSummaryNew getAccountSummaryNew()
+    {
+        return accountSummaryNew;
+    }
+
+    public void setAccountSummaryNew(AccountSummaryNew accountSummaryNew)
+    {
+        this.accountSummaryNew = accountSummaryNew;
+    }
 
     public boolean isBusyLoading()
     {

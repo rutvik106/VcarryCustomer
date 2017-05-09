@@ -99,11 +99,17 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
                 accountSummary.getTodayIncompleteTrips());
 
         vh.tvAccountPaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getToday().getPaid());
+
+        vh.tvAccountUnpaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getToday().getPayable());
+
+        /*vh.tvAccountPaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 accountSummary.getReceivedToday());
 
         vh.tvAccountUnpaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 (accountSummary.getReceivableToday() != 0 ?
-                        accountSummary.getReceivableToday() - accountSummary.getReceivedToday() : 0));
+                        accountSummary.getReceivableToday() - accountSummary.getReceivedToday() : 0));*/
         ////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -115,11 +121,17 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
                 accountSummary.getThisMonthCompletedTrips());
 
         vh.tvAccountPaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getThisMonth().getPaid());
+
+        vh.tvAccountUnpaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getThisMonth().getPayable());
+
+        /*vh.tvAccountPaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 accountSummary.getReceivedThisMonth());
 
         vh.tvAccountUnpaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 (accountSummary.getReceivableThisMonth() != 0 ?
-                        accountSummary.getReceivableThisMonth() - accountSummary.getReceivedThisMonth() : 0));
+                        accountSummary.getReceivableThisMonth() - accountSummary.getReceivedThisMonth() : 0));*/
         ////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -131,11 +143,17 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
                 accountSummary.getTotalIncompleteTrips());
 
         vh.tvAccountPaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getAllTime().getPaid());
+
+        vh.tvAccountUnpaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getAllTime().getPayable());
+
+        /*vh.tvAccountPaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 accountSummary.getTotalReceived());
 
         vh.tvAccountUnpaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 (accountSummary.getTotalReceivable() != 0 ?
-                        accountSummary.getTotalReceivable() - accountSummary.getTotalReceived() : 0));
+                        accountSummary.getTotalReceivable() - accountSummary.getTotalReceived() : 0));*/
         ////////////////////////////////////////////////////////////////////////////////////////////
 
     }

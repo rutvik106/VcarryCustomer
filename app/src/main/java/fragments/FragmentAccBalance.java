@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +22,7 @@ import adapters.AccountBalanceAdapter;
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.AccountSummary;
+import apimodels.AccountSummaryNew;
 import apimodels.TripByCustomerId;
 import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.Constants;
@@ -102,13 +104,61 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     .getString(Constants.CUSTOMER_ID, null);
             if (customerId != null)
             {
-                getAccountBalanceForToday();
+                //getAccountBalanceForToday();
 
-                getTripForToday();
-                getTripForThisMonth();
-                getTotalTrips();
+                getAccountBalanceSummary(customerId);
+
             }
         }
+    }
+
+    private void getAccountBalanceSummary(String customerId)
+    {
+        api.getAccountSummary(customerId,
+                new RetrofitCallbacks<AccountSummaryNew>()
+                {
+
+                    @Override
+                    public void onResponse(Call<AccountSummaryNew> call, Response<AccountSummaryNew> response)
+                    {
+                        super.onResponse(call, response);
+                        if (busyLoadingData)
+                        {
+                            if (swipeRefreshLayout.isRefreshing())
+                            {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                            busyLoadingData = false;
+                        }
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() instanceof AccountSummaryNew)
+                            {
+                                accountSummary.setAccountSummaryNew(response.body());
+                                adapter.notifyDataSetChanged();
+                                getTripForToday();
+                            }
+                        } else
+                        {
+                            Toast.makeText(getContext(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<AccountSummaryNew> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        Toast.makeText(getContext(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                        if (busyLoadingData)
+                        {
+                            if (swipeRefreshLayout.isRefreshing())
+                            {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                            busyLoadingData = false;
+                        }
+                    }
+                });
     }
 
     private void getAccountBalanceForToday()
@@ -268,6 +318,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                                     accountSummary.getTripToday().add(tripsByDriverMail);
                                 }
                                 adapter.notifyDataSetChanged();
+                                getTripForThisMonth();
                             }
                         }
                     }
@@ -299,6 +350,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                                     accountSummary.getTripThisMonth().add(tripsByDriverMail);
                                 }
                                 adapter.notifyDataSetChanged();
+                                getTotalTrips();
                             }
                         }
                     }

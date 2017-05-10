@@ -392,6 +392,17 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tv_tripChargesDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="Fare Details"
+                android:textColor="@android:color/holo_blue_dark"/>
+
+
         </LinearLayout>
 
     </ScrollView>

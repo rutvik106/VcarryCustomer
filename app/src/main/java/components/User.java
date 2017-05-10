@@ -8,6 +8,7 @@ import fragments.FragmentAccBalance;
 import fragments.FragmentTrips;
 import io.fusionbit.vcarrycustomer.ActivityBookTrip;
 import io.fusionbit.vcarrycustomer.ActivityDriverLocation;
+import io.fusionbit.vcarrycustomer.ActivityFareDetails;
 import io.fusionbit.vcarrycustomer.ActivityHome;
 import io.fusionbit.vcarrycustomer.ActivityOnGoingTrips;
 import io.fusionbit.vcarrycustomer.ActivityRegistrationForm;
@@ -52,4 +53,6 @@ public interface User
     API getAPI();
 
     void inject(ActivityTripSummary activityTripSummary);
+
+    void inject(ActivityFareDetails activityFareDetails);
 }

@@ -123,6 +123,10 @@
         </activity>
         <activity android:name=".ActivityImageView">
         </activity>
+        <activity
+            android:name=".ActivityFareDetails"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

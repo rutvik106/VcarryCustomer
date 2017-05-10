@@ -117,6 +117,9 @@
     <string name="canceled_by_vcarry">Canceled By V-Carry</string>
     <string name="rate_motorist">Rate Motorist</string>
     <string name="submit">Submit</string>
+    <string name="item">ITEM</string>
+    <string name="your_share">YOUR SHARE</string>
+    <string name="trip_charges_details">Trip Charges Details</string>
 
 
 </resources>

@@ -76,7 +76,7 @@
     <string name="return_trip">Return</string>
 
     <string name="paid">Paid</string>
-    <string name="unpaid">Unpaid</string>
+    <string name="unpaid">Payable</string>
     <string name="today">Today</string>
     <string name="this_month">This Month</string>
     <string name="total">Total</string>
@@ -115,5 +115,8 @@
     <string name="canceled_by_vcarry">Canceled By V-Carry</string>
     <string name="rate_motorist">Rate Motorist</string>
     <string name="submit">Submit</string>
+    <string name="item">ITEM</string>
+    <string name="your_share">YOUR SHARE</string>
+    <string name="trip_charges_details">Trip Charges Details</string>
 
 </resources>

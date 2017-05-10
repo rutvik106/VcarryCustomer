@@ -11,6 +11,7 @@ import apimodels.AccountSummaryNew;
 import apimodels.Area;
 import apimodels.City;
 import apimodels.FromLocation;
+import apimodels.TripBreakUpDetails;
 import apimodels.TripByCustomerId;
 import apimodels.Vehicle;
 import io.fusionbit.vcarrycustomer.App;
@@ -230,6 +231,15 @@ public class API
     {
         Call<AccountSummaryNew> call = apiService.getAccountSummary("get_full_customer_balance_summary",
                 customerId);
+        call.enqueue(callback);
+        return call;
+    }
+
+    public Call<List<TripBreakUpDetails>> getTripBreakUpDetails(final String tripId,
+                                                                final RetrofitCallbacks<List<TripBreakUpDetails>> callback)
+    {
+        Call<List<TripBreakUpDetails>> call = apiService.getTripBreakUpDetails("getTripBreakUpForTripIdCustomer",
+                tripId);
         call.enqueue(callback);
         return call;
     }

@@ -7,6 +7,7 @@ import apimodels.AccountSummaryNew;
 import apimodels.Area;
 import apimodels.City;
 import apimodels.FromLocation;
+import apimodels.TripBreakUpDetails;
 import apimodels.TripByCustomerId;
 import apimodels.Vehicle;
 import okhttp3.ResponseBody;
@@ -127,5 +128,10 @@ public interface ApiInterface
     @POST("webservice.php")
     Call<AccountSummaryNew> getAccountSummary(@Field("method") String method,
                                               @Field("customer_id") String customerId);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<TripBreakUpDetails>> getTripBreakUpDetails(@Field("method") String method,
+                                                         @Field("trip_id") String tripId);
 
 }

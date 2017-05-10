@@ -29,6 +29,7 @@ import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
+import butterknife.OnClick;
 import dialogs.DriverRatingDialog;
 import extra.LocaleHelper;
 import io.realm.Realm;
@@ -85,6 +86,8 @@ public class ActivityTripDetails extends BaseActivity
     Snackbar sbNoInternet;
     @BindView(R.id.rb_rateDriver)
     AppCompatRatingBar rbRateDriver;
+    @BindView(R.id.tv_tripChargesDetails)
+    TextView tvTripChargesDetails;
 
     // Hold a reference to the current animator,
     // so that it can be canceled mid-way.
@@ -106,6 +109,17 @@ public class ActivityTripDetails extends BaseActivity
     {
         Intent i = new Intent(context, ActivityTripDetails.class);
         i.putExtra(Constants.INTENT_EXTRA_TRIP_NUMBER, tripNumber);
+
+        final TripByCustomerId trip = Realm.getDefaultInstance()
+                .where(TripByCustomerId.class)
+                .equalTo("tripNo", tripNumber)
+                .findFirst();
+
+        if (trip != null)
+        {
+            i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, trip.getTripId());
+        }
+
         context.startActivity(i);
     }
 
@@ -509,5 +523,11 @@ public class ActivityTripDetails extends BaseActivity
                 mCurrentAnimator = set;
             }
         });
+    }
+
+    @OnClick(R.id.tv_tripChargesDetails)
+    public void onClick()
+    {
+        ActivityFareDetails.start(this, tripId);
     }
 }

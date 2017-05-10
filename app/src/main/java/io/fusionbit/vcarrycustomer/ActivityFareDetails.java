@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -73,6 +74,12 @@ public class ActivityFareDetails extends BaseActivity
                     super.onResponse(call, response);
                     if (response.isSuccessful())
                     {
+                        if (response.body() == null)
+                        {
+                            Toast.makeText(ActivityFareDetails.this, R.string.fare_details_not_found, Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
                         llChargesItemContainerView.setVisibility(View.VISIBLE);
 
                         for (int i = 0; i < response.body().size(); i++)

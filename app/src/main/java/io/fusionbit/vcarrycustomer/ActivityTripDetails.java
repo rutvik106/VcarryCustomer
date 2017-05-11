@@ -29,7 +29,6 @@ import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
-import butterknife.OnClick;
 import dialogs.DriverRatingDialog;
 import extra.LocaleHelper;
 import io.realm.Realm;
@@ -241,6 +240,22 @@ public class ActivityTripDetails extends BaseActivity
     private void bindDataToUi()
     {
         tvTripStatus.setText(tripDetails.getStatus());
+
+        if (tripDetails.getStatus().equals(Constants.TRIP_STATUS_FINISHED))
+        {
+            tvTripChargesDetails.setVisibility(View.VISIBLE);
+            tvTripChargesDetails.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    ActivityFareDetails.start(ActivityTripDetails.this, tripId);
+                }
+            });
+        } else
+        {
+            tvTripChargesDetails.setVisibility(View.VISIBLE);
+        }
 
         if (tripDetails.getTripNo() != null)
         {
@@ -525,9 +540,4 @@ public class ActivityTripDetails extends BaseActivity
         });
     }
 
-    @OnClick(R.id.tv_tripChargesDetails)
-    public void onClick()
-    {
-        ActivityFareDetails.start(this, tripId);
-    }
 }

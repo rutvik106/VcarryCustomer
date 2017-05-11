@@ -105,22 +105,22 @@
     <string name="request_from">પ્રારંભ સ્થળ</string>
     <string name="request_to">ગંતવ્ય</string>
     <string name="trip_status">ટ્રીપ ની સ્થિતિ</string>
-    <string name="fare">Trip Fare</string>
-    <string name="request_from_company_name">From Company Name</string>
-    <string name="to_compant_name">To Company Name</string>
-    <string name="driver_licence_no">Motorist Licence No</string>
-    <string name="vehicel_no">Vehicle No</string>
-    <string name="weight">Weight</string>
-    <string name="dimension">Dimension</string>
+    <string name="fare">ટ્રીપ ફેર</string>
+    <string name="request_from_company_name">કંપનીનું નામ</string>
+    <string name="to_compant_name">કંપનીનું નામ</string>
+    <string name="driver_licence_no">મોટરિસ્ટ્રેટર લાઇસન્સ નં</string>
+    <string name="vehicel_no">વાહન નં</string>
+    <string name="weight">વજન</string>
+    <string name="dimension">પરિમાણ</string>
     <string name="trip_not_confirmed">આ સફર પુષ્ટિ કરવામાં આવી નથી</string>
-    <string name="active_trips">Active Trips</string>
-    <string name="canceled_by_vcarry">Canceled By V-Carry</string>
-    <string name="rate_motorist">Rate Motorist</string>
-    <string name="submit">Submit</string>
-    <string name="item">ITEM</string>
-    <string name="your_share">YOUR SHARE</string>
-    <string name="trip_charges_details">Trip Charges Details</string>
-    <string name="fare_details_not_found">Trip fare details not found</string>
+    <string name="active_trips">સક્રિય સફરો</string>
+    <string name="canceled_by_vcarry">V-Carry દ્વારા રદ કરાયું</string>
+    <string name="rate_motorist">રેટ મોટરિસ્ટ</string>
+    <string name="submit">સબમિટ કરો</string>
+    <string name="item">આઇટમ</string>
+    <string name="your_share">તમારા શેર</string>
+    <string name="trip_charges_details">ટ્રીપનો ચાર્જિસ વિગતો</string>
+    <string name="fare_details_not_found">ટ્રીપની વિગતો મળી નથી</string>
 
 
 </resources>

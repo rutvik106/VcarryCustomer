@@ -120,7 +120,12 @@
     <string name="item">આઇટમ</string>
     <string name="your_share">તમારા શેર</string>
     <string name="trip_charges_details">ટ્રીપનો ચાર્જિસ વિગતો</string>
-    <string name="fare_details_not_found">ટ્રીપની વિગતો મળી નથી</string>
+    <string name="fare_details_not_found">ઇન્વૉઇસ હજી સુધી જનરેટ થયું નથી, પછીથી ફરી પ્રયાસ કરો.</string>
+    <string name="cannot_track_multi_trip_drivers">તમે મલ્ટી ટ્રીપ મોટરિસ્ટને ટ્રૅક કરી શકતા નથી</string>
+    <string name="feature_coming_soon">સુવિધા જલ્દી ઉપલબ્ધ થશે</string>
+    <string name="pending_trips">બાકી ટ્રીપ</string>
+    <string name="finished_trips">પૂર્ણ થયેલી ટ્રીપ</string>
+    <string name="canceled_by_you">તમે દ્વારા રદ</string>
 
 
 </resources>

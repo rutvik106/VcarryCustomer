@@ -25,6 +25,7 @@ public class BookedTrip extends RealmObject
     String tripNo;
     String tripStatus;
     TripByCustomerId tripDetails;
+    long countDownTime;
 
     public BookedTrip()
     {
@@ -49,7 +50,18 @@ public class BookedTrip extends RealmObject
         pendingTrip.setBookedToLocation(bookedTrip.getTripTo());
         pendingTrip.setVehicleType(bookedTrip.getVehicleType());
         pendingTrip.setStatus(bookedTrip.getTripStatus());
+        pendingTrip.setCountDownTime(bookedTrip.getCountDownTime());
         return pendingTrip;
+    }
+
+    public long getCountDownTime()
+    {
+        return countDownTime;
+    }
+
+    public void setCountDownTime(long countDownTime)
+    {
+        this.countDownTime = countDownTime;
     }
 
     public String getCustomerTripId()

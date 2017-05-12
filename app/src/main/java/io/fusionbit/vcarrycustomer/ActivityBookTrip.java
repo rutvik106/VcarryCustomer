@@ -774,11 +774,13 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                             if (response.body() > 0)
                             {
                                 realm.beginTransaction();
-                                realm.copyToRealmOrUpdate(new BookedTrip(response.body().toString(),
+                                final BookedTrip bt = new BookedTrip(response.body().toString(),
                                         shippingLocationList.get(selectedFromLocation)
                                                 .getCompanyName(), shippingLocationList.get(selectedToLocation)
                                         .getCompanyName(),
-                                        tripFare, vehicleName));
+                                        tripFare, vehicleName);
+                                bt.setCountDownTime(System.currentTimeMillis() + (1000 * 60 * 30));
+                                realm.copyToRealmOrUpdate(bt);
                                 realm.commitTransaction();
 
                                 Utils.showSimpleAlertBox(ActivityBookTrip.this,

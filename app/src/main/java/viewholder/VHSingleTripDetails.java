@@ -3,6 +3,7 @@ package viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,6 +78,8 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
     LinearLayout llTripNumberContainer;
 
     OnDriverPhotoClickListener onDriverPhotoClickListener;
+    @BindView(R.id.tv_countDownTime)
+    TextView tvCountDownTime;
 
     public VHSingleTripDetails(final Context context, View itemView,
                                final OnDriverPhotoClickListener onDriverPhotoClickListener)
@@ -301,6 +304,14 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             vh.tvTripNumber.setText("");
         }
 
+        if (model.getTripStatus().equals(Constants.TRIP_STATUS_PENDING))
+        {
+            vh.tvCountDownTime.setVisibility(View.VISIBLE);
+        } else
+        {
+            vh.tvCountDownTime.setVisibility(View.GONE);
+        }
+
         switch (model.getTripStatus())
         {
             case Constants.TRIP_STATUS_PENDING:
@@ -310,6 +321,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                         .getColor(android.R.color.holo_red_light));
                 vh.rlTripRowItem.setBackground(vh.context.getResources()
                         .getDrawable(R.drawable.trip_card_bg_red));
+                vh.startCountDown();
                 break;
 
             case Constants.TRIP_STATUS_NEW:
@@ -398,6 +410,35 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                 break;
 
 
+        }
+    }
+
+    private void startCountDown()
+    {
+        if (tripDetails.getCountDownTime() > System.currentTimeMillis())
+        {
+            Log.i(TAG, "STARTING COUNT DOWN TIMER");
+            new CountDownTimer(tripDetails.getCountDownTime() - System.currentTimeMillis(), 1000)
+            {
+                @Override
+                public void onTick(long millisUntilFinished)
+                {
+                    Log.i(TAG, "ON COUNT DOWN TIMER TICK: " + millisUntilFinished);
+                    final long seconds = (millisUntilFinished / 1000) % 60;
+                    long minutes = ((millisUntilFinished - seconds) / 1000) / 60;
+                    tvCountDownTime.setText(minutes + " Min " + seconds + " Sec");
+                }
+
+                @Override
+                public void onFinish()
+                {
+                    tvCountDownTime.setVisibility(View.GONE);
+                }
+            }.start();
+        } else
+        {
+            Log.i(TAG, "NOT STARTING COUNT DOWN TIMER");
+            tvCountDownTime.setVisibility(View.GONE);
         }
     }
 

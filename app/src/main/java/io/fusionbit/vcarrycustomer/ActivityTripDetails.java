@@ -241,7 +241,7 @@ public class ActivityTripDetails extends BaseActivity
     {
         tvTripStatus.setText(tripDetails.getStatus());
 
-        if (tripDetails.getStatus().equals(Constants.TRIP_STATUS_FINISHED))
+        if (tripDetails.getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
         {
             tvTripChargesDetails.setVisibility(View.VISIBLE);
             tvTripChargesDetails.setOnClickListener(new View.OnClickListener()
@@ -249,12 +249,12 @@ public class ActivityTripDetails extends BaseActivity
                 @Override
                 public void onClick(View view)
                 {
-                    ActivityFareDetails.start(ActivityTripDetails.this, tripId);
+                    ActivityFareDetails.start(ActivityTripDetails.this, tripDetails.getTripId());
                 }
             });
         } else
         {
-            tvTripChargesDetails.setVisibility(View.VISIBLE);
+            tvTripChargesDetails.setVisibility(View.GONE);
         }
 
         if (tripDetails.getTripNo() != null)

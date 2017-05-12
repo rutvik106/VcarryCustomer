@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -28,6 +30,8 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
     FragmentDriverLocation fragmentDriverLocation;
     @Inject
     Realm realm;
+    @BindView(R.id.activity_driver_location)
+    CoordinatorLayout activityDriverLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -110,6 +114,8 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
             final LatLng latLng = new LatLng(Double.parseDouble(intent.getStringExtra("LAT")),
                     Double.parseDouble(intent.getStringExtra("LNG")));
 
+            final int driverType = intent.getIntExtra("DRIVER_TYPE", -1);
+
             runOnUiThread(new Runnable()
             {
                 @Override
@@ -119,6 +125,13 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
                     {
                         getSupportActionBar().setTitle(getString(R.string.driver_location));
                     }
+
+                    if (driverType == 1)
+                    {
+                        Snackbar.make(activityDriverLocation, R.string.cannot_track_multi_trip_drivers, Snackbar.LENGTH_INDEFINITE)
+                                .show();
+                    }
+
                 }
             });
 

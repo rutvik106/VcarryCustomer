@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import apimodels.TripByCustomerId;
@@ -36,6 +37,14 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
     {
         bookedTripList.add(0, bookedTrip);
         Collections.sort(bookedTripList);
+        Collections.sort(bookedTripList, new Comparator<TripByCustomerId>()
+        {
+            @Override
+            public int compare(TripByCustomerId tripsByDriverMail, TripByCustomerId t1)
+            {
+                return t1.getTripDatetime().compareTo(tripsByDriverMail.getTripDatetime());
+            }
+        });
         notifyItemInserted(bookedTripList.size());
     }
 

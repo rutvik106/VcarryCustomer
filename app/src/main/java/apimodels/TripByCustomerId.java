@@ -26,6 +26,7 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     String driverDeviceToken;
     String driverNumber;
     String customerTripId;
+    long countDownTime;
     /**
      * trip_id : 2
      * trip_datetime : 2016-09-07 16:17:18
@@ -370,12 +371,9 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     private String fromContactNo;
     @SerializedName("to_contact_no")
     private String toContactNo;
-
-
     public TripByCustomerId()
     {
     }
-
     public TripByCustomerId(String customerTripId, String tripFrom, String tripTo, String tripCost, String tripVehicle)
     {
         this.customerTripId = customerTripId;
@@ -383,6 +381,16 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
         this.bookedToLocation = tripTo;
         this.fare = tripCost;
         this.vehicleType = tripVehicle;
+    }
+
+    public long getCountDownTime()
+    {
+        return countDownTime;
+    }
+
+    public void setCountDownTime(long countDownTime)
+    {
+        this.countDownTime = countDownTime;
     }
 
     public long getDriverLocationLastAccess()
@@ -997,7 +1005,7 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
 
     public String getDriverNumber()
     {
-        return driverNumber;
+        return driverNumber == null ? contactNo1 : driverNumber;
     }
 
     public void setDriverNumber(String driverNumber)

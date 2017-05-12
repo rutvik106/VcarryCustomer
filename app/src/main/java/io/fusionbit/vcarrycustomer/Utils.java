@@ -3,6 +3,7 @@ package io.fusionbit.vcarrycustomer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
@@ -79,6 +80,34 @@ public class Utils
         }
 
         return date;
+    }
+
+    public static void ShareApp(final Activity activity)
+    {
+        try
+        {
+            int applicationNameId = activity.getApplicationInfo().labelRes;
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, activity.getString(applicationNameId));
+            String sAux = "\nLet me recommend you this application\n\n";
+            sAux = sAux + "https://play.google.com/store/apps/details?id=" + activity.getPackageName() + "\n\n";
+            i.putExtra(Intent.EXTRA_TEXT, sAux);
+            activity.startActivity(Intent.createChooser(i, "choose one"));
+        } catch (Exception e)
+        {
+            //e.toString();
+        }
+    }
+
+    public static void sendFeedback(Activity activity)
+    {
+        Intent Email = new Intent(Intent.ACTION_SEND);
+        Email.setType("text/email");
+        Email.putExtra(Intent.EXTRA_EMAIL, new String[]{"sales@vcarry.co.in"});
+        Email.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+        Email.putExtra(Intent.EXTRA_TEXT, "Dear ...," + "");
+        activity.startActivity(Intent.createChooser(Email, "Send Feedback:"));
     }
 
 }

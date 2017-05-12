@@ -114,6 +114,7 @@ public class NotificationHandler
             final Intent locationDetails = new Intent(Constants.NotificationType.DRIVER_CURRENT_LOCATION);
             locationDetails.putExtra("LAT", extra.getString("lat"));
             locationDetails.putExtra("LNG", extra.getString("lng"));
+            locationDetails.putExtra("DRIVER_TYPE", extra.getInt("driver_type"));
             context.sendBroadcast(locationDetails);
         } catch (JSONException e)
         {

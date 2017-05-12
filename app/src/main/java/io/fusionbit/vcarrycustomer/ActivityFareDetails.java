@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,8 @@ public class ActivityFareDetails extends BaseActivity
     API api;
 
     double totalCharges = 0;
+    @BindView(R.id.pb_loadingFareDetails)
+    ProgressBar pbLoadingFareDetails;
 
     public static void start(Context context, String tripId)
     {
@@ -72,11 +75,13 @@ public class ActivityFareDetails extends BaseActivity
                 public void onResponse(Call<List<TripBreakUpDetails>> call, Response<List<TripBreakUpDetails>> response)
                 {
                     super.onResponse(call, response);
+                    pbLoadingFareDetails.setVisibility(View.GONE);
                     if (response.isSuccessful())
                     {
                         if (response.body() == null)
                         {
-                            Toast.makeText(ActivityFareDetails.this, R.string.fare_details_not_found, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ActivityFareDetails.this, R.string.fare_details_not_found,
+                                    Toast.LENGTH_SHORT).show();
                             finish();
                             return;
                         }
@@ -114,9 +119,18 @@ public class ActivityFareDetails extends BaseActivity
 
                     }
                 }
+
+                @Override
+                public void onFailure(Call<List<TripBreakUpDetails>> call, Throwable t)
+                {
+                    super.onFailure(call, t);
+                    Toast.makeText(ActivityFareDetails.this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                    pbLoadingFareDetails.setVisibility(View.GONE);
+                }
             });
         } else
         {
+            Toast.makeText(this, "Trip Id NULL", Toast.LENGTH_SHORT).show();
             finish();
         }
 

@@ -453,13 +453,13 @@ public class ActivityHome extends VCarryActivity
             searchMenu.setVisible(false);
         } else if (id == R.id.nav_tripsOnOffer)
         {
-
+            Toast.makeText(this, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_share)
         {
-
+            Utils.ShareApp(this);
         } else if (id == R.id.nav_sendFeedback)
         {
-
+            Utils.sendFeedback(this);
         }
 
         if (currentFragment != null)

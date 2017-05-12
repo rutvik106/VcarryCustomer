@@ -3,7 +3,6 @@ package io.fusionbit.vcarrycustomer;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -29,11 +28,11 @@ public class ActivityTripSummary extends BaseActivity
     TextView tvCanceledByDriverTrips;
     @BindView(R.id.tv_canceledByVcarryTrips)
     TextView tvCanceledByVcarryTrips;
-    @BindView(R.id.cl_activityTripSummary)
-    CoordinatorLayout clActivityTripSummary;
 
     @Inject
     Realm realm;
+    @BindView(R.id.tv_activeTrips)
+    TextView tvActiveTrips;
 
     public static void start(Context context)
     {
@@ -53,6 +52,8 @@ public class ActivityTripSummary extends BaseActivity
 
         ((App) getApplication()).getUser().inject(this);
 
+        getActiveTripsFromRealm();
+
         getPendingTripsFromRealm();
 
         getFinishedTripsFromRealm();
@@ -65,6 +66,20 @@ public class ActivityTripSummary extends BaseActivity
 
     }
 
+    private void getActiveTripsFromRealm()
+    {
+        final int count = realm.where(TripByCustomerId.class)
+                .equalTo("tripStatus", Constants.TRIP_STATUS_TRIP_STARTED)
+                .equalTo("tripStatus", Constants.TRIP_STATUS_DRIVER_ALLOCATED)
+                .equalTo("tripStatus", Constants.TRIP_STATUS_LOADING)
+                .equalTo("tripStatus", Constants.TRIP_STATUS_UNLOADING)
+                .equalTo("tripStatus", Constants.TRIP_STATUS_NEW)
+                .findAll()
+                .size();
+
+        tvActiveTrips.setText(count + "");
+    }
+
     private void getCancelledByVcarryTripsFromRealm()
     {
         final int count = realm.where(TripByCustomerId.class)
@@ -72,7 +87,7 @@ public class ActivityTripSummary extends BaseActivity
                 .findAll()
                 .size();
 
-        tvCanceledByVcarryTrips.append(count + "");
+        tvCanceledByVcarryTrips.setText(count + "");
     }
 
     private void getCancelledByCustomerTripsFromRealm()
@@ -82,7 +97,7 @@ public class ActivityTripSummary extends BaseActivity
                 .findAll()
                 .size();
 
-        tvCanceledByCustomerTrips.append(count + "");
+        tvCanceledByCustomerTrips.setText(count + "");
     }
 
     private void getCanceledByDriverTripsFromRealm()
@@ -92,7 +107,7 @@ public class ActivityTripSummary extends BaseActivity
                 .findAll()
                 .size();
 
-        tvCanceledByDriverTrips.append(count + "");
+        tvCanceledByDriverTrips.setText(count + "");
     }
 
     private void getFinishedTripsFromRealm()
@@ -102,7 +117,7 @@ public class ActivityTripSummary extends BaseActivity
                 .findAll()
                 .size();
 
-        tvFinishedTrips.append(count + "");
+        tvFinishedTrips.setText(count + "");
     }
 
     private void getPendingTripsFromRealm()
@@ -112,7 +127,7 @@ public class ActivityTripSummary extends BaseActivity
                 .findAll()
                 .size();
 
-        tvPendingTrips.append(count + "");
+        tvPendingTrips.setText(count + "");
     }
 
     @Override
@@ -124,24 +139,24 @@ public class ActivityTripSummary extends BaseActivity
     @Override
     protected void internetNotAvailable()
     {
-        if (sbNoInternet == null)
+        /*if (sbNoInternet == null)
         {
             sbNoInternet = Snackbar.make(clActivityTripSummary, R.string.no_internet, Snackbar.LENGTH_INDEFINITE);
             sbNoInternet.show();
-        }
+        }*/
     }
 
     @Override
     protected void internetAvailable()
     {
-        if (sbNoInternet != null)
+        /*if (sbNoInternet != null)
         {
             if (sbNoInternet.isShown())
             {
                 sbNoInternet.dismiss();
                 sbNoInternet = null;
             }
-        }
+        }*/
     }
 
     @Override

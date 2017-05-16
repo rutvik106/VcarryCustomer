@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -40,7 +41,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import viewholder.VHSingleTripDetails;
 
-public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDetails.OnDriverPhotoClickListener
+public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDetails.OnDriverPhotoClickListener, SwipeRefreshLayout.OnRefreshListener
 {
     public static final String TAG = App.APP_TAG + ActivityOnGoingTrips.class.getSimpleName();
 
@@ -59,6 +60,8 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
     TripDetailsAdapter adapter;
     @BindView(R.id.fl_noActiveTrips)
     FrameLayout flNoActiveTrips;
+    @BindView(R.id.srl_refreshActiveTrips)
+    SwipeRefreshLayout srlRefreshActiveTrips;
     private Call<List<TripByCustomerId>> call;
     private RealmResults<TripByCustomerId> tripByCustomerIds;
 
@@ -92,6 +95,8 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
         mShortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
+
+        srlRefreshActiveTrips.setOnRefreshListener(this);
 
         setupRecyclerView();
 
@@ -207,6 +212,7 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
     private void getTripsFromAPI()
     {
+        srlRefreshActiveTrips.setRefreshing(true);
         final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CUSTOMER_ID, null);
         if (customerId != null)
@@ -221,6 +227,10 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                 public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
                 {
                     super.onResponse(call, response);
+                    if (srlRefreshActiveTrips.isRefreshing())
+                    {
+                        srlRefreshActiveTrips.setRefreshing(false);
+                    }
                     if (response.isSuccessful())
                     {
                         realm.beginTransaction();
@@ -229,6 +239,16 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                             realm.copyToRealmOrUpdate(trip);
                         }
                         realm.commitTransaction();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<TripByCustomerId>> call, Throwable t)
+                {
+                    super.onFailure(call, t);
+                    if (srlRefreshActiveTrips.isRefreshing())
+                    {
+                        srlRefreshActiveTrips.setRefreshing(false);
                     }
                 }
             });
@@ -461,5 +481,13 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
         {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onRefresh()
+    {
+        getOnGoingTripsFromRealm();
+
+        getTripsFromAPI();
     }
 }

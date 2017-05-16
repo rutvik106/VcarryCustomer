@@ -121,7 +121,7 @@ public class ActivityHome extends VCarryActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setActionBarTitle("V-Carry");
+        setActionBarTitle(getString(R.string.app_name));
 
         ((App) getApplication()).getUser().inject(this);
 
@@ -228,7 +228,7 @@ public class ActivityHome extends VCarryActivity
 
                                 updateFcmDeviceToken(String.valueOf(response.body()));
 
-                                Toast.makeText(ActivityHome.this, "You are a registered Customer.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ActivityHome.this, R.string.registered_customer, Toast.LENGTH_SHORT).show();
 
                             } else
                             {

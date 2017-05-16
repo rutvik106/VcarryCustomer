@@ -128,5 +128,7 @@
     <string name="discount">DISCOUNT</string>
     <string name="net_amount">NET AMOUNT</string>
     <string name="fare_details">Fare Details</string>
+    <string name="registered_customer">You are a registered Customer.</string>
+    <string name="no_active_trips_found">No Active Trips</string>
 
 </resources>

@@ -70,9 +70,13 @@ public class ActivityTripSummary extends BaseActivity
     {
         final int count = realm.where(TripByCustomerId.class)
                 .equalTo("tripStatus", Constants.TRIP_STATUS_TRIP_STARTED)
+                .or()
                 .equalTo("tripStatus", Constants.TRIP_STATUS_DRIVER_ALLOCATED)
+                .or()
                 .equalTo("tripStatus", Constants.TRIP_STATUS_LOADING)
+                .or()
                 .equalTo("tripStatus", Constants.TRIP_STATUS_UNLOADING)
+                .or()
                 .equalTo("tripStatus", Constants.TRIP_STATUS_NEW)
                 .findAll()
                 .size();

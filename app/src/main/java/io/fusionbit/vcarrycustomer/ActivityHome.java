@@ -448,7 +448,7 @@ public class ActivityHome extends VCarryActivity
         if (id == R.id.nav_home)
         {
             currentFragment = FragmentHome.newInstance(0);
-            setActionBarTitle("V-Carry");
+            setActionBarTitle(getString(R.string.app_name));
             searchMenu.setVisible(false);
         } else if (id == R.id.nav_trips)
         {

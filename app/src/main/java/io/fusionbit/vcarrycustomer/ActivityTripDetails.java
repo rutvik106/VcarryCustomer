@@ -239,7 +239,70 @@ public class ActivityTripDetails extends BaseActivity
 
     private void bindDataToUi()
     {
-        tvTripStatus.setText(tripDetails.getStatus());
+        switch (tripDetails.getTripStatus())
+        {
+            case Constants.TRIP_STATUS_PENDING:
+                tvTripStatus.setText(R.string.pending_confirmation);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.holo_red_light));
+                break;
+
+            case Constants.TRIP_STATUS_NEW:
+                tvTripStatus.setText(R.string.trip_confirmed);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.holo_orange_light));
+                break;
+
+            case Constants.TRIP_STATUS_DRIVER_ALLOCATED:
+                tvTripStatus.setText(R.string.driver_allocated);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.holo_green_light));
+                break;
+
+            case Constants.TRIP_STATUS_LOADING:
+                tvTripStatus.setText(R.string.driver_allocated);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.holo_green_light));
+                break;
+
+            case Constants.TRIP_STATUS_TRIP_STARTED:
+                tvTripStatus.setText(R.string.trip_started);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.holo_green_light));
+                break;
+
+            case Constants.TRIP_STATUS_UNLOADING:
+                tvTripStatus.setText(R.string.trip_started);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.holo_green_light));
+                break;
+
+            case Constants.TRIP_STATUS_FINISHED:
+                tvTripStatus.setText(R.string.trip_finished);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.black));
+                break;
+
+            case Constants.TRIP_STATUS_CANCELLED_BY_DRIVER:
+                tvTripStatus.setText(R.string.cancelled_by_motorist);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.holo_red_light));
+                break;
+
+            case Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER:
+                tvTripStatus.setText(R.string.cancelled_by_you);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.holo_red_light));
+                break;
+
+            case Constants.TRIP_STATUS_CANCELLED_BY_VCARRY:
+                tvTripStatus.setText(R.string.canceled_by_vcarry);
+                tvTripStatus.setTextColor(getResources()
+                        .getColor(android.R.color.holo_red_light));
+                break;
+
+
+        }
 
         if (tripDetails.getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
         {

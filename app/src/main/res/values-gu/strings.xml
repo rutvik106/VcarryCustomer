@@ -126,6 +126,10 @@
     <string name="pending_trips">બાકી ટ્રીપ</string>
     <string name="finished_trips">પૂર્ણ થયેલી ટ્રીપ</string>
     <string name="canceled_by_you">તમે દ્વારા રદ</string>
+    <string name="amount">રકમ</string>
+    <string name="discount">ડિસ્કાઉન્ટ</string>
+    <string name="net_amount">નેટ રકમ</string>
+    <string name="fare_details">ભાડું વિગતો</string>
 
 
 </resources>

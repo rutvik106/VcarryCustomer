@@ -399,7 +399,7 @@
                 android:layout_marginLeft="10dp"
                 android:paddingBottom="5dp"
                 android:paddingTop="5dp"
-                android:text="Fare Details"
+                android:text="@string/fare_details"
                 android:textColor="@android:color/holo_blue_dark"/>
 
 

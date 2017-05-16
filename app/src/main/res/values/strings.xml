@@ -124,5 +124,9 @@
     <string name="pending_trips">Pending Trips</string>
     <string name="finished_trips">Finished Trips</string>
     <string name="canceled_by_you">Canceled By You</string>
+    <string name="amount">AMOUNT</string>
+    <string name="discount">DISCOUNT</string>
+    <string name="net_amount">NET AMOUNT</string>
+    <string name="fare_details">Fare Details</string>
 
 </resources>

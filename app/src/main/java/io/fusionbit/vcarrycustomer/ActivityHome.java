@@ -210,7 +210,12 @@ public class ActivityHome extends VCarryActivity
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
-                            System.out.println(response.body());
+                            if (response.body() == null)
+                            {
+                                Toast.makeText(ActivityHome.this, "customer ID not found: " +
+                                        "Response NULL", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
 
                             if (response.body() > 0)
                             {
@@ -223,6 +228,8 @@ public class ActivityHome extends VCarryActivity
 
                                 updateFcmDeviceToken(String.valueOf(response.body()));
 
+                                Toast.makeText(ActivityHome.this, "You are a registered Customer.", Toast.LENGTH_SHORT).show();
+
                             } else
                             {
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
@@ -233,25 +240,27 @@ public class ActivityHome extends VCarryActivity
                                 Toast.makeText(ActivityHome.this,
                                         "Something went wrong, Please try again later",
                                         Toast.LENGTH_SHORT).show();
+
+                                Toast.makeText(ActivityHome.this, "customer ID not found: "
+                                        + response.body(), Toast.LENGTH_SHORT).show();
+
+                                promptForRegistration();
                             }
+                        } else
+                        {
+                            Toast.makeText(ActivityHome.this, "cannot get customer ID API RESPONSE" +
+                                    " not OK: " + response.code(), Toast.LENGTH_SHORT).show();
+
+                            promptForRegistration();
                         }
-                        promptForRegistration();
                     }
 
                     @Override
                     public void onFailure(Call<Integer> call, Throwable t)
                     {
                         super.onFailure(call, t);
-                        final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
-                                .getString(Constants.CUSTOMER_ID, null);
-                        ActivityHome.this.customerId = customerId;
-                        if (customerId == null)
-                        {
-                            promptForRegistration();
-                        } else
-                        {
-                            Toast.makeText(ActivityHome.this, "please check network connection", Toast.LENGTH_SHORT).show();
-                        }
+                        promptForRegistration();
+                        Toast.makeText(ActivityHome.this, "cannot get customer ID RETROFIT ON FAILURE", Toast.LENGTH_SHORT).show();
                     }
                 };
 
@@ -494,9 +503,9 @@ public class ActivityHome extends VCarryActivity
 
     private void promptForRegistration()
     {
-        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                 .getString(Constants.CUSTOMER_ID, null);
-
+        ActivityHome.this.customerId = customerId;
         if (customerId == null)
         {
             final Intent i = new Intent(this, ActivityRegistrationForm.class);

@@ -41,7 +41,15 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
     final AccountSummary accountSummary = new AccountSummary();
     final String tripStatus = Constants.TRIP_STATUS_FINISHED + ","
             + Constants.TRIP_STATUS_CANCELLED_BY_DRIVER + ","
-            + Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER;
+            + Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER + ","
+            + Constants.TRIP_STATUS_LOADING + ","
+            + Constants.TRIP_STATUS_DRIVER_ALLOCATED + ","
+            + Constants.TRIP_STATUS_NEW + ","
+            + Constants.TRIP_STATUS_TRIP_STARTED + ","
+            + Constants.TRIP_STATUS_UNLOADING + ","
+            + Constants.TRIP_STATUS_CANCELLED_BY_VCARRY;
+
+
     RecyclerView rvAccountBalance;
     AccountBalanceAdapter adapter;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -137,6 +145,8 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                                 accountSummary.setAccountSummaryNew(response.body());
                                 adapter.notifyDataSetChanged();
                                 getTripForToday();
+                                getTripForThisMonth();
+                                getTotalTrips();
                             }
                         } else
                         {
@@ -315,10 +325,10 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                             {
                                 for (TripByCustomerId tripsByDriverMail : response.body())
                                 {
-                                    accountSummary.getTripToday().add(tripsByDriverMail);
+                                    accountSummary.getTripToday().put(tripsByDriverMail.getTripId(),
+                                            tripsByDriverMail);
                                 }
                                 adapter.notifyDataSetChanged();
-                                getTripForThisMonth();
                             }
                         }
                     }
@@ -347,10 +357,10 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                             {
                                 for (TripByCustomerId tripsByDriverMail : response.body())
                                 {
-                                    accountSummary.getTripThisMonth().add(tripsByDriverMail);
+                                    accountSummary.getTripThisMonth().put(tripsByDriverMail.getTripId(),
+                                            tripsByDriverMail);
                                 }
                                 adapter.notifyDataSetChanged();
-                                getTotalTrips();
                             }
                         }
                     }
@@ -381,7 +391,8 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                             {
                                 for (TripByCustomerId tripsByDriverMail : response.body())
                                 {
-                                    accountSummary.getTotalTrips().add(tripsByDriverMail);
+                                    accountSummary.getTotalTrips().put(tripsByDriverMail.getTripId(),
+                                            tripsByDriverMail);
                                 }
                                 adapter.notifyDataSetChanged();
                             }
@@ -389,8 +400,9 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     }
                 };
 
-        api.getTripSummary(customerId, tripStatus, null, null, null,
+        api.getTripsByCustomerId(customerId,
                 onGetTripSummary);
+
     }
 
 

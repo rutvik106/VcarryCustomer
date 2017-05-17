@@ -312,7 +312,8 @@ public class ActivityTripDetails extends BaseActivity
                 @Override
                 public void onClick(View view)
                 {
-                    ActivityFareDetails.start(ActivityTripDetails.this, tripDetails.getTripId());
+                    ActivityFareDetails.start(ActivityTripDetails.this,
+                            tripDetails.getTripId(), tripDetails.getCashReceived());
                 }
             });
         } else
@@ -339,7 +340,7 @@ public class ActivityTripDetails extends BaseActivity
                     !tripDetails.getLicenceNo().isEmpty() ? tripDetails.getLicenceNo() : "NA" : "NA");
             if (tripDetails.getDriverImage() != null)
             {
-                Glide.with(this)
+                Glide.with(getApplicationContext())
                         .load(tripDetails.getDriverImage())
                         .bitmapTransform(new CropCircleTransformation(this))
                         .into(ivDriverPhoto);

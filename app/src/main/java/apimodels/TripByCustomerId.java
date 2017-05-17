@@ -51,7 +51,6 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
      * customer_name : Jeet Patel
      */
 
-    @PrimaryKey
     @SerializedName("trip_id")
     private String tripId;
     @SerializedName("trip_datetime")
@@ -128,6 +127,8 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     private String toAreaName;
     @SerializedName("customer_contact_no")
     private String customerContactNo;
+
+    @PrimaryKey
     @SerializedName("trip_no")
     private String tripNo;
     /**

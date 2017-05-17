@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -16,6 +17,8 @@ import models.BookedTrip;
 
 public class ActivityTripSummary extends BaseActivity
 {
+
+    private static final String TAG = App.APP_TAG + ActivityTripSummary.class.getSimpleName();
 
     Snackbar sbNoInternet;
     @BindView(R.id.tv_pendingTrips)
@@ -52,6 +55,8 @@ public class ActivityTripSummary extends BaseActivity
 
         ((App) getApplication()).getUser().inject(this);
 
+        getTotalTripsFromRealm();
+
         getActiveTripsFromRealm();
 
         getPendingTripsFromRealm();
@@ -64,6 +69,15 @@ public class ActivityTripSummary extends BaseActivity
 
         getCancelledByVcarryTripsFromRealm();
 
+    }
+
+    private void getTotalTripsFromRealm()
+    {
+        final int count = realm.where(TripByCustomerId.class)
+                .findAll()
+                .size();
+
+        Log.i(TAG, "TOTAL TRIPS IN REALM: " + count);
     }
 
     private void getActiveTripsFromRealm()

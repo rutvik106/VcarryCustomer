@@ -3,7 +3,8 @@ package apimodels;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.fusionbit.vcarrycustomer.Constants;
 
@@ -16,9 +17,9 @@ public class AccountSummary
 {
 
 
-    private final List<TripByCustomerId> tripToday = new ArrayList<>();
-    private final List<TripByCustomerId> tripThisMonth = new ArrayList<>();
-    private final List<TripByCustomerId> totalTrips = new ArrayList<>();
+    private final Map<String, TripByCustomerId> tripToday = new HashMap<>();
+    private final Map<String, TripByCustomerId> tripThisMonth = new HashMap<>();
+    private final Map<String, TripByCustomerId> totalTrips = new HashMap<>();
     boolean busyLoading = true;
     /**
      * received : 300
@@ -68,17 +69,17 @@ public class AccountSummary
         totalReceivable = 0;
     }
 
-    public List<TripByCustomerId> getTripToday()
+    public Map<String, TripByCustomerId> getTripToday()
     {
         return tripToday;
     }
 
-    public List<TripByCustomerId> getTripThisMonth()
+    public Map<String, TripByCustomerId> getTripThisMonth()
     {
         return tripThisMonth;
     }
 
-    public List<TripByCustomerId> getTotalTrips()
+    public Map<String, TripByCustomerId> getTotalTrips()
     {
         return totalTrips;
     }
@@ -170,10 +171,13 @@ public class AccountSummary
         int count = 0;
         if (totalTrips.size() > 0)
         {
-            for (int i = 0; i < totalTrips.size(); i++)
+            final ArrayList<TripByCustomerId> totalTripsList = new ArrayList<>(totalTrips.values());
+
+            for (int i = 0; i < totalTripsList.size(); i++)
             {
-                if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
-                        totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+                if (totalTripsList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
+                        totalTripsList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER) ||
+                        totalTripsList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_VCARRY))
                 {
                     count++;
                 }
@@ -188,9 +192,11 @@ public class AccountSummary
         int count = 0;
         if (totalTrips.size() > 0)
         {
-            for (int i = 0; i < totalTrips.size(); i++)
+            final ArrayList<TripByCustomerId> totalTripsList = new ArrayList<>(totalTrips.values());
+
+            for (int i = 0; i < totalTripsList.size(); i++)
             {
-                if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+                if (totalTripsList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
                 {
                     count++;
                 }
@@ -207,10 +213,13 @@ public class AccountSummary
         int count = 0;
         if (tripToday.size() > 0)
         {
-            for (int i = 0; i < tripToday.size(); i++)
+            final ArrayList<TripByCustomerId> tripTodayList = new ArrayList<>(tripToday.values());
+
+            for (int i = 0; i < tripTodayList.size(); i++)
             {
-                if (tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
-                        tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+                if (tripTodayList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
+                        tripTodayList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER) ||
+                        tripTodayList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_VCARRY))
                 {
                     count++;
                 }
@@ -225,9 +234,11 @@ public class AccountSummary
         int count = 0;
         if (tripToday.size() > 0)
         {
-            for (int i = 0; i < tripToday.size(); i++)
+            final ArrayList<TripByCustomerId> tripTodayList = new ArrayList<>(tripToday.values());
+
+            for (int i = 0; i < tripTodayList.size(); i++)
             {
-                if (tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+                if (tripTodayList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
                 {
                     count++;
                 }
@@ -244,10 +255,12 @@ public class AccountSummary
         int count = 0;
         if (tripThisMonth.size() > 0)
         {
-            for (int i = 0; i < tripThisMonth.size(); i++)
+            final ArrayList<TripByCustomerId> tripThisMonthList = new ArrayList<>(tripThisMonth.values());
+            for (int i = 0; i < tripThisMonthList.size(); i++)
             {
-                if (tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
-                        tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+                if (tripThisMonthList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
+                        tripThisMonthList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER) ||
+                        tripThisMonthList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_VCARRY))
                 {
                     count++;
                 }
@@ -262,9 +275,10 @@ public class AccountSummary
         int count = 0;
         if (tripThisMonth.size() > 0)
         {
-            for (int i = 0; i < tripThisMonth.size(); i++)
+            final ArrayList<TripByCustomerId> tripThisMonthList = new ArrayList<>(tripThisMonth.values());
+            for (int i = 0; i < tripThisMonthList.size(); i++)
             {
-                if (tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+                if (tripThisMonthList.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
                 {
                     count++;
                 }

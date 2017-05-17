@@ -164,18 +164,15 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
         switch (view.getId())
         {
             case R.id.ll_accountToday:
-                ActivityTrips.start(context, Constants.AccountTripType.TODAY
-                        , accountSummary.getTripToday());
+                ActivityTrips.start(context, Constants.AccountTripType.TODAY);
                 break;
 
             case R.id.ll_accountThisMonth:
-                ActivityTrips.start(context, Constants.AccountTripType.THIS_MONTH
-                        , accountSummary.getTripThisMonth());
+                ActivityTrips.start(context, Constants.AccountTripType.THIS_MONTH);
                 break;
 
             case R.id.ll_accountTotal:
-                ActivityTrips.start(context, Constants.AccountTripType.TOTAL
-                        , accountSummary.getTotalTrips());
+                ActivityTrips.start(context, Constants.AccountTripType.TOTAL);
                 break;
 
         }

@@ -23,7 +23,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:padding="10dp"
-        android:text="AMOUNT"
+        android:text="@string/amount"
         android:textColor="@android:color/black"/>
 
     <TextView
@@ -33,7 +33,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:padding="10dp"
-        android:text="DISCOUNT"
+        android:text="@string/discount"
         android:textColor="@android:color/black"/>
 
     <TextView
@@ -43,7 +43,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:padding="10dp"
-        android:text="NET AMOUNT"
+        android:text="@string/net_amount"
         android:textColor="@android:color/black"/>
 
 </LinearLayout>

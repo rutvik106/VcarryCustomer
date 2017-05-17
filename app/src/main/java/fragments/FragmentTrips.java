@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,6 +35,7 @@ import api.RetrofitCallbacks;
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import extra.Log;
 import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
@@ -48,23 +50,21 @@ import viewholder.VHSingleTripDetails;
  * Created by rutvik on 11/20/2016 at 11:16 AM.
  */
 
-public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefreshListener, VHSingleTripDetails.OnDriverPhotoClickListener
+public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+        VHSingleTripDetails.OnDriverPhotoClickListener
 {
 
+    private static final String TAG = App.APP_TAG + FragmentTrips.class.getSimpleName();
+    final List<String> tripIds = new ArrayList<>();
     @BindView(R.id.rv_userActivity)
     RecyclerView rvUserActivity;
-
     @BindView(R.id.ll_homeEmpty)
     LinearLayout llHomeEmpty;
-
     @BindView(R.id.srl_refreshTrips)
     SwipeRefreshLayout srlRefreshTrips;
-
     TripDetailsAdapter adapter;
-
     @Inject
     Realm realm;
-
     @Inject
     API api;
     View view;
@@ -89,7 +89,8 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState)
     {
         view = inflater.inflate(R.layout.fragment_trips, container, false);
 
@@ -159,16 +160,26 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                 super.onResponse(call, response);
                 if (response.isSuccessful())
                 {
+                    Log.i(TAG, "TOTAL TRIPS: " + response.body().size());
                     realm.beginTransaction();
                     for (TripByCustomerId trip : response.body())
                     {
+                        if (!tripIds.contains(trip.getTripId()))
+                        {
+                            Log.i(TAG, "TRIP ID: " + trip.getTripId());
+                            tripIds.add(trip.getTripId());
+                        } else
+                        {
+                            Log.i(TAG, "DUPLICATE TRIP ID: " + trip.getTripId());
+                        }
                         realm.copyToRealmOrUpdate(trip);
                     }
                     realm.commitTransaction();
                     getTripsFromRealm();
                 } else
                 {
-                    Toast.makeText(getActivity(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.something_went_wrong,
+                            Toast.LENGTH_SHORT).show();
                 }
                 if (srlRefreshTrips.isRefreshing())
                 {
@@ -180,7 +191,8 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
             public void onFailure(Call<List<TripByCustomerId>> call, Throwable t)
             {
                 super.onFailure(call, t);
-                Toast.makeText(getActivity(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.something_went_wrong,
+                        Toast.LENGTH_SHORT).show();
                 if (srlRefreshTrips.isRefreshing())
                 {
                     srlRefreshTrips.setRefreshing(false);

@@ -44,11 +44,14 @@ public class ActivityFareDetails extends BaseActivity
     double totalCharges = 0;
     @BindView(R.id.pb_loadingFareDetails)
     ProgressBar pbLoadingFareDetails;
+    @BindView(R.id.tv_cashRecieved)
+    TextView tvCashRecieved;
 
-    public static void start(Context context, String tripId)
+    public static void start(Context context, String tripId, String cashReceived)
     {
         final Intent i = new Intent(context, ActivityFareDetails.class);
         i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
+        i.putExtra(Constants.INTENT_EXTRA_CASH_RECEIVED, cashReceived);
         context.startActivity(i);
     }
 
@@ -66,9 +69,17 @@ public class ActivityFareDetails extends BaseActivity
         }
 
         final String tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
+        final String cashReceived = getIntent().getStringExtra(Constants.INTENT_EXTRA_CASH_RECEIVED);
 
         if (tripId != null)
         {
+            if (cashReceived != null)
+            {
+                tvCashRecieved.setText(getString(R.string.rs) + " " + cashReceived);
+            } else
+            {
+                tvCashRecieved.setText("NA");
+            }
             api.getTripBreakUpDetails(tripId, new RetrofitCallbacks<List<TripBreakUpDetails>>()
             {
                 @Override
@@ -104,8 +115,7 @@ public class ActivityFareDetails extends BaseActivity
                                     response.body().get(i).getAmount());
 
                             TextView tv3 = (TextView) v.findViewById(R.id.tv_chargeDiscount);
-                            tv3.setText(getResources().getString(R.string.rs) + " " +
-                                    response.body().get(i).getDiscount());
+                            tv3.setText(response.body().get(i).getDiscount() + " %");
 
                             TextView tv4 = (TextView) v.findViewById(R.id.tv_chargeNetAmount);
                             tv4.setText(getResources().getString(R.string.rs) + " " +

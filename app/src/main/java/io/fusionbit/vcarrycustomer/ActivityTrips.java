@@ -24,6 +24,7 @@ import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
+import extra.Log;
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -31,8 +32,11 @@ import retrofit2.Response;
 public class ActivityTrips extends BaseActivity
 {
 
+    private static final String TAG = App.APP_TAG + ActivityTrips.class.getSimpleName();
+
     final String tripStatus = Constants.TRIP_STATUS_FINISHED + ","
             + Constants.TRIP_STATUS_CANCELLED_BY_DRIVER + ","
+            + Constants.TRIP_STATUS_CANCELLED_BY_VCARRY + ","
             + Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER;
 
     @BindView(R.id.rv_accountTrips)
@@ -55,7 +59,7 @@ public class ActivityTrips extends BaseActivity
     private List<TripByCustomerId> trips = new ArrayList<>();
     private String customerId;
 
-    public static void start(Context context, String accountTripType, List<TripByCustomerId> trips)
+    public static void start(Context context, String accountTripType)
     {
         final Intent i = new Intent(context, ActivityTrips.class);
         i.putExtra(Constants.ACCOUNT_TRIP_TYPE, accountTripType);
@@ -210,6 +214,7 @@ public class ActivityTrips extends BaseActivity
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
+                            Log.i(TAG, "TOTAL TRIPS: " + response.body().size());
                             if (response.body() != null)
                             {
                                 for (TripByCustomerId tripsByDriverMail : response.body())

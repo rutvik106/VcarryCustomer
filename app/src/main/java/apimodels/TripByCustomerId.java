@@ -213,67 +213,17 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     private String dimensions;
     private double driverLastKnownLat = 0, driverLastKnownLng = 0;
     /**
-     * 0 : 1019
-     * 1 : 2017-04-18 15:18:52
-     * 2 : 18/04/2017 03:18:52 PM
-     * 3 : 25
-     * 4 : Amishi Mehta
-     * 5 : Jodhpur park society
-     * 6 : Jodhpur park society Near Ramdev Nagar BRTS Bus stop
-     * 7 :
-     * 8 : 2
-     * 9 : Ahmedabad
-     * 10 : 567
-     * 11 : Kankriya
-     * 12 : 35
-     * 13 : jeet patel
-     * 14 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
-     * 15 : Rangin Park Soc
-     * 16 :
-     * 17 : 2
-     * 18 : Ahmedabad
-     * 19 : 566
-     * 20 : S g highway
-     * 21 : 3
-     * 22 : Pickup Bolero
-     * 23 : 2
-     * 24 : Rutvik Mehta
-     * 25 : 9824143009
      * contact_no_1 : 9824143009
-     * 26 : f5YxGZ2qyGI:APA91bE71ZjUy02hHUVYF4yOZgwJFLafcpoy0im6dJetGXRFcxLixpVCYHAGIPixicZWRL7i3ywNW_Rl4Z8dqZulF5hJ0nCF0AOOU-ZNROPeUwJN8f4WdjAaMSZp4rQxvQU-g5cAE2W8
      * device_token : f5YxGZ2qyGI:APA91bE71ZjUy02hHUVYF4yOZgwJFLafcpoy0im6dJetGXRFcxLixpVCYHAGIPixicZWRL7i3ywNW_Rl4Z8dqZulF5hJ0nCF0AOOU-ZNROPeUwJN8f4WdjAaMSZp4rQxvQU-g5cAE2W8
-     * 27 : 235
-     * 28 : 27
-     * 29 : 27
-     * 30 : 2017-04-18 15:19:12
-     * 31 : 2017-04-18 15:25:44
-     * 32 : 2
-     * 33 : 1664
-     * 34 : Motorist Allocated
-     * 35 : Amishi Mehta
-     * 36 : 9409210477
-     * 37 : 201704180000660
-     * 38 : null
      * trip_start_time : null
-     * 39 : null
      * trip_stop_time : null
-     * 40 : null
      * trip_start_latlong : null
-     * 41 : null
      * trip_stop_latlong : null
-     * 42 : null
      * trip_distance : null
-     * 43 : null
      * memo_amount : null
-     * 44 : null
      * labour_amount : null
-     * 45 : null
      * cash_received : null
-     * 46 : 23.0265273,72.5147981
      * lat_long : 23.0333222,72.5104536
-     * 47 : 23.0333222,72.5104536
-     * 48 : 0
-     * 49 :
      */
 
     @SerializedName("contact_no_1")

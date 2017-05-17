@@ -5,6 +5,8 @@ import android.app.Application;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Singleton;
 
 import api.API;
@@ -53,6 +55,9 @@ public class ApiModule
     OkHttpClient provideOkHttpClient(Cache cache, HttpLoggingInterceptor interceptor)
     {
         return new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .cache(cache)
                 .build();

@@ -260,7 +260,8 @@ public class ActivityHome extends VCarryActivity
                     {
                         super.onFailure(call, t);
                         promptForRegistration();
-                        Toast.makeText(ActivityHome.this, "cannot get customer ID RETROFIT ON FAILURE", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActivityHome.this, "cannot get customer ID RETROFIT ON FAILURE: " +
+                                t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 };
 

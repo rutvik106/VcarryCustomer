@@ -96,6 +96,7 @@ public class ActivityTripDetails extends BaseActivity
     // duration is ideal for subtle animations or animations that occur
     // very frequently.
     private int mShortAnimationDuration;
+    private Call<TripByCustomerId> gettingTripDetails;
 
     public static void start(Context context, String tripId)
     {
@@ -168,9 +169,8 @@ public class ActivityTripDetails extends BaseActivity
     {
         if (tripId != null)
         {
-            api.getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripByCustomerId>()
+            gettingTripDetails = api.getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripByCustomerId>()
             {
-
                 @Override
                 public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response)
                 {
@@ -183,7 +183,7 @@ public class ActivityTripDetails extends BaseActivity
             });
         } else if (tripNumber != null)
         {
-            api.getTripDetailsByTripNo(tripNumber, new RetrofitCallbacks<TripByCustomerId>()
+            gettingTripDetails = api.getTripDetailsByTripNo(tripNumber, new RetrofitCallbacks<TripByCustomerId>()
             {
 
                 @Override
@@ -604,4 +604,14 @@ public class ActivityTripDetails extends BaseActivity
         });
     }
 
+    @Override
+    public void finish()
+    {
+        if (gettingTripDetails != null)
+        {
+            gettingTripDetails.cancel();
+            gettingTripDetails = null;
+        }
+        super.finish();
+    }
 }

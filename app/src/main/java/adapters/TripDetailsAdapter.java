@@ -42,7 +42,11 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
             @Override
             public int compare(TripByCustomerId tripsByDriverMail, TripByCustomerId t1)
             {
-                return t1.getTripDatetime().compareTo(tripsByDriverMail.getTripDatetime());
+                if (t1.getTripDatetime() != null && tripsByDriverMail.getTripDatetime() != null)
+                {
+                    return t1.getTripDatetime().compareTo(tripsByDriverMail.getTripDatetime());
+                }
+                return 0;
             }
         });
         notifyItemInserted(bookedTripList.size());

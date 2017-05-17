@@ -16,6 +16,21 @@
 #   public *;
 #}
 
+-dontobfuscate
+-optimizations !code/allocation/variable
+
+
+
+-keepattributes Signature
+
+-keepattributes Annotation
+
+-keep class com.google.** { *; }
+
+-keep class sun.misc.** { *; }
+
+
+
 # FOR VALIDATION
 -keep class com.mobsandgeeks.saripaar.** {*;}
 -keep @com.mobsandgeeks.saripaar.annotation.ValidateUsing class * {*;}

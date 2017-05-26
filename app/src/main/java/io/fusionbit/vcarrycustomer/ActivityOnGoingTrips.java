@@ -490,4 +490,11 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
         getTripsFromAPI();
     }
+
+    @Override
+    protected void onStop()
+    {
+        adapter.stopTimers();
+        super.onStop();
+    }
 }

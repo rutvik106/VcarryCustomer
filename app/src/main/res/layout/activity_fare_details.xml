@@ -98,7 +98,7 @@
                     android:layout_weight="1"
                     android:gravity="left|center_vertical"
                     android:padding="10dp"
-                    android:text="Amount Paid"
+                    android:text="@string/amount_paid"
                     android:textColor="#333333"/>
 
                 <TextView

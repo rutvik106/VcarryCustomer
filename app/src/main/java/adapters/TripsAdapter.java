@@ -58,7 +58,7 @@ public class TripsAdapter extends RecyclerView.Adapter
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        return VHSingleTripDetails.create(context, parent, null);
+        return VHSingleTripDetails.create(context, parent, null, null);
     }
 
     @Override

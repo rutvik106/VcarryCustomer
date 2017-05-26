@@ -84,6 +84,9 @@ public class NotificationHandler
                 case Constants.NotificationType.SIMPLE:
                     showNotification(0, data.getString("title"), data.getString("message"));
                     break;
+                case Constants.NotificationType.TRIP_REJECTION:
+                    rejectTrip();
+                    break;
                 case Constants.NotificationType.TRIP_CONFIRMATION:
                     confirmTrip();
                     break;
@@ -107,6 +110,40 @@ public class NotificationHandler
         }
     }
 
+    private void rejectTrip()
+    {
+
+        try
+        {
+            final int customerTripIdInt = Integer.parseInt(extra.getString("customer_trip_id"));
+            final String customerTripId = extra.getString("customer_trip_id");
+
+            final Realm realm = Realm.getInstance(realmConfiguration);
+            final BookedTrip bookedTrip = realm.where(BookedTrip.class)
+                    .equalTo("customerTripId", customerTripId)
+                    .findFirst();
+
+            if (bookedTrip != null)
+            {
+                realm.beginTransaction();
+                bookedTrip.deleteFromRealm();
+                realm.commitTransaction();
+            }
+
+            showNotification(customerTripIdInt, data.getString("title"), data.getString("message"));
+
+        } catch (JSONException e)
+        {
+            try
+            {
+                showNotification(0, data.getString("title"), data.getString("message"));
+            } catch (JSONException e1)
+            {
+                showNotification(0, "V-carry Trip Rejected", "Your Trip  has been Rejected By Vcarry");
+            }
+        }
+    }
+
     private void sendBroadcastGetDriverCurrentLocation()
     {
         try
@@ -114,7 +151,13 @@ public class NotificationHandler
             final Intent locationDetails = new Intent(Constants.NotificationType.DRIVER_CURRENT_LOCATION);
             locationDetails.putExtra("LAT", extra.getString("lat"));
             locationDetails.putExtra("LNG", extra.getString("lng"));
-            locationDetails.putExtra("DRIVER_TYPE", extra.getInt("driver_type"));
+            try
+            {
+                locationDetails.putExtra("DRIVER_TYPE", extra.getInt("driver_type"));
+            } catch (Exception e)
+            {
+                locationDetails.putExtra("DRIVER_TYPE", -1);
+            }
             context.sendBroadcast(locationDetails);
         } catch (JSONException e)
         {

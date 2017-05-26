@@ -130,5 +130,7 @@
     <string name="fare_details">Fare Details</string>
     <string name="registered_customer">You are a registered Customer.</string>
     <string name="no_active_trips_found">No Active Trips</string>
+    <string name="from_to_cannot_be_same">From and To Location cannot be same</string>
+    <string name="amount_paid">Amount Paid</string>
 
 </resources>

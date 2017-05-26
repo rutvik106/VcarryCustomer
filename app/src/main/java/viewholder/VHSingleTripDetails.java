@@ -81,8 +81,11 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
     @BindView(R.id.tv_countDownTime)
     TextView tvCountDownTime;
 
+    CountDownTimerReferenceHolder countDownTimerReferenceHolder;
+
     public VHSingleTripDetails(final Context context, View itemView,
-                               final OnDriverPhotoClickListener onDriverPhotoClickListener)
+                               final OnDriverPhotoClickListener onDriverPhotoClickListener,
+                               final CountDownTimerReferenceHolder countDownTimerReferenceHolder)
     {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -159,13 +162,17 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             }
         });
 
+        this.countDownTimerReferenceHolder = countDownTimerReferenceHolder;
+
     }
 
     public static VHSingleTripDetails create(final Context context, final ViewGroup parent,
-                                             final OnDriverPhotoClickListener onDriverPhotoClickListener)
+                                             final OnDriverPhotoClickListener onDriverPhotoClickListener,
+                                             final CountDownTimerReferenceHolder countDownTimerReferenceHolder)
     {
         return new VHSingleTripDetails(context, LayoutInflater.from(context)
-                .inflate(R.layout.single_trip_row_item, parent, false), onDriverPhotoClickListener);
+                .inflate(R.layout.single_trip_row_item, parent, false), onDriverPhotoClickListener,
+                countDownTimerReferenceHolder);
     }
 
     /*public static void bind(final VHSingleTripDetails vh, BookedTrip model)
@@ -418,7 +425,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
         if (tripDetails.getCountDownTime() > System.currentTimeMillis())
         {
             Log.i(TAG, "STARTING COUNT DOWN TIMER");
-            new CountDownTimer(tripDetails.getCountDownTime() - System.currentTimeMillis(), 1000)
+            final CountDownTimer cdt = new CountDownTimer(tripDetails.getCountDownTime() - System.currentTimeMillis(), 1000)
             {
                 @Override
                 public void onTick(long millisUntilFinished)
@@ -435,6 +442,12 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                     tvCountDownTime.setVisibility(View.GONE);
                 }
             }.start();
+
+            if (countDownTimerReferenceHolder != null)
+            {
+                countDownTimerReferenceHolder.onCountDownCreated(cdt);
+            }
+
         } else
         {
             Log.i(TAG, "NOT STARTING COUNT DOWN TIMER");
@@ -454,6 +467,11 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
     public interface OnDriverPhotoClickListener
     {
         void openImageInFullView(View view, String image);
+    }
+
+    public interface CountDownTimerReferenceHolder
+    {
+        void onCountDownCreated(CountDownTimer cdt);
     }
 
 }

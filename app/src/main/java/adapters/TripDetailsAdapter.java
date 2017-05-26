@@ -1,6 +1,7 @@
 package adapters;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -17,7 +18,7 @@ import viewholder.VHSingleTripDetails;
  * Created by rutvik on 1/26/2017 at 1:58 PM.
  */
 
-public class TripDetailsAdapter extends RecyclerView.Adapter
+public class TripDetailsAdapter extends RecyclerView.Adapter implements VHSingleTripDetails.CountDownTimerReferenceHolder
 {
 
     private final List<TripByCustomerId> bookedTripList;
@@ -26,11 +27,14 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
 
     private VHSingleTripDetails.OnDriverPhotoClickListener onDriverPhotoClickListener;
 
+    private ArrayList<CountDownTimer> countDownTimers;
+
     public TripDetailsAdapter(Context context, VHSingleTripDetails.OnDriverPhotoClickListener onDriverPhotoClickListener)
     {
         this.context = context;
         this.onDriverPhotoClickListener = onDriverPhotoClickListener;
         bookedTripList = new ArrayList<>();
+        countDownTimers = new ArrayList<>();
     }
 
     public void addBookedTrip(TripByCustomerId bookedTrip)
@@ -55,7 +59,7 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        return VHSingleTripDetails.create(context, parent, onDriverPhotoClickListener);
+        return VHSingleTripDetails.create(context, parent, onDriverPhotoClickListener, this);
     }
 
     @Override
@@ -103,5 +107,22 @@ public class TripDetailsAdapter extends RecyclerView.Adapter
     {
         bookedTripList.clear();
         notifyDataSetChanged();
+    }
+
+    public void stopTimers()
+    {
+        for (CountDownTimer c : countDownTimers)
+        {
+            c.cancel();
+            c = null;
+        }
+        countDownTimers.clear();
+        countDownTimers = null;
+    }
+
+    @Override
+    public void onCountDownCreated(CountDownTimer cdt)
+    {
+        countDownTimers.add(cdt);
     }
 }

@@ -85,6 +85,7 @@ public class Constants
         public static final String DRIVER_CURRENT_LOCATION = "driver_current_location";
         public static final String TRIP_FINISHED = "trip_finished";
         public static final String TRIP_STARTED = "trip_started";
+        public static final String TRIP_REJECTION = "trip_rejection";
     }
 
     public static class AccountTripType

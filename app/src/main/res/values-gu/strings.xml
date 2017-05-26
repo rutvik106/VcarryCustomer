@@ -132,6 +132,8 @@
     <string name="fare_details">ભાડું વિગતો</string>
     <string name="registered_customer">તમે નોંધાયેલા ગ્રાહક છો</string>
     <string name="no_active_trips_found">કોઈ સક્રિય સફરો નથી</string>
+    <string name="from_to_cannot_be_same">પ્રતિ અને સ્થાન માટે સમાન ન હોઈ શકે</string>
+    <string name="amount_paid">ચુકવેલ રકમ</string>
 
 
 </resources>

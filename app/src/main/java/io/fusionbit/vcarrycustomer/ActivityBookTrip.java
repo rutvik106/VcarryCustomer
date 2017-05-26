@@ -600,6 +600,13 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
             {
+                if (selectedFromLocation == i)
+                {
+                    Toast.makeText(ActivityBookTrip.this, R.string.from_to_cannot_be_same, Toast.LENGTH_SHORT).show();
+                    actTo.setText("");
+                    return;
+                }
+
                 final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
                 actTo.setText(model.getLabel());
                 toShippingLocationId = model.getId() + "";

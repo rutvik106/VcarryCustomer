@@ -10,18 +10,20 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import javax.inject.Inject;
 
+import apimodels.TripByCustomerId;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fcm.FCM;
 import fragments.FragmentDriverLocation;
 import io.realm.Realm;
 
-public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCMCallbackListener
+public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCMCallbackListener, FragmentDriverLocation.Callbacks
 {
 
     final OnReceiveDriverLocation onReceiveDriverLocation = new OnReceiveDriverLocation();
@@ -50,7 +52,7 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
         }
 
         fragmentDriverLocation = FragmentDriverLocation
-                .newInstance(getIntent().getStringExtra(Constants.TRIP_ID), this, realm, this);
+                .newInstance(getIntent().getStringExtra(Constants.TRIP_ID), this, realm, this, this);
 
 
         getSupportFragmentManager().beginTransaction()
@@ -87,7 +89,7 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
     }
 
     @Override
-    public void sentNotificationHttpStatus(int statusCode)
+    public void sentNotificationHttpStatus(final int statusCode)
     {
         if (statusCode > 300)
         {
@@ -98,11 +100,31 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
                 {
                     if (getSupportActionBar() != null)
                     {
-                        getSupportActionBar().setTitle("Cannot Get Location");
+                        getSupportActionBar().setTitle(R.string.cannot_get_location);
+                        Toast.makeText(ActivityDriverLocation.this, "STATUS: " + statusCode, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         }
+    }
+
+    @Override
+    public void driverDeviceTokenNotFound(TripByCustomerId trip)
+    {
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (getSupportActionBar() != null)
+                {
+                    getSupportActionBar().setTitle(R.string.not_eligible_for_tracking);
+                }
+                Snackbar.make(activityDriverLocation, R.string.not_eligible_for_tracking, Snackbar.LENGTH_INDEFINITE)
+                        .show();
+            }
+        });
+
     }
 
     class OnReceiveDriverLocation extends BroadcastReceiver

@@ -134,6 +134,10 @@
     <string name="no_active_trips_found">કોઈ સક્રિય સફરો નથી</string>
     <string name="from_to_cannot_be_same">પ્રતિ અને સ્થાન માટે સમાન ન હોઈ શકે</string>
     <string name="amount_paid">ચુકવેલ રકમ</string>
+    <string name="cannot_get_location">સ્થાન મેળવી શકાતું નથી</string>
+    <string name="motorist_no_app">આ મોટરચાલક પાસે એપ્લિકેશન નથી</string>
+    <string name="not_eligible_for_tracking">મોટરગાડી જીપીએસ ટ્રેકિંગ માટે પાત્ર નથી.</string>
+    <string name="note">નૉૅધ</string>
 
 
 </resources>

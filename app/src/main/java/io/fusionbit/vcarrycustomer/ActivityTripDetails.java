@@ -34,11 +34,14 @@ import extra.LocaleHelper;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import models.BookedTrip;
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class ActivityTripDetails extends BaseActivity
 {
+    private static final String TAG = App.APP_TAG + ActivityTripDetails.class.getSimpleName();
+
     @BindView(R.id.tv_tripStatus)
     TextView tvTripStatus;
     @BindView(R.id.tv_tripNumber)
@@ -87,6 +90,8 @@ public class ActivityTripDetails extends BaseActivity
     AppCompatRatingBar rbRateDriver;
     @BindView(R.id.tv_tripChargesDetails)
     TextView tvTripChargesDetails;
+    @BindView(R.id.tv_tripNote)
+    TextView tvTripNote;
 
     // Hold a reference to the current animator,
     // so that it can be canceled mid-way.
@@ -97,6 +102,7 @@ public class ActivityTripDetails extends BaseActivity
     // very frequently.
     private int mShortAnimationDuration;
     private Call<TripByCustomerId> gettingTripDetails;
+    private String tripNote;
 
     public static void start(Context context, String tripId)
     {
@@ -222,7 +228,6 @@ public class ActivityTripDetails extends BaseActivity
             tripDetails = realm.where(TripByCustomerId.class).equalTo("tripNo", tripNumber).findFirst();
         }
 
-
         if (tripDetails != null)
         {
             bindDataToUi();
@@ -234,6 +239,24 @@ public class ActivityTripDetails extends BaseActivity
                     bindDataToUi();
                 }
             });
+        }
+
+        tryToGetBookedTrip();
+
+    }
+
+    private void tryToGetBookedTrip()
+    {
+        if (tripDetails != null)
+        {
+            BookedTrip bt = realm.where(BookedTrip.class)
+                    .equalTo("tripId", tripDetails.getTripId())
+                    .findFirst();
+            if (bt != null)
+            {
+                tripNote = bt.getNote();
+            }
+
         }
     }
 
@@ -392,6 +415,9 @@ public class ActivityTripDetails extends BaseActivity
 
         tvTripFare.setText(tripDetails.getFare() != null ? !tripDetails.getFare().isEmpty() ?
                 getString(R.string.rs) + " " + tripDetails.getFare() : "NA" : "NA");
+
+        tvTripNote.setText(tripNote != null ? !tripNote.isEmpty() ?
+                tripNote : "NA" : "NA");
 
     }
 

@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -103,6 +104,8 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     @BindView(R.id.ll_tripScheduleDetails)
     LinearLayout llTripScheduleDetails;
     int selectedFromLocation, selectedToLocation;
+    @BindView(R.id.et_tripNote)
+    EditText etTripNote;
     private String fromShippingLocationId = null;
     private String toShippingLocationId = null;
     private int vehicleTypeId = 0;
@@ -785,7 +788,7 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                                         shippingLocationList.get(selectedFromLocation)
                                                 .getCompanyName(), shippingLocationList.get(selectedToLocation)
                                         .getCompanyName(),
-                                        tripFare, vehicleName);
+                                        tripFare, vehicleName, etTripNote.getText().toString());
                                 bt.setCountDownTime(System.currentTimeMillis() + (1000 * 60 * 30));
                                 realm.copyToRealmOrUpdate(bt);
                                 realm.commitTransaction();

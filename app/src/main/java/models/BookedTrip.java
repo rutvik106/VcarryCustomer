@@ -1,6 +1,9 @@
 package models;
 
+import android.util.Log;
+
 import apimodels.TripByCustomerId;
+import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.Constants;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -11,6 +14,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class BookedTrip extends RealmObject
 {
+
+    private static final String TAG = App.APP_TAG + BookedTrip.class.getSimpleName();
 
     @PrimaryKey
     String customerTripId;
@@ -23,6 +28,7 @@ public class BookedTrip extends RealmObject
     String driverDeviceToken;
     String tripFare;
     String tripNo;
+    String note;
     String tripStatus;
     TripByCustomerId tripDetails;
     long countDownTime;
@@ -32,13 +38,16 @@ public class BookedTrip extends RealmObject
 
     }
 
-    public BookedTrip(String customerTripId, String tripFrom, String tripTo, String tripFare, String vehicleType)
+    public BookedTrip(String customerTripId, String tripFrom, String tripTo, String tripFare,
+                      String vehicleType, String note)
     {
         this.customerTripId = customerTripId;
         this.tripFrom = tripFrom;
         this.tripTo = tripTo;
         this.tripFare = tripFare;
         this.vehicleType = vehicleType;
+        Log.i(TAG, "SAVING BOOKED TRIP NOTE: " + note);
+        this.note = note;
         tripStatus = Constants.TRIP_STATUS_PENDING;
     }
 
@@ -172,5 +181,15 @@ public class BookedTrip extends RealmObject
     public TripByCustomerId getTripDetails()
     {
         return tripDetails;
+    }
+
+    public String getNote()
+    {
+        return note;
+    }
+
+    public void setNote(String note)
+    {
+        this.note = note;
     }
 }

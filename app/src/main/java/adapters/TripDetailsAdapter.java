@@ -111,18 +111,27 @@ public class TripDetailsAdapter extends RecyclerView.Adapter implements VHSingle
 
     public void stopTimers()
     {
-        for (CountDownTimer c : countDownTimers)
+        if (countDownTimers != null)
         {
-            c.cancel();
-            c = null;
+            if (countDownTimers.size() > 0)
+            {
+                for (CountDownTimer c : countDownTimers)
+                {
+                    c.cancel();
+                    c = null;
+                }
+                countDownTimers.clear();
+                countDownTimers = null;
+            }
         }
-        countDownTimers.clear();
-        countDownTimers = null;
     }
 
     @Override
     public void onCountDownCreated(CountDownTimer cdt)
     {
-        countDownTimers.add(cdt);
+        if (countDownTimers != null)
+        {
+            countDownTimers.add(cdt);
+        }
     }
 }

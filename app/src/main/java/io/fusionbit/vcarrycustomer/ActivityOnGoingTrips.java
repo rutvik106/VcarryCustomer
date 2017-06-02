@@ -486,7 +486,7 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
     @Override
     public void onRefresh()
     {
-        getOnGoingTripsFromRealm();
+        //getOnGoingTripsFromRealm();
 
         getTripsFromAPI();
     }

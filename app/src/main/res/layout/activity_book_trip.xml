@@ -268,6 +268,21 @@
 
             </RadioGroup>
 
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="@string/note">
+
+                <EditText
+                    android:id="@+id/et_tripNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:maxLines="4"
+                    android:scrollHorizontally="false"/>
+
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 

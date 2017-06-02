@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -25,6 +26,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -83,6 +85,9 @@ public class ActivityHome extends VCarryActivity
     private BroadcastReceiver mNetworkDetectReceiver;
     private SimpleCursorAdapter tripSearchResultCursorAdapter;
     private String[] strArrData = {"No Suggestions"};
+    private AlertDialog notRegisterDialog;
+    private Call<Integer> getCustomerIdFromEmail;
+    private boolean showIt = true;
 
     private void checkInternetConnection()
     {
@@ -201,6 +206,11 @@ public class ActivityHome extends VCarryActivity
     private void tryToGetCustomerIdFromCustomerEmail(String email)
     {
 
+        if (getCustomerIdFromEmail != null)
+        {
+            getCustomerIdFromEmail.cancel();
+        }
+
         final RetrofitCallbacks<Integer> onGetCustomerIdCallback =
                 new RetrofitCallbacks<Integer>()
                 {
@@ -229,6 +239,20 @@ public class ActivityHome extends VCarryActivity
                                 updateFcmDeviceToken(String.valueOf(response.body()));
 
                                 Toast.makeText(ActivityHome.this, R.string.registered_customer, Toast.LENGTH_SHORT).show();
+
+                                if (notRegisterDialog != null)
+                                {
+                                    if (notRegisterDialog.isShowing())
+                                    {
+                                        notRegisterDialog.dismiss();
+                                    }
+                                }
+
+                                /*if (showIt)
+                                {
+                                    showIt = false;
+                                    promptForRegistration();
+                                }*/
 
                             } else
                             {
@@ -265,7 +289,7 @@ public class ActivityHome extends VCarryActivity
                     }
                 };
 
-        api.getCustomerIdFromEmail(email, onGetCustomerIdCallback);
+        getCustomerIdFromEmail = api.getCustomerIdFromEmail(email, onGetCustomerIdCallback);
 
     }
 
@@ -504,7 +528,23 @@ public class ActivityHome extends VCarryActivity
 
     private void promptForRegistration()
     {
-        final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+        notRegisterDialog = new AlertDialog.Builder(this)
+                .setTitle("Not Registered")
+                .setMessage("Dear Customer, you're not yet registered with V-Carry. \n" +
+                        "\n" +
+                        "Please call 079-2755-0007 to register your account, and let us take load off your business.")
+                .setCancelable(false)
+                .setPositiveButton("Try Again", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        tryToGetCustomerIdFromCustomerEmail(FirebaseAuth.getInstance()
+                                .getCurrentUser().getEmail());
+                    }
+                })
+                .show();
+        /*final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                 .getString(Constants.CUSTOMER_ID, null);
         ActivityHome.this.customerId = customerId;
         if (customerId == null)
@@ -512,7 +552,7 @@ public class ActivityHome extends VCarryActivity
             final Intent i = new Intent(this, ActivityRegistrationForm.class);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
-        }
+        }*/
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

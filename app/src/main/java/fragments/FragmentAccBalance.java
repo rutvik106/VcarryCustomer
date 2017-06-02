@@ -125,7 +125,6 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
         api.getAccountSummary(customerId,
                 new RetrofitCallbacks<AccountSummaryNew>()
                 {
-
                     @Override
                     public void onResponse(Call<AccountSummaryNew> call, Response<AccountSummaryNew> response)
                     {

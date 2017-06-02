@@ -132,5 +132,9 @@
     <string name="no_active_trips_found">No Active Trips</string>
     <string name="from_to_cannot_be_same">From and To Location cannot be same</string>
     <string name="amount_paid">Amount Paid</string>
+    <string name="cannot_get_location">Cannot Get Location</string>
+    <string name="motorist_no_app">This Motorist is not having App.</string>
+    <string name="not_eligible_for_tracking">Motorist not eligible for GPS Tracking.</string>
+    <string name="note">Note</string>
 
 </resources>

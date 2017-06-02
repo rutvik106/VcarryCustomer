@@ -460,6 +460,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
         Glide.with(context)
                 .load(tripDetails.getDriverImage() != null ?
                         tripDetails.getDriverImage() : R.drawable.driver_photo_placeholder)
+                .error(R.drawable.driver_photo_placeholder)
                 .bitmapTransform(new CropCircleTransformation(context))
                 .into(ivDriverImage);
     }

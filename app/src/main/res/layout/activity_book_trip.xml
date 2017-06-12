@@ -142,7 +142,8 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="5dp"
-                    android:layout_weight="1.7"/>
+                    android:layout_weight="1.7"
+                    android:inputType="textNoSuggestions"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -192,7 +193,8 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="5dp"
-                    android:layout_weight="1.7"/>
+                    android:layout_weight="1.7"
+                    android:inputType="textNoSuggestions"/>
 
                 <LinearLayout
                     android:layout_width="0dp"

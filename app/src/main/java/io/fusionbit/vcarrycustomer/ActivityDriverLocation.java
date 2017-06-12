@@ -91,6 +91,8 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
     @Override
     public void sentNotificationHttpStatus(final int statusCode)
     {
+        Toast.makeText(this, "Http Status Code: " + statusCode, Toast.LENGTH_SHORT).show();
+
         if (statusCode > 300)
         {
             runOnUiThread(new Runnable()

@@ -19,7 +19,7 @@ public class ActivitySplash extends VCarryActivity
             @Override
             public void run()
             {
-                Intent i = new Intent(ActivitySplash.this, ActivityLogin.class);
+                Intent i = new Intent(ActivitySplash.this, ActivityPhoneAuth.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(i);
             }

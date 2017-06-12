@@ -32,6 +32,7 @@ import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -399,8 +400,13 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                     public void onResponse(Call<Integer> call, Response<Integer> response)
                     {
                         super.onResponse(call, response);
+                        Toast.makeText(ActivityBookTrip.this, "RESPONSE CODE: " + response.code(),
+                                Toast.LENGTH_SHORT).show();
                         if (response.isSuccessful())
                         {
+                            Toast.makeText(ActivityBookTrip.this, "Response body: " +
+                                            response.body(),
+                                    Toast.LENGTH_SHORT).show();
                             if (response.body() > 0)
                             {
                                 tripFare = response.body() + "";
@@ -412,6 +418,16 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                             }
                         } else
                         {
+                            try
+                            {
+                                Toast.makeText(ActivityBookTrip.this, "Response error body: " +
+                                                response.errorBody().string(),
+                                        Toast.LENGTH_SHORT).show();
+                            } catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+
                             tripFare = "N/A";
                             tvTripFare.setText("N/A");
                         }
@@ -422,6 +438,10 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                     public void onFailure(Call<Integer> call, Throwable t)
                     {
                         super.onFailure(call, t);
+
+                        Toast.makeText(ActivityBookTrip.this, "On Failure: " + t.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+
                         tripFare = "N/A";
                         tvTripFare.setText("N/A");
                         pbLoadingTripCost.setVisibility(View.GONE);
@@ -480,12 +500,12 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
                 TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
                 companyName.setText(getString(R.string.company_name) + " " +
-                        shippingLocationList.get(position).getShippingName());
+                        suggestedSpinnerModelList.get(position).getShippingName());
                 companyName.setTextColor(Color.DKGRAY);
                 companyName.setTextSize(13f);
 
                 TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
-                label.setText(shippingLocationList.get(position).getLabel());
+                label.setText(suggestedSpinnerModelList.get(position).getLabel());
                 label.setTextColor(Color.BLACK);
                 label.setTextSize(16f);
 
@@ -506,12 +526,12 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
                 TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
                 companyName.setText(getString(R.string.company_name) + " " +
-                        shippingLocationList.get(position).getShippingName());
+                        suggestedSpinnerModelList.get(position).getShippingName());
                 companyName.setTextColor(Color.DKGRAY);
                 companyName.setTextSize(13f);
 
                 TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
-                label.setText(shippingLocationList.get(position).getLabel());
+                label.setText(suggestedSpinnerModelList.get(position).getLabel());
                 label.setTextColor(Color.BLACK);
                 label.setTextSize(16f);
 
@@ -519,7 +539,11 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
                 // And finally return your dynamic (or custom) view for each spinner item
                 return convertView;
             }
+
         };
+
+        fromAdapter.setFilter(new CustomListAdapter.CustomFilter(fromAdapter.spinnerModelList,
+                fromAdapter.suggestedSpinnerModelList, fromAdapter));
 
         CustomListAdapter<FromLocation> toAdapter = new CustomListAdapter<FromLocation>(this,
                 android.R.layout.simple_list_item_1, shippingLocationList)
@@ -537,12 +561,12 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
                 TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
                 companyName.setText(getString(R.string.company_name) + " " +
-                        shippingLocationList.get(position).getShippingName());
+                        suggestedSpinnerModelList.get(position).getShippingName());
                 companyName.setTextColor(Color.DKGRAY);
                 companyName.setTextSize(13f);
 
                 TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
-                label.setText(shippingLocationList.get(position).getLabel());
+                label.setText(suggestedSpinnerModelList.get(position).getLabel());
                 label.setTextColor(Color.BLACK);
                 label.setTextSize(16f);
 
@@ -563,12 +587,12 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
 
                 TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
                 companyName.setText(getString(R.string.company_name) + " " +
-                        shippingLocationList.get(position).getShippingName());
+                        suggestedSpinnerModelList.get(position).getShippingName());
                 companyName.setTextColor(Color.DKGRAY);
                 companyName.setTextSize(13f);
 
                 TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
-                label.setText(shippingLocationList.get(position).getLabel());
+                label.setText(suggestedSpinnerModelList.get(position).getLabel());
                 label.setTextColor(Color.BLACK);
                 label.setTextSize(16f);
 
@@ -578,6 +602,9 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
             }
 
         };
+
+        toAdapter.setFilter(new CustomListAdapter.CustomFilter(toAdapter.spinnerModelList,
+                toAdapter.suggestedSpinnerModelList, toAdapter));
 
         actFrom.setAdapter(fromAdapter);
         actTo.setAdapter(toAdapter);

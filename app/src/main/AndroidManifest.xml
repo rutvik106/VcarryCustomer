@@ -127,6 +127,10 @@
             android:name=".ActivityFareDetails"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".ActivityPhoneAuth"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

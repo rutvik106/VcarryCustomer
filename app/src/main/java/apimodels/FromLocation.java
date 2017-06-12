@@ -262,6 +262,11 @@ public class FromLocation extends RealmObject implements SpinnerModel
         return getShippingAddress();
     }
 
+    public String getComparisionAddress()
+    {
+        return getShippingAddress() + " " + getShippingName();
+    }
+
     public String getGujaratiAddress()
     {
         try

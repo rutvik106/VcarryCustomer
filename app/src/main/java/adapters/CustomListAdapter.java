@@ -14,7 +14,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import apimodels.FromLocation;
 import apimodels.SpinnerModel;
+import extra.Log;
+import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.R;
 
 /**
@@ -25,21 +28,17 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter
 {
 
 
+    public final List<T> spinnerModelList;
     private final Context context;
-
-    private final List<T> spinnerModelList;
-    private final CustomFilter filter;
-    private List<T> suggestedSpinnerModelList;
-
+    public List<T> suggestedSpinnerModelList;
+    private CustomFilter filter;
     public CustomListAdapter(Context context, int resource, List<T> spinnerModelList)
     {
         super(context, resource, spinnerModelList);
         this.context = context;
         this.spinnerModelList = spinnerModelList;
-        filter = new CustomFilter();
         this.suggestedSpinnerModelList = spinnerModelList;
     }
-
 
     @Override
     public int getCount()
@@ -47,21 +46,18 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter
         return suggestedSpinnerModelList.size();
     }
 
-
     @Nullable
     @Override
     public T getItem(int position)
     {
-        return spinnerModelList.get(position);
+        return suggestedSpinnerModelList.get(position);
     }
-
 
     @Override
     public long getItemId(int position)
     {
-        return spinnerModelList.get(position).getId();
+        return suggestedSpinnerModelList.get(position).getId();
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
@@ -75,7 +71,7 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter
         TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
         // Then you can get the current item using the values array (Users array) and the current position
         // You can NOW reference each method you has created in your bean object (User class)
-        label.setText(spinnerModelList.get(position).getLabel());
+        label.setText(suggestedSpinnerModelList.get(position).getLabel());
 
         label.setTextColor(Color.BLACK);
         label.setTextSize(15f);
@@ -94,7 +90,7 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter
         }
         TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
         label.setTextColor(Color.BLACK);
-        label.setText(spinnerModelList.get(position).getLabel());
+        label.setText(suggestedSpinnerModelList.get(position).getLabel());
 
         return convertView;
     }
@@ -106,25 +102,65 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter
         return filter;
     }
 
-
-    private class CustomFilter extends Filter
+    public void setFilter(CustomFilter filter)
     {
+        this.filter = filter;
+    }
+
+    public static class CustomFilter extends Filter
+    {
+        private static final String TAG = App.APP_TAG + CustomFilter.class.getSimpleName();
+        List<FromLocation> spinnerModelList;
+        List<FromLocation> suggestedSpinnerModelList;
+        CustomListAdapter adapter;
+
+        public CustomFilter(List<FromLocation> spinnerModelList, List<FromLocation> suggestedSpinnerModelList,
+                            CustomListAdapter adapter)
+        {
+            this.spinnerModelList = spinnerModelList;
+            this.suggestedSpinnerModelList = suggestedSpinnerModelList;
+            this.adapter = adapter;
+        }
+
         @Override
         protected FilterResults performFiltering(CharSequence charSequence)
         {
             final FilterResults filterResults = new FilterResults();
-            final List<SpinnerModel> queryResult = new ArrayList<>();
+            final List<FromLocation> queryResult = new ArrayList<>();
 
             if (charSequence != null)
             {
-                for (SpinnerModel model : spinnerModelList)
+                queryResult.clear();
+                Log.i(TAG, "spinnerModelList: " + spinnerModelList.size());
+                for (int i = 0; i < spinnerModelList.size(); i++)
                 {
-                    if (model.getLabel().toLowerCase().contains(charSequence.toString().trim().toLowerCase()))
+                    if (spinnerModelList.get(i).getLabel().toLowerCase()
+                            .matches("(?i).*" + charSequence.toString().trim().toLowerCase() + ".*") ||
+                            spinnerModelList.get(i).getShippingName().toLowerCase()
+                                    .startsWith(charSequence.toString().trim().toLowerCase()))
                     {
-                        queryResult.add(model);
+                        Log.i(TAG, spinnerModelList.get(i).getLabel().toLowerCase());
+                        Log.i(TAG, spinnerModelList.get(i).getShippingName().toLowerCase());
+
+                        boolean isDuplicate = false;
+
+                        for (FromLocation location : queryResult)
+                        {
+                            if (location.getShippingAddress().equals(spinnerModelList.get(i).getShippingAddress()))
+                            {
+                                isDuplicate = true;
+                            }
+                        }
+
+                        if (!queryResult.contains(spinnerModelList.get(i)) && !isDuplicate)
+                        {
+                            queryResult.add(spinnerModelList.get(i));
+                        }
                     }
                 }
             }
+
+            Log.i(TAG, "queryResult SIZE: " + queryResult.size());
 
             filterResults.values = queryResult;
             filterResults.count = queryResult.size();
@@ -135,22 +171,25 @@ public class CustomListAdapter<T extends SpinnerModel> extends ArrayAdapter
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults)
         {
-            suggestedSpinnerModelList = (List<T>) filterResults.values;
-            if (suggestedSpinnerModelList != null)
+            suggestedSpinnerModelList = (List<FromLocation>) filterResults.values;
+
+            if (suggestedSpinnerModelList.size() > 0 && charSequence != null)
             {
                 /*if (suggestedSpinnerModelList.size() > 0)
                 {*/
-                notifyDataSetChanged();
-                /*} else*/
-                if (charSequence == null)
+                for (FromLocation location : suggestedSpinnerModelList)
                 {
-                    suggestedSpinnerModelList = spinnerModelList;
-                    notifyDataSetChanged();
+                    Log.i(TAG, "SUGGESTED LOCATIONS: " + location.getShippingName());
                 }
+                adapter.suggestedSpinnerModelList = suggestedSpinnerModelList;
+                adapter.notifyDataSetChanged();
+                /*} else*/
+
             } else
             {
                 suggestedSpinnerModelList = spinnerModelList;
-                notifyDataSetInvalidated();
+                adapter.suggestedSpinnerModelList = suggestedSpinnerModelList;
+                adapter.notifyDataSetInvalidated();
             }
         }
     }

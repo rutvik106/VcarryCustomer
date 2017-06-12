@@ -133,40 +133,32 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
                 callbacks.driverDeviceTokenNotFound(trip);
             } else
             {
-                if (trip.getDriverLocationLastAccess() > 0)
+                new AsyncTask<Void, Void, Void>()
                 {
-                    if (System.currentTimeMillis() > trip.getDriverLocationLastAccess() + (1000 * 60))
-                    {
-                        new AsyncTask<Void, Void, Void>()
-                        {
-                            @Override
-                            protected Void doInBackground(Void... voids)
-                            {
-                                FCM.sendPushNotification(Constants.NotificationType.GET_DRIVER_LOCATION,
-                                        "Location Request", "Sending your location to customer",
-                                        deviceToken, extra, listener);
-                                return null;
-                            }
-                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    int status = 0;
 
-                    } else
+                    @Override
+                    protected Void doInBackground(Void... voids)
                     {
-                        Toast.makeText(context, "You can only view new location after one minute, Please try after one minute.", Toast.LENGTH_SHORT).show();
+                        FCM.sendPushNotification(Constants.NotificationType.GET_DRIVER_LOCATION,
+                                "Location Request", "Sending your location to customer",
+                                deviceToken, extra, new FCM.FCMCallbackListener()
+                                {
+                                    @Override
+                                    public void sentNotificationHttpStatus(int statusCode)
+                                    {
+                                        status = statusCode;
+                                    }
+                                });
+                        return null;
                     }
-                } else
-                {
-                    new AsyncTask<Void, Void, Void>()
+
+                    @Override
+                    protected void onPostExecute(Void aVoid)
                     {
-                        @Override
-                        protected Void doInBackground(Void... voids)
-                        {
-                            FCM.sendPushNotification(Constants.NotificationType.GET_DRIVER_LOCATION,
-                                    "Location Request", "Sending your location to customer",
-                                    deviceToken, extra, listener);
-                            return null;
-                        }
-                    }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
+                        listener.sentNotificationHttpStatus(status);
+                    }
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
             if (trip.getDriverLastKnownLocation() != null)

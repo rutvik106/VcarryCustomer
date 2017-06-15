@@ -1,6 +1,7 @@
 package fragments;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,8 @@ public class PhoneAuthScreenTwo extends Fragment
     Unbinder unbinder;
 
     PhoneAuthScreenTwoCallbacks phoneAuthScreenTwoCallbacks;
+
+    CountDownTimer timer;
 
     public static PhoneAuthScreenTwo newInstance(PhoneAuthScreenTwoCallbacks phoneAuthScreenTwoCallbacks)
     {
@@ -74,6 +77,35 @@ public class PhoneAuthScreenTwo extends Fragment
             return;
         }
         phoneAuthScreenTwoCallbacks.verifyNumberWithOtp(etOtp.getText().toString());
+    }
+
+    public void startTimer()
+    {
+        btnResendOtp.setVisibility(View.GONE);
+
+        timer = new CountDownTimer(60000, 1000)
+        {
+
+            public void onTick(long millisUntilFinished)
+            {
+                tvOtpWaitingText.setText("Please wait, You will receive a OTP in " + millisUntilFinished / 1000 + " Seconds.");
+            }
+
+            public void onFinish()
+            {
+                tvOtpWaitingText.setText("If you have not received any OTP. Please try resending.");
+                btnResendOtp.setVisibility(View.VISIBLE);
+            }
+        }.start();
+    }
+
+    public void stopTimer()
+    {
+        if (timer != null)
+        {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     @OnClick(R.id.btn_resendOtp)

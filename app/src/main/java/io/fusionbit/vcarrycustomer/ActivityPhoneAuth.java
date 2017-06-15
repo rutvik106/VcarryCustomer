@@ -111,6 +111,7 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
                         }
                     }
                     mPager.setCurrentItem(1);
+                    phoneAuthScreenTwo.startTimer();
                     // The SMS verification code has been sent to the provided phone number, we
                     // now need to ask the user to enter the code and then construct a credential
                     // by combining the code with a verification ID.
@@ -229,6 +230,7 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
                     {
                         if (task.isSuccessful())
                         {
+                            phoneAuthScreenTwo.stopTimer();
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
 
@@ -288,6 +290,7 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
     @Override
     public void resendOtp()
     {
+        phoneAuthScreenTwo.startTimer();
         resendVerificationCode(phoneAuthScreenOne.getMobileNo(), mResendToken);
     }
 

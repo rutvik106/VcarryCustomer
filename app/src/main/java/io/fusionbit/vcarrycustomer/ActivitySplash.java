@@ -3,8 +3,9 @@ package io.fusionbit.vcarrycustomer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 
-public class ActivitySplash extends VCarryActivity
+public class ActivitySplash extends AppCompatActivity
 {
 
     private static final String TAG = App.APP_TAG + ActivitySplash.class.getSimpleName();

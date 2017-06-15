@@ -36,7 +36,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ActivityRegistrationForm extends VCarryActivity implements Validator.ValidationListener
+public class ActivityRegistrationForm extends BaseActivity implements Validator.ValidationListener
 {
 
     final List<Area> areaList = new ArrayList<Area>();
@@ -74,7 +74,6 @@ public class ActivityRegistrationForm extends VCarryActivity implements Validato
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registration_form);
 
         if (getSupportActionBar() != null)
         {
@@ -114,6 +113,24 @@ public class ActivityRegistrationForm extends VCarryActivity implements Validato
         });
 
         getCityList();
+
+    }
+
+    @Override
+    protected int getLayoutResourceId()
+    {
+        return R.layout.activity_registration_form;
+    }
+
+    @Override
+    protected void internetNotAvailable()
+    {
+
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
 
     }
 

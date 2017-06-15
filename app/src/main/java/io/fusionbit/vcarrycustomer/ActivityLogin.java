@@ -22,33 +22,44 @@ import java.util.ArrayList;
 
 import extra.Log;
 
-public class ActivityLogin extends VCarryActivity implements PermissionListener
+public class ActivityLogin extends BaseActivity implements PermissionListener
 {
 
     private static final String TAG = App.APP_TAG + ActivityLogin.class.getSimpleName();
-
-    private boolean isConnected = false;
-
-    private FirebaseAuth mFirebaseAuth;
-
-    private Intent intent;
-
     private static final String GOOGLE_TOS_URL =
             "https://www.google.com/policies/terms/";
-
     private static final int RC_SIGN_IN = 100;
-
     BroadcastReceiver networkChangeReceiver;
+    private boolean isConnected = false;
+    private FirebaseAuth mFirebaseAuth;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
         Log.i(TAG, "OnCreate");
 
         checkForPermissions();
+
+    }
+
+    @Override
+    protected int getLayoutResourceId()
+    {
+        return R.layout.activity_login;
+    }
+
+    @Override
+    protected void internetNotAvailable()
+    {
+
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
 
     }
 

@@ -24,7 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fragments.FragmentMap;
 
-public class ActivityPickLocation extends VCarryActivity
+public class ActivityPickLocation extends BaseActivity
 {
 
     FragmentMap map;
@@ -38,7 +38,6 @@ public class ActivityPickLocation extends VCarryActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pick_location);
 
         ButterKnife.bind(this);
 
@@ -91,6 +90,24 @@ public class ActivityPickLocation extends VCarryActivity
                 return false;
             }
         });
+
+    }
+
+    @Override
+    protected int getLayoutResourceId()
+    {
+        return R.layout.activity_pick_location;
+    }
+
+    @Override
+    protected void internetNotAvailable()
+    {
+
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
 
     }
 

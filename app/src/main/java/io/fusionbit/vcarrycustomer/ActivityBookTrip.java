@@ -58,7 +58,7 @@ import module.FirebaseRemoteConfigSettingsModule;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ActivityBookTrip extends VCarryActivity implements Validator.ValidationListener
+public class ActivityBookTrip extends BaseActivity implements Validator.ValidationListener
 {
 
     final Handler mHandler = new Handler();
@@ -117,7 +117,6 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_trip);
 
         ButterKnife.bind(this);
 
@@ -222,6 +221,24 @@ public class ActivityBookTrip extends VCarryActivity implements Validator.Valida
         getVehiclesFromRealm();
         setVehicleListAdapter();
         getVehiclesFromApi();
+
+    }
+
+    @Override
+    protected int getLayoutResourceId()
+    {
+        return R.layout.activity_book_trip;
+    }
+
+    @Override
+    protected void internetNotAvailable()
+    {
+
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
 
     }
 

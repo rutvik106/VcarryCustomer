@@ -14,7 +14,7 @@ import java.util.List;
 import extra.LocaleHelper;
 import extra.Log;
 
-public class ActivitySettings extends VCarryActivity
+public class ActivitySettings extends BaseActivity
 {
     private static final String TAG = App.APP_TAG + ActivitySettings.class.getSimpleName();
 
@@ -30,7 +30,6 @@ public class ActivitySettings extends VCarryActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
 
         if (getSupportActionBar() != null)
         {
@@ -74,6 +73,24 @@ public class ActivitySettings extends VCarryActivity
             }
         });
 
+
+    }
+
+    @Override
+    protected int getLayoutResourceId()
+    {
+        return R.layout.activity_settings;
+    }
+
+    @Override
+    protected void internetNotAvailable()
+    {
+
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
 
     }
 

@@ -59,7 +59,7 @@ import retrofit2.Response;
 
 import static io.fusionbit.vcarrycustomer.Constants.WAS_LANGUAGE_CHANGED;
 
-public class ActivityHome extends VCarryActivity
+public class ActivityHome extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
     private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
@@ -118,8 +118,6 @@ public class ActivityHome extends VCarryActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_home);
 
         ButterKnife.bind(this);
 
@@ -201,6 +199,24 @@ public class ActivityHome extends VCarryActivity
             unregisterReceiver(mNetworkDetectReceiver);
         }
         super.onStop();
+    }
+
+    @Override
+    protected int getLayoutResourceId()
+    {
+        return R.layout.activity_home;
+    }
+
+    @Override
+    protected void internetNotAvailable()
+    {
+        showNoInternetView();
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
+        checkInternetConnection();
     }
 
     private void tryToGetCustomerIdFromCustomerEmail(String email)

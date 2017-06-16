@@ -152,7 +152,7 @@ public class ActivityHome extends BaseActivity
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {
-            tryToGetCustomerIdFromCustomerEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            tryToGetCustomerIdFromCustomerPhone(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
             Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
                     .bitmapTransform(new CropCircleTransformation(this))
@@ -219,7 +219,7 @@ public class ActivityHome extends BaseActivity
         checkInternetConnection();
     }
 
-    private void tryToGetCustomerIdFromCustomerEmail(String email)
+    private void tryToGetCustomerIdFromCustomerPhone(String phone)
     {
 
         if (getCustomerIdFromEmail != null)
@@ -305,7 +305,7 @@ public class ActivityHome extends BaseActivity
                     }
                 };
 
-        getCustomerIdFromEmail = api.getCustomerIdFromEmail(email, onGetCustomerIdCallback);
+        getCustomerIdFromEmail = api.getCustomerIdFromPhone(phone, onGetCustomerIdCallback);
 
     }
 
@@ -555,8 +555,8 @@ public class ActivityHome extends BaseActivity
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i)
                     {
-                        tryToGetCustomerIdFromCustomerEmail(FirebaseAuth.getInstance()
-                                .getCurrentUser().getEmail());
+                        tryToGetCustomerIdFromCustomerPhone(FirebaseAuth.getInstance()
+                                .getCurrentUser().getPhoneNumber());
                     }
                 })
                 .show();

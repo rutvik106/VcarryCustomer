@@ -87,11 +87,15 @@ public class API
         return call;
     }
 
-    public Call<Integer> getCustomerIdFromEmail(final String email,
+    public Call<Integer> getCustomerIdFromPhone(String phone,
                                                 RetrofitCallbacks<Integer> callback)
     {
-        Call<Integer> call = apiService.getCustomerIdFromEmail("get_customer_id_from_customer_email",
-                email);
+        if (phone.contains("+91"))
+        {
+            phone = phone.replace("+91", "");
+        }
+        Call<Integer> call = apiService.getCustomerIdFromPhone("get_customer_id_from_customer_contact_no",
+                phone);
 
         call.enqueue(callback);
 

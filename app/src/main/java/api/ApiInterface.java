@@ -52,8 +52,8 @@ public interface ApiInterface
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<Integer> getCustomerIdFromEmail(@Field("method") String method,
-                                         @Field("email") String email);
+    Call<Integer> getCustomerIdFromPhone(@Field("method") String method,
+                                         @Field("contact_no") String phone);
 
     @FormUrlEncoded
     @POST("webservice.php")

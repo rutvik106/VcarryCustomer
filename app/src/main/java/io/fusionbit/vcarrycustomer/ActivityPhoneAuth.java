@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,6 +52,8 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
     PhoneAuthScreenOne phoneAuthScreenOne;
     PhoneAuthScreenTwo phoneAuthScreenTwo;
     ProgressDialog pd;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     // [END declare_auth]
     // [START declare_auth]
@@ -135,12 +138,6 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
 
         intent = new Intent(this, ActivityHome.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        if (getActionBar() != null)
-        {
-            getActionBar().setTitle("Phone Verification");
-        }
-
 
         initializeFragments();
 
@@ -281,7 +278,7 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
     {
         if (mVerificationId == null)
         {
-            Toast.makeText(this, "Code not yet sent. Please wait for OTP.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.code_not_sent, Toast.LENGTH_SHORT).show();
             return;
         }
         verifyPhoneNumberWithCode(mVerificationId, otp);
@@ -302,7 +299,7 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
 
     private void verifyPhoneNumberWithCode(String verificationId, String code)
     {
-        pd = ProgressDialog.show(this, "Please Wait...", "Verifying OTP...", true, false);
+        pd = ProgressDialog.show(this, getString(R.string.please_wait), getString(R.string.verifying_otp), true, false);
         pd.setCanceledOnTouchOutside(false);
         // [START verify_with_code]
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
@@ -325,7 +322,7 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
 
     public void startPhoneNumberVerification(String phoneNumber)
     {
-        pd = ProgressDialog.show(this, "Please Wait...", "Verifying Phone Number...", true, false);
+        pd = ProgressDialog.show(this, getString(R.string.please_wait), getString(R.string.verify_phone), true, false);
         pd.setCanceledOnTouchOutside(false);
         // [START start_phone_auth]
         PhoneAuthProvider.getInstance().verifyPhoneNumber(

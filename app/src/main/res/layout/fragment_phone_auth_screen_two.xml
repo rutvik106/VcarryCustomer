@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_confirmation_number_black_18dp"
             android:drawablePadding="5dp"
-            android:hint="Enter OTP"
+            android:hint="@string/enter_otp"
             android:inputType="number"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -76,7 +76,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="32dp"
-        android:text="Please wait, You will receive a OTP in 60 Seconds."
+        android:text="@string/please_wait_you_will_receive_a_otp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fabConfirmOtp"/>
@@ -88,7 +88,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:text="Resend"
+        android:text="@string/resend"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

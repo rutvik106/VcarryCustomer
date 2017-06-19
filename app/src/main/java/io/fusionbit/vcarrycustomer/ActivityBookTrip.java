@@ -32,7 +32,6 @@ import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -345,7 +344,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             {
                 if (charSequence.length() == 0)
                 {
-                    Toast.makeText(ActivityBookTrip.this, "Empty", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ActivityBookTrip.this, "Empty", Toast.LENGTH_SHORT).show();
                     mHandler.post(new Runnable()
                     {
                         @Override
@@ -417,13 +416,13 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     public void onResponse(Call<Integer> call, Response<Integer> response)
                     {
                         super.onResponse(call, response);
-                        Toast.makeText(ActivityBookTrip.this, "RESPONSE CODE: " + response.code(),
-                                Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ActivityBookTrip.this, "RESPONSE CODE: " + response.code(),
+                        //Toast.LENGTH_SHORT).show();
                         if (response.isSuccessful())
                         {
-                            Toast.makeText(ActivityBookTrip.this, "Response body: " +
-                                            response.body(),
-                                    Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(ActivityBookTrip.this, "Response body: " +
+                            //response.body(),
+                            //Toast.LENGTH_SHORT).show();
                             if (response.body() > 0)
                             {
                                 tripFare = response.body() + "";
@@ -435,15 +434,15 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                             }
                         } else
                         {
-                            try
+                            /*try
                             {
-                                Toast.makeText(ActivityBookTrip.this, "Response error body: " +
-                                                response.errorBody().string(),
-                                        Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(ActivityBookTrip.this, "Response error body: " +
+                                                //response.errorBody().string(),
+                                        //Toast.LENGTH_SHORT).show();
                             } catch (IOException e)
                             {
                                 e.printStackTrace();
-                            }
+                            }*/
 
                             tripFare = "N/A";
                             tvTripFare.setText("N/A");
@@ -456,8 +455,8 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     {
                         super.onFailure(call, t);
 
-                        Toast.makeText(ActivityBookTrip.this, "On Failure: " + t.getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ActivityBookTrip.this, "On Failure: " + t.getMessage(),
+                        //Toast.LENGTH_SHORT).show();
 
                         tripFare = "N/A";
                         tvTripFare.setText("N/A");

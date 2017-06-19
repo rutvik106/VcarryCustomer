@@ -154,6 +154,8 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
         for (TripByCustomerId trip : tripByCustomerIds)
         {
+            Log.i(TAG, "getDriverDeviceToken: " + trip.getDriverDeviceToken());
+            Log.i(TAG, "getDeviceToken: " + trip.getDeviceToken());
             adapter.addBookedTrip(trip);
         }
 

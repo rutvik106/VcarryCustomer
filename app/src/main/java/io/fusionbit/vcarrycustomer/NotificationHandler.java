@@ -293,6 +293,7 @@ public class NotificationHandler
                                 super.onResponse(call, response);
                                 if (response.isSuccessful())
                                 {
+                                    final TripByCustomerId tripByCustomerId = response.body();
                                     final Realm realm = Realm.getInstance(realmConfiguration);
                                     realm.beginTransaction();
                                     bookedTrip.setTripStatus(Constants.TRIP_STATUS_DRIVER_ALLOCATED);
@@ -300,8 +301,10 @@ public class NotificationHandler
                                     bookedTrip.setDriverName(driverName);
                                     bookedTrip.setTripId(tripId);
                                     bookedTrip.setDriverDeviceToken(driverDeviceToken);
+                                    tripByCustomerId.setDriverNumber(driverNumber);
+                                    tripByCustomerId.setDeviceToken(driverDeviceToken);
                                     bookedTrip.setCustomerTripId(realm
-                                            .copyToRealmOrUpdate(response.body()));
+                                            .copyToRealmOrUpdate(tripByCustomerId));
                                     realm.copyToRealmOrUpdate(bookedTrip);
                                     realm.commitTransaction();
                                 }

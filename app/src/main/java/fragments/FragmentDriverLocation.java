@@ -83,8 +83,11 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
         trip = realm
                 .copyFromRealm(realm.
                         where(TripByCustomerId.class).equalTo("tripId", tripId).findFirst());
+
         Log.i(TAG, "TRIP ID: " + tripId);
         Log.i(TAG, "TRIP DRIVER NAME: " + trip.getDriverName());
+        android.util.Log.i(TAG, "getDriverDeviceToken: " + trip.getDriverDeviceToken());
+        android.util.Log.i(TAG, "getDeviceToken: " + trip.getDeviceToken());
     }
 
     private void loadMapNow()

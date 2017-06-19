@@ -31,11 +31,9 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
@@ -52,7 +50,6 @@ import fragments.FragmentAccBalance;
 import fragments.FragmentHome;
 import fragments.FragmentTrips;
 import io.realm.Realm;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -154,12 +151,12 @@ public class ActivityHome extends BaseActivity
         {
             tryToGetCustomerIdFromCustomerPhone(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
-            Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
+            /*Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
                     .bitmapTransform(new CropCircleTransformation(this))
-                    .into((ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userPic));
+                    .into((ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userPic));*/
 
-            ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_titleUserName))
-                    .setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            /*((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_titleUserName))
+                    .setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());*/
 
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_subTitle))
                     .setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());

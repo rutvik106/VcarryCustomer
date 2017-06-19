@@ -21,6 +21,7 @@ public class RealmModule
     @Singleton
     public Realm provideRealm(Application application, RealmConfiguration realmConfig)
     {
+        Realm.setDefaultConfiguration(realmConfig);
         return Realm.getInstance(realmConfig);
     }
 

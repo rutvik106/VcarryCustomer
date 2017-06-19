@@ -75,6 +75,7 @@ public class Constants
     public static final String TRIP_ID = "TRIP_ID";
     public static final String INTENT_EXTRA_TRIP_NUMBER = "INTENT_EXTRA_TRIP_NUMBER";
     public static final String INTENT_EXTRA_CASH_RECEIVED = "INTENT_EXTRA_CASH_RECEIVED";
+    public static final String CUSTOMER_TRIP_ID = "CUSTOMER_TRIP_ID";
 
     public static final class NotificationType
     {

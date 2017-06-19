@@ -53,6 +53,10 @@ public class BookedTrip extends RealmObject
 
     public static TripByCustomerId bakePendingTrip(BookedTrip bookedTrip)
     {
+        if (bookedTrip.getTripDetails() != null)
+        {
+            return bookedTrip.getTripDetails();
+        }
         final TripByCustomerId pendingTrip = new TripByCustomerId();
         pendingTrip.setFare(bookedTrip.getTripFare());
         pendingTrip.setBookedFromLocation(bookedTrip.getTripFrom());

@@ -159,7 +159,7 @@ public class ActivityHome extends BaseActivity
                     .setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());*/
 
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_subTitle))
-                    .setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                    .setText(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
             ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_container, FragmentHome.newInstance(0));

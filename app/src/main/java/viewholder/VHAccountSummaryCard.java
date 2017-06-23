@@ -56,6 +56,8 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
     TextView tvAccountUnpaidTotal;
     @BindView(R.id.ll_accountTotal)
     LinearLayout llAccountTotal;
+    @BindView(R.id.tv_netAmount)
+    TextView tvNetAmount;
 
 
     private AccountSummary accountSummary;
@@ -155,6 +157,10 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
                 (accountSummary.getTotalReceivable() != 0 ?
                         accountSummary.getTotalReceivable() - accountSummary.getTotalReceived() : 0));*/
         ////////////////////////////////////////////////////////////////////////////////////////////
+
+        vh.tvNetAmount.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                (accountSummary.getAccountSummaryNew().getAllTime().getPayable() -
+                        accountSummary.getAccountSummaryNew().getAllTime().getPaid()));
 
     }
 

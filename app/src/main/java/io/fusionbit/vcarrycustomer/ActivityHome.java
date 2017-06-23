@@ -83,7 +83,7 @@ public class ActivityHome extends BaseActivity
     private SimpleCursorAdapter tripSearchResultCursorAdapter;
     private String[] strArrData = {"No Suggestions"};
     private AlertDialog notRegisterDialog;
-    private Call<Integer> getCustomerIdFromEmail;
+    private Call<List<Integer>> getCustomerIdFromEmail;
     private boolean showIt = true;
 
     private void checkInternetConnection()
@@ -224,11 +224,11 @@ public class ActivityHome extends BaseActivity
             getCustomerIdFromEmail.cancel();
         }
 
-        final RetrofitCallbacks<Integer> onGetCustomerIdCallback =
-                new RetrofitCallbacks<Integer>()
+        final RetrofitCallbacks<List<Integer>> onGetCustomerIdCallback =
+                new RetrofitCallbacks<List<Integer>>()
                 {
                     @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response)
+                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response)
                     {
                         super.onResponse(call, response);
                         if (response.isSuccessful())
@@ -240,16 +240,16 @@ public class ActivityHome extends BaseActivity
                                 return;
                             }
 
-                            if (response.body() > 0)
+                            if (response.body().get(0) > 0)
                             {
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                                         .edit()
-                                        .putString(Constants.CUSTOMER_ID, String.valueOf(response.body()))
+                                        .putString(Constants.CUSTOMER_ID, String.valueOf(response.body().get(0)))
                                         .apply();
 
-                                customerId = String.valueOf(response.body());
+                                customerId = String.valueOf(response.body().get(0));
 
-                                updateFcmDeviceToken(String.valueOf(response.body()));
+                                updateFcmDeviceToken(String.valueOf(response.body().get(0)));
 
                                 Toast.makeText(ActivityHome.this, R.string.registered_customer, Toast.LENGTH_SHORT).show();
 
@@ -293,7 +293,7 @@ public class ActivityHome extends BaseActivity
                     }
 
                     @Override
-                    public void onFailure(Call<Integer> call, Throwable t)
+                    public void onFailure(Call<List<Integer>> call, Throwable t)
                     {
                         super.onFailure(call, t);
                         promptForRegistration();

@@ -67,10 +67,10 @@ public class API
                                              final String cityId,
                                              final RetrofitCallbacks<ResponseBody> callback)
     {
-        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        final String phoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
 
         Call<ResponseBody> call = apiService.insertCustomer("insert_customer", namePrefix, name,
-                address1, address2, cityId, areaId, contact, email);
+                address1, address2, cityId, areaId, contact, phoneNumber);
 
         call.enqueue(callback);
 
@@ -87,14 +87,14 @@ public class API
         return call;
     }
 
-    public Call<Integer> getCustomerIdFromPhone(String phone,
-                                                RetrofitCallbacks<Integer> callback)
+    public Call<List<Integer>> getCustomerIdFromPhone(String phone,
+                                                      RetrofitCallbacks<List<Integer>> callback)
     {
         if (phone.contains("+91"))
         {
             phone = phone.replace("+91", "");
         }
-        Call<Integer> call = apiService.getCustomerIdFromPhone("get_customer_id_from_customer_contact_no",
+        Call<List<Integer>> call = apiService.getCustomerIdFromPhone("get_customer_id_from_customer_contact_no",
                 phone);
 
         call.enqueue(callback);
@@ -114,13 +114,13 @@ public class API
         return call;
     }
 
-    public Call<Integer> getFareForVehicleTypeLocations(final String fromShippingId,
-                                                        final String toShippingId,
-                                                        final String vehicleTypeId,
-                                                        final String customerId,
-                                                        RetrofitCallbacks<Integer> callback)
+    public Call<List<Integer>> getFareForVehicleTypeLocations(final String fromShippingId,
+                                                              final String toShippingId,
+                                                              final String vehicleTypeId,
+                                                              final String customerId,
+                                                              RetrofitCallbacks<List<Integer>> callback)
     {
-        Call<Integer> call =
+        Call<List<Integer>> call =
                 apiService.getFareForVehicleTypeLocations("get_fare_for_vehicle_type_locations",
                         fromShippingId, toShippingId, vehicleTypeId, customerId);
 
@@ -129,17 +129,17 @@ public class API
         return call;
     }
 
-    public Call<Integer> insertCustomerTrip(final String fromShippingId,
-                                            final String toShippingId,
-                                            final String vehicleTypeId,
-                                            final String customerId,
-                                            final String fromNewAddress,
-                                            final String toNewAddress,
-                                            final String fromLatLng,
-                                            final String toLatLng,
-                                            RetrofitCallbacks<Integer> callback)
+    public Call<List<Integer>> insertCustomerTrip(final String fromShippingId,
+                                                  final String toShippingId,
+                                                  final String vehicleTypeId,
+                                                  final String customerId,
+                                                  final String fromNewAddress,
+                                                  final String toNewAddress,
+                                                  final String fromLatLng,
+                                                  final String toLatLng,
+                                                  RetrofitCallbacks<List<Integer>> callback)
     {
-        Call<Integer> call =
+        Call<List<Integer>> call =
                 apiService.insertCustomerTrip("insert_customer_trip",
                         fromShippingId, toShippingId, vehicleTypeId, customerId, fromNewAddress,
                         toNewAddress, fromLatLng, toLatLng);

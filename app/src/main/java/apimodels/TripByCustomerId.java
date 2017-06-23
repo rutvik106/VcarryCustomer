@@ -13,7 +13,7 @@ import io.realm.annotations.PrimaryKey;
 import static io.fusionbit.vcarrycustomer.Constants.TRIP_STATUS_PENDING;
 
 /**
- * Created by rutvik on 11/27/2016 at 3:54 PM.
+ * Created by rutvik on 11/27/2016 at 3:54H PM.
  */
 
 public class TripByCustomerId extends RealmObject implements Comparable<TripByCustomerId>

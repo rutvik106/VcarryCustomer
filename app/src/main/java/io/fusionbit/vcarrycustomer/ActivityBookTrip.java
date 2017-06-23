@@ -92,7 +92,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     RealmResults<Vehicle> realmVehicles;
     RealmResults<FromLocation> realmFromLocations;
     Validator validator;
-    Call<Integer> getFare;
+    Call<List<Integer>> getFare;
     @Inject
     API api;
     @Inject
@@ -408,12 +408,12 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             getFare.cancel();
         }
 
-        final RetrofitCallbacks<Integer> onGetFairCallback =
-                new RetrofitCallbacks<Integer>()
+        final RetrofitCallbacks<List<Integer>> onGetFairCallback =
+                new RetrofitCallbacks<List<Integer>>()
                 {
 
                     @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response)
+                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response)
                     {
                         super.onResponse(call, response);
                         //Toast.makeText(ActivityBookTrip.this, "RESPONSE CODE: " + response.code(),
@@ -423,10 +423,10 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                             //Toast.makeText(ActivityBookTrip.this, "Response body: " +
                             //response.body(),
                             //Toast.LENGTH_SHORT).show();
-                            if (response.body() > 0)
+                            if (response.body().get(0) > 0)
                             {
-                                tripFare = response.body() + "";
-                                tvTripFare.setText(getResources().getString(R.string.rs) + " " + response.body());
+                                tripFare = response.body().get(0) + "";
+                                tvTripFare.setText(getResources().getString(R.string.rs) + " " + response.body().get(0));
                             } else
                             {
                                 tripFare = "N/A";
@@ -451,7 +451,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     }
 
                     @Override
-                    public void onFailure(Call<Integer> call, Throwable t)
+                    public void onFailure(Call<List<Integer>> call, Throwable t)
                     {
                         super.onFailure(call, t);
 
@@ -680,12 +680,15 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
-                            realm.beginTransaction();
-                            for (FromLocation location : response.body())
+                            if (response.body() != null)
                             {
-                                realm.copyToRealmOrUpdate(location);
+                                realm.beginTransaction();
+                                for (FromLocation location : response.body())
+                                {
+                                    realm.copyToRealmOrUpdate(location);
+                                }
+                                realm.commitTransaction();
                             }
-                            realm.commitTransaction();
                         }
                     }
                 };
@@ -815,19 +818,19 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityBookTrip.this)
                 .getString(Constants.CUSTOMER_ID, null);
 
-        final RetrofitCallbacks<Integer> onInsertCustomerTrip =
-                new RetrofitCallbacks<Integer>()
+        final RetrofitCallbacks<List<Integer>> onInsertCustomerTrip =
+                new RetrofitCallbacks<List<Integer>>()
                 {
                     @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response)
+                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response)
                     {
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
-                            if (response.body() > 0)
+                            if (response.body().get(0) > 0)
                             {
                                 realm.beginTransaction();
-                                final BookedTrip bt = new BookedTrip(response.body().toString(),
+                                final BookedTrip bt = new BookedTrip(response.body().get(0).toString(),
                                         shippingLocationList.get(selectedFromLocation)
                                                 .getCompanyName(), shippingLocationList.get(selectedToLocation)
                                         .getCompanyName(),
@@ -855,7 +858,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     }
 
                     @Override
-                    public void onFailure(Call<Integer> call, Throwable t)
+                    public void onFailure(Call<List<Integer>> call, Throwable t)
                     {
                         super.onFailure(call, t);
                         if (!call.isCanceled())

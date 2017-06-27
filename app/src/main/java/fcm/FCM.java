@@ -2,15 +2,22 @@ package fcm;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import apimodels.FcmResponse;
 import io.fusionbit.vcarrycustomer.App;
 
 /**
@@ -96,7 +103,7 @@ public class FCM
 
             Log.i(TAG, "RESPONSE from server: " + status);
 
-            listener.sentNotificationHttpStatus(status);
+            listener.sentNotificationHttpStatus(status, readInputStreamToString(conn));
 
         } catch (IOException e)
         {
@@ -111,9 +118,52 @@ public class FCM
         }
     }
 
+    private static FcmResponse readInputStreamToString(HttpURLConnection connection)
+    {
+        String result = null;
+        StringBuffer sb = new StringBuffer();
+        InputStream is = null;
+
+        try
+        {
+            is = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String inputLine = "";
+            while ((inputLine = br.readLine()) != null)
+            {
+                sb.append(inputLine);
+            }
+            result = sb.toString();
+        } catch (Exception e)
+        {
+            Log.i(TAG, "Error reading InputStream");
+            result = null;
+        } finally
+        {
+            if (is != null)
+            {
+                try
+                {
+                    is.close();
+                } catch (IOException e)
+                {
+                    Log.i(TAG, "Error closing InputStream");
+                }
+            }
+        }
+
+        Log.i(TAG, result);
+
+        Gson gson = new Gson();
+        final FcmResponse response =
+                gson.fromJson(result, FcmResponse.class);
+
+        return response;
+    }
+
     public interface FCMCallbackListener
     {
-        void sentNotificationHttpStatus(int statusCode);
+        void sentNotificationHttpStatus(int statusCode, FcmResponse response);
     }
 
 }

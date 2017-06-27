@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import javax.inject.Inject;
 
+import apimodels.FcmResponse;
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -89,9 +90,9 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
     }
 
     @Override
-    public void sentNotificationHttpStatus(final int statusCode)
+    public void sentNotificationHttpStatus(final int statusCode, FcmResponse fcmResponse)
     {
-        Toast.makeText(this, "Http Status Code: " + statusCode, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Http Status Code: " + statusCode, Toast.LENGTH_SHORT).show();
 
         if (statusCode > 300)
         {
@@ -103,10 +104,27 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
                     if (getSupportActionBar() != null)
                     {
                         getSupportActionBar().setTitle(R.string.cannot_get_location);
-                        Toast.makeText(ActivityDriverLocation.this, "STATUS: " + statusCode, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ActivityDriverLocation.this, "STATUS: " + statusCode, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
+        }
+        if (fcmResponse != null)
+        {
+            if (fcmResponse.getFailure() == 1)
+            {
+                Toast.makeText(this, "Failed to send Notification", Toast.LENGTH_SHORT).show();
+                if (fcmResponse.getResults() != null)
+                {
+                    if (fcmResponse.getResults().size() > 0)
+                    {
+                        if (fcmResponse.getResults().get(0) != null)
+                        {
+                            Toast.makeText(this, fcmResponse.getResults().get(0).getError(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
         }
     }
 

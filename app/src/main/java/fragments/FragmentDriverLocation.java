@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import apimodels.FcmResponse;
 import apimodels.TripByCustomerId;
 import extra.Log;
 import fcm.FCM;
@@ -140,6 +141,8 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
                 {
                     int status = 0;
 
+                    FcmResponse response;
+
                     @Override
                     protected Void doInBackground(Void... voids)
                     {
@@ -148,9 +151,11 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
                                 deviceToken, extra, new FCM.FCMCallbackListener()
                                 {
                                     @Override
-                                    public void sentNotificationHttpStatus(int statusCode)
+                                    public void sentNotificationHttpStatus(int statusCode,
+                                                                           FcmResponse fcmResponse)
                                     {
                                         status = statusCode;
+                                        response = fcmResponse;
                                     }
                                 });
                         return null;
@@ -159,7 +164,7 @@ public class FragmentDriverLocation extends Fragment implements OnMapReadyCallba
                     @Override
                     protected void onPostExecute(Void aVoid)
                     {
-                        listener.sentNotificationHttpStatus(status);
+                        listener.sentNotificationHttpStatus(status, response);
                     }
                 }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }

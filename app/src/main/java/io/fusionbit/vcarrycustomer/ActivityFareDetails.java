@@ -38,8 +38,6 @@ public class ActivityFareDetails extends BaseActivity
     @BindView(R.id.cl_activityFareDetails)
     CoordinatorLayout clActivityFareDetails;
 
-    @Inject
-    API api;
 
     double totalCharges = 0;
     @BindView(R.id.pb_loadingFareDetails)
@@ -80,7 +78,7 @@ public class ActivityFareDetails extends BaseActivity
             {
                 tvCashRecieved.setText("NA");
             }
-            api.getTripBreakUpDetails(tripId, new RetrofitCallbacks<List<TripBreakUpDetails>>()
+            API.getInstance().getTripBreakUpDetails(tripId, new RetrofitCallbacks<List<TripBreakUpDetails>>()
             {
                 @Override
                 public void onResponse(Call<List<TripBreakUpDetails>> call, Response<List<TripBreakUpDetails>> response)

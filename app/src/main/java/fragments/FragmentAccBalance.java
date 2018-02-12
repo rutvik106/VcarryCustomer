@@ -35,8 +35,9 @@ import retrofit2.Response;
  * Created by rutvik on 11/17/2016 at 11:17 PM.
  */
 
-public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.OnRefreshListener
-{
+public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+
+    View view;
 
     final AccountSummary accountSummary = new AccountSummary();
     final String tripStatus = Constants.TRIP_STATUS_FINISHED + ","
@@ -54,12 +55,9 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
     AccountBalanceAdapter adapter;
     SwipeRefreshLayout swipeRefreshLayout;
     String customerId;
-    @Inject
-    API api;
     boolean busyLoadingData = false;
 
-    public static FragmentAccBalance newInstance(int index)
-    {
+    public static FragmentAccBalance newInstance(int index) {
         FragmentAccBalance fragmentAccBalance = new FragmentAccBalance();
         Bundle b = new Bundle();
         b.putInt("index", index);
@@ -70,48 +68,47 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
-        View view = inflater.inflate(R.layout.fragment_account_balance, container, false);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.srl_refreshAccountBalance);
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_account_balance, container, false);
 
-        swipeRefreshLayout.setOnRefreshListener(this);
+            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.srl_refreshAccountBalance);
 
-        rvAccountBalance = (RecyclerView) view.findViewById(R.id.rv_accountBalance);
-        rvAccountBalance.setHasFixedSize(true);
-        rvAccountBalance.setLayoutManager(new LinearLayoutManager(getActivity()));
+            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+            swipeRefreshLayout.setOnRefreshListener(this);
 
-        adapter = new AccountBalanceAdapter(getActivity());
+            rvAccountBalance = (RecyclerView) view.findViewById(R.id.rv_accountBalance);
+            rvAccountBalance.setHasFixedSize(true);
+            rvAccountBalance.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        rvAccountBalance.setAdapter(adapter);
+            adapter = new AccountBalanceAdapter(getActivity());
 
-        adapter.addAccountSummaryCard(accountSummary);
+            rvAccountBalance.setAdapter(adapter);
 
-        getAccountBalance();
+            adapter.addAccountSummaryCard(accountSummary);
+
+            getAccountBalance();
+        }
 
         return view;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState)
-    {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         ((App) getActivity().getApplication()).getUser().inject(this);
         super.onCreate(savedInstanceState);
     }
 
-    public void getAccountBalance()
-    {
-        if (!busyLoadingData)
-        {
+    public void getAccountBalance() {
+        if (!busyLoadingData) {
             busyLoadingData = true;
             swipeRefreshLayout.setRefreshing(true);
             accountSummary.clearData();
             //adapter.notifyDataSetChanged();
             customerId = PreferenceManager.getDefaultSharedPreferences(getActivity())
                     .getString(Constants.CUSTOMER_ID, null);
-            if (customerId != null)
-            {
+            if (customerId != null) {
                 //getAccountBalanceForToday();
 
                 getAccountBalanceSummary(customerId);
@@ -120,48 +117,37 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
         }
     }
 
-    private void getAccountBalanceSummary(String customerId)
-    {
-        api.getAccountSummary(customerId,
-                new RetrofitCallbacks<AccountSummaryNew>()
-                {
+    private void getAccountBalanceSummary(String customerId) {
+        API.getInstance().getAccountSummary(customerId,
+                new RetrofitCallbacks<AccountSummaryNew>() {
                     @Override
-                    public void onResponse(Call<AccountSummaryNew> call, Response<AccountSummaryNew> response)
-                    {
+                    public void onResponse(Call<AccountSummaryNew> call, Response<AccountSummaryNew> response) {
                         super.onResponse(call, response);
-                        if (busyLoadingData)
-                        {
-                            if (swipeRefreshLayout.isRefreshing())
-                            {
+                        if (busyLoadingData) {
+                            if (swipeRefreshLayout.isRefreshing()) {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                             busyLoadingData = false;
                         }
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() instanceof AccountSummaryNew)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() instanceof AccountSummaryNew) {
                                 accountSummary.setAccountSummaryNew(response.body());
                                 adapter.notifyDataSetChanged();
                                 getTripForToday();
                                 getTripForThisMonth();
                                 getTotalTrips();
                             }
-                        } else
-                        {
+                        } else {
                             Toast.makeText(getContext(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<AccountSummaryNew> call, Throwable t)
-                    {
+                    public void onFailure(Call<AccountSummaryNew> call, Throwable t) {
                         super.onFailure(call, t);
                         Toast.makeText(getContext(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
-                        if (busyLoadingData)
-                        {
-                            if (swipeRefreshLayout.isRefreshing())
-                            {
+                        if (busyLoadingData) {
+                            if (swipeRefreshLayout.isRefreshing()) {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                             busyLoadingData = false;
@@ -170,20 +156,15 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                 });
     }
 
-    private void getAccountBalanceForToday()
-    {
+    private void getAccountBalanceForToday() {
         final RetrofitCallbacks<AccountSummary> onGetAccountSummary =
-                new RetrofitCallbacks<AccountSummary>()
-                {
+                new RetrofitCallbacks<AccountSummary>() {
 
                     @Override
-                    public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response)
-                    {
+                    public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() != null)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
                                 accountSummary.setReceivedToday(response.body().getReceived());
                                 accountSummary.setReceivableToday(response.body().getReceivable());
                                 getAccountBalanceForThisMonth();
@@ -192,14 +173,11 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     }
 
                     @Override
-                    public void onFailure(Call<AccountSummary> call, Throwable t)
-                    {
+                    public void onFailure(Call<AccountSummary> call, Throwable t) {
                         super.onFailure(call, t);
                         adapter.notifyDataSetChanged();
-                        if (busyLoadingData)
-                        {
-                            if (swipeRefreshLayout.isRefreshing())
-                            {
+                        if (busyLoadingData) {
+                            if (swipeRefreshLayout.isRefreshing()) {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                             busyLoadingData = false;
@@ -209,24 +187,19 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
 
         final String today = Utils.getDate(Calendar.getInstance().getTime());
 
-        api.getAccountSummary(customerId, today, today, onGetAccountSummary);
+        API.getInstance().getAccountSummary(customerId, today, today, onGetAccountSummary);
 
     }
 
-    private void getAccountBalanceForThisMonth()
-    {
+    private void getAccountBalanceForThisMonth() {
         final RetrofitCallbacks<AccountSummary> onGetAccountSummary =
-                new RetrofitCallbacks<AccountSummary>()
-                {
+                new RetrofitCallbacks<AccountSummary>() {
 
                     @Override
-                    public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response)
-                    {
+                    public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() != null)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
                                 accountSummary.setReceivedThisMonth(response.body().getReceived());
                                 accountSummary.setReceivableThisMonth(response.body().getReceivable());
                                 getTotalAccountBalance();
@@ -235,14 +208,11 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     }
 
                     @Override
-                    public void onFailure(Call<AccountSummary> call, Throwable t)
-                    {
+                    public void onFailure(Call<AccountSummary> call, Throwable t) {
                         super.onFailure(call, t);
                         adapter.notifyDataSetChanged();
-                        if (busyLoadingData)
-                        {
-                            if (swipeRefreshLayout.isRefreshing())
-                            {
+                        if (busyLoadingData) {
+                            if (swipeRefreshLayout.isRefreshing()) {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                             busyLoadingData = false;
@@ -255,33 +225,26 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                 -1 * (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1));
         final String monthInString = Utils.getDate(month);
 
-        api.getAccountSummary(customerId, monthInString, today, onGetAccountSummary);
+        API.getInstance().getAccountSummary(customerId, monthInString, today, onGetAccountSummary);
     }
 
-    private void getTotalAccountBalance()
-    {
+    private void getTotalAccountBalance() {
         final RetrofitCallbacks<AccountSummary> onGetAccountSummary =
-                new RetrofitCallbacks<AccountSummary>()
-                {
+                new RetrofitCallbacks<AccountSummary>() {
 
                     @Override
-                    public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response)
-                    {
+                    public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() != null)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
                                 accountSummary.setTotalReceived(response.body().getReceived());
                                 accountSummary.setTotalReceivable(response.body().getReceivable());
                                 accountSummary.setBusyLoading(false);
                                 adapter.notifyDataSetChanged();
                             }
                         }
-                        if (busyLoadingData)
-                        {
-                            if (swipeRefreshLayout.isRefreshing())
-                            {
+                        if (busyLoadingData) {
+                            if (swipeRefreshLayout.isRefreshing()) {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                             busyLoadingData = false;
@@ -289,14 +252,11 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     }
 
                     @Override
-                    public void onFailure(Call<AccountSummary> call, Throwable t)
-                    {
+                    public void onFailure(Call<AccountSummary> call, Throwable t) {
                         super.onFailure(call, t);
                         adapter.notifyDataSetChanged();
-                        if (busyLoadingData)
-                        {
-                            if (swipeRefreshLayout.isRefreshing())
-                            {
+                        if (busyLoadingData) {
+                            if (swipeRefreshLayout.isRefreshing()) {
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                             busyLoadingData = false;
@@ -304,26 +264,20 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     }
                 };
 
-        api.getAccountSummary(customerId, "", "", onGetAccountSummary);
+        API.getInstance().getAccountSummary(customerId, "", "", onGetAccountSummary);
     }
 
 
-    private void getTripForToday()
-    {
+    private void getTripForToday() {
         final RetrofitCallbacks<List<TripByCustomerId>> onGetTripSummary =
-                new RetrofitCallbacks<List<TripByCustomerId>>()
-                {
+                new RetrofitCallbacks<List<TripByCustomerId>>() {
 
                     @Override
-                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
-                    {
+                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() != null)
-                            {
-                                for (TripByCustomerId tripsByDriverMail : response.body())
-                                {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                for (TripByCustomerId tripsByDriverMail : response.body()) {
                                     accountSummary.getTripToday().put(tripsByDriverMail.getTripId(),
                                             tripsByDriverMail);
                                 }
@@ -335,27 +289,21 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
 
         final String today = Utils.getDate(Calendar.getInstance().getTime());
 
-        api.getTripSummary(customerId, tripStatus, today, today, null,
+        API.getInstance().getTripSummary(customerId, tripStatus, today, today, null,
                 onGetTripSummary);
 
     }
 
-    private void getTripForThisMonth()
-    {
+    private void getTripForThisMonth() {
         final RetrofitCallbacks<List<TripByCustomerId>> onGetTripSummary =
-                new RetrofitCallbacks<List<TripByCustomerId>>()
-                {
+                new RetrofitCallbacks<List<TripByCustomerId>>() {
 
                     @Override
-                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
-                    {
+                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() != null)
-                            {
-                                for (TripByCustomerId tripsByDriverMail : response.body())
-                                {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                for (TripByCustomerId tripsByDriverMail : response.body()) {
                                     accountSummary.getTripThisMonth().put(tripsByDriverMail.getTripId(),
                                             tripsByDriverMail);
                                 }
@@ -370,26 +318,20 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                 -1 * (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1));
         final String monthInString = Utils.getDate(month);
 
-        api.getTripSummary(customerId, tripStatus, monthInString, today, null,
+        API.getInstance().getTripSummary(customerId, tripStatus, monthInString, today, null,
                 onGetTripSummary);
     }
 
-    private void getTotalTrips()
-    {
+    private void getTotalTrips() {
         final RetrofitCallbacks<List<TripByCustomerId>> onGetTripSummary =
-                new RetrofitCallbacks<List<TripByCustomerId>>()
-                {
+                new RetrofitCallbacks<List<TripByCustomerId>>() {
 
                     @Override
-                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
-                    {
+                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() != null)
-                            {
-                                for (TripByCustomerId tripsByDriverMail : response.body())
-                                {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                for (TripByCustomerId tripsByDriverMail : response.body()) {
                                     accountSummary.getTotalTrips().put(tripsByDriverMail.getTripId(),
                                             tripsByDriverMail);
                                 }
@@ -399,15 +341,14 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     }
                 };
 
-        api.getTripsByCustomerId(customerId,
+        API.getInstance().getTripsByCustomerId(customerId,
                 onGetTripSummary);
 
     }
 
 
     @Override
-    public void onRefresh()
-    {
+    public void onRefresh() {
         getAccountBalance();
     }
 

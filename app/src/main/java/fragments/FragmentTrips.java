@@ -51,8 +51,7 @@ import viewholder.VHSingleTripDetails;
  */
 
 public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
-        VHSingleTripDetails.OnDriverPhotoClickListener
-{
+        VHSingleTripDetails.OnDriverPhotoClickListener {
 
     private static final String TAG = App.APP_TAG + FragmentTrips.class.getSimpleName();
     final List<String> tripIds = new ArrayList<>();
@@ -65,8 +64,6 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     TripDetailsAdapter adapter;
     @Inject
     Realm realm;
-    @Inject
-    API api;
     View view;
     private RealmResults<TripByCustomerId> bookedTripRealmResults;
     // Hold a reference to the current animator,
@@ -77,8 +74,7 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     // very frequently.
     private int mShortAnimationDuration;
 
-    public static FragmentTrips newInstance(int index)
-    {
+    public static FragmentTrips newInstance(int index) {
         FragmentTrips fragmentTrips = new FragmentTrips();
         Bundle b = new Bundle();
         b.putInt("index", index);
@@ -90,111 +86,97 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState)
-    {
-        view = inflater.inflate(R.layout.fragment_trips, container, false);
+                             @Nullable Bundle savedInstanceState) {
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_trips, container, false);
 
-        ButterKnife.bind(this, view);
+            ButterKnife.bind(this, view);
 
-        ((App) getActivity().getApplication()).getUser().inject(this);
+            ((App) getActivity().getApplication()).getUser().inject(this);
 
-        mShortAnimationDuration = getResources().getInteger(
-                android.R.integer.config_shortAnimTime);
+            mShortAnimationDuration = getResources().getInteger(
+                    android.R.integer.config_shortAnimTime);
 
-        adapter = new TripDetailsAdapter(getActivity(), this);
+            adapter = new TripDetailsAdapter(getActivity(), this);
 
-        rvUserActivity.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvUserActivity.setHasFixedSize(true);
-        rvUserActivity.setAdapter(adapter);
+            rvUserActivity.setLayoutManager(new LinearLayoutManager(getActivity()));
+            rvUserActivity.setHasFixedSize(true);
+            rvUserActivity.setAdapter(adapter);
 
-        srlRefreshTrips.setOnRefreshListener(this);
+            srlRefreshTrips.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
-        getTripsFromRealm();
-        getTrips();
+            srlRefreshTrips.setOnRefreshListener(this);
 
+            getTripsFromRealm();
+            getTrips();
+
+        }
         return view;
     }
 
 
-    private void getTripsFromRealm()
-    {
+    private void getTripsFromRealm() {
         adapter.clearAll();
 
         bookedTripRealmResults =
                 realm.where(TripByCustomerId.class).findAll();
 
-        bookedTripRealmResults.addChangeListener(new RealmChangeListener<RealmResults<TripByCustomerId>>()
-        {
+        bookedTripRealmResults.addChangeListener(new RealmChangeListener<RealmResults<TripByCustomerId>>() {
             @Override
-            public void onChange(RealmResults<TripByCustomerId> element)
-            {
+            public void onChange(RealmResults<TripByCustomerId> element) {
                 adapter.notifyDataSetChanged();
             }
         });
 
-        for (TripByCustomerId bookedTrip : bookedTripRealmResults)
-        {
+        for (TripByCustomerId bookedTrip : bookedTripRealmResults) {
             adapter.addBookedTrip(bookedTrip);
         }
 
-        if (adapter.getItemCount() != 0)
-        {
+        if (adapter.getItemCount() != 0) {
             llHomeEmpty.setVisibility(View.GONE);
-        } else
-        {
+        } else {
             llHomeEmpty.setVisibility(View.VISIBLE);
         }
     }
 
 
-    private void getTrips()
-    {
+    private void getTrips() {
         final String customerId = PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .getString(Constants.CUSTOMER_ID, null);
-        api.getTripsByCustomerId(customerId, new RetrofitCallbacks<List<TripByCustomerId>>()
-        {
+        API.getInstance().getTripsByCustomerId(customerId, new RetrofitCallbacks<List<TripByCustomerId>>() {
 
             @Override
-            public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
-            {
+            public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response) {
                 super.onResponse(call, response);
-                if (response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
                     Log.i(TAG, "TOTAL TRIPS: " + response.body().size());
                     realm.beginTransaction();
-                    for (TripByCustomerId trip : response.body())
-                    {
-                        if (!tripIds.contains(trip.getTripId()))
-                        {
+                    for (TripByCustomerId trip : response.body()) {
+                        if (!tripIds.contains(trip.getTripId())) {
                             Log.i(TAG, "TRIP ID: " + trip.getTripId());
                             tripIds.add(trip.getTripId());
-                        } else
-                        {
+                        } else {
                             Log.i(TAG, "DUPLICATE TRIP ID: " + trip.getTripId());
                         }
                         realm.copyToRealmOrUpdate(trip);
                     }
                     realm.commitTransaction();
                     getTripsFromRealm();
-                } else
-                {
+                } else {
                     Toast.makeText(getActivity(), R.string.something_went_wrong,
                             Toast.LENGTH_SHORT).show();
                 }
-                if (srlRefreshTrips.isRefreshing())
-                {
+                if (srlRefreshTrips.isRefreshing()) {
                     srlRefreshTrips.setRefreshing(false);
                 }
             }
 
             @Override
-            public void onFailure(Call<List<TripByCustomerId>> call, Throwable t)
-            {
+            public void onFailure(Call<List<TripByCustomerId>> call, Throwable t) {
                 super.onFailure(call, t);
                 Toast.makeText(getActivity(), R.string.something_went_wrong,
                         Toast.LENGTH_SHORT).show();
-                if (srlRefreshTrips.isRefreshing())
-                {
+                if (srlRefreshTrips.isRefreshing()) {
                     srlRefreshTrips.setRefreshing(false);
                 }
             }
@@ -202,18 +184,15 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     @Override
-    public void onRefresh()
-    {
+    public void onRefresh() {
         getTrips();
     }
 
 
-    private void zoomImageFromThumb(final View thumbView, String image)
-    {
+    private void zoomImageFromThumb(final View thumbView, String image) {
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.
-        if (mCurrentAnimator != null)
-        {
+        if (mCurrentAnimator != null) {
             mCurrentAnimator.cancel();
         }
 
@@ -252,16 +231,14 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
         // factor (the end scaling factor is always 1.0).
         float startScale;
         if ((float) finalBounds.width() / finalBounds.height()
-                > (float) startBounds.width() / startBounds.height())
-        {
+                > (float) startBounds.width() / startBounds.height()) {
             // Extend start bounds horizontally
             startScale = (float) startBounds.height() / finalBounds.height();
             float startWidth = startScale * finalBounds.width();
             float deltaWidth = (startWidth - startBounds.width()) / 2;
             startBounds.left -= deltaWidth;
             startBounds.right += deltaWidth;
-        } else
-        {
+        } else {
             // Extend start bounds vertically
             startScale = (float) startBounds.width() / finalBounds.width();
             float startHeight = startScale * finalBounds.height();
@@ -296,17 +273,14 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                 View.SCALE_Y, startScale, 1f));
         set.setDuration(mShortAnimationDuration);
         set.setInterpolator(new DecelerateInterpolator());
-        set.addListener(new AnimatorListenerAdapter()
-        {
+        set.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationEnd(Animator animation)
-            {
+            public void onAnimationEnd(Animator animation) {
                 mCurrentAnimator = null;
             }
 
             @Override
-            public void onAnimationCancel(Animator animation)
-            {
+            public void onAnimationCancel(Animator animation) {
                 mCurrentAnimator = null;
             }
         });
@@ -317,13 +291,10 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
         // to the original bounds and show the thumbnail instead of
         // the expanded image.
         final float startScaleFinal = startScale;
-        expandedImageView.setOnClickListener(new View.OnClickListener()
-        {
+        expandedImageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                if (mCurrentAnimator != null)
-                {
+            public void onClick(View view) {
+                if (mCurrentAnimator != null) {
                     mCurrentAnimator.cancel();
                 }
 
@@ -343,11 +314,9 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                                         View.SCALE_Y, startScaleFinal));
                 set.setDuration(mShortAnimationDuration);
                 set.setInterpolator(new DecelerateInterpolator());
-                set.addListener(new AnimatorListenerAdapter()
-                {
+                set.addListener(new AnimatorListenerAdapter() {
                     @Override
-                    public void onAnimationEnd(Animator animation)
-                    {
+                    public void onAnimationEnd(Animator animation) {
                         thumbView.setAlpha(1f);
                         expandedImageView.setVisibility(View.GONE);
                         flExpandedImage.setVisibility(View.GONE);
@@ -355,8 +324,7 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                     }
 
                     @Override
-                    public void onAnimationCancel(Animator animation)
-                    {
+                    public void onAnimationCancel(Animator animation) {
                         thumbView.setAlpha(1f);
                         expandedImageView.setVisibility(View.GONE);
                         flExpandedImage.setVisibility(View.GONE);
@@ -371,8 +339,7 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
 
     @Override
-    public void openImageInFullView(View view, String image)
-    {
+    public void openImageInFullView(View view, String image) {
         zoomImageFromThumb(view, image);
     }
 }

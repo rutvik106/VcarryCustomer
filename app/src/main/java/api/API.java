@@ -27,14 +27,21 @@ public class API
 {
 
     private static final String TAG = App.APP_TAG + API.class.getSimpleName();
-    Retrofit retrofit;
-    private ApiInterface apiService;
 
-    @Inject
-    public API(Retrofit retrofit)
+    //create an object of SingleObject
+    private static API instance = new API();
+    private ApiInterface apiService;
+    private String authToken = "";
+
+    private API()
     {
-        this.retrofit = retrofit;
-        apiService = retrofit.create(ApiInterface.class);
+        apiService = ApiClient.getClient().create(ApiInterface.class);
+    }
+
+    //Get the only object available
+    public static API getInstance()
+    {
+        return instance;
     }
 
     //**********************************************************************************************

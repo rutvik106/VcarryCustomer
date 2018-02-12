@@ -16,7 +16,6 @@ import io.fusionbit.vcarrycustomer.ActivityTripDetails;
 import io.fusionbit.vcarrycustomer.ActivityTripSummary;
 import io.fusionbit.vcarrycustomer.ActivityTrips;
 import io.realm.RealmConfiguration;
-import module.ApiModule;
 import module.AppModule;
 import module.RealmConfigModule;
 import module.RealmModule;
@@ -27,7 +26,7 @@ import module.UserModule;
  */
 
 @Singleton
-@Component(modules = {AppModule.class, RealmConfigModule.class, RealmModule.class, UserModule.class, ApiModule.class})
+@Component(modules = {AppModule.class, RealmConfigModule.class, RealmModule.class, UserModule.class})
 public interface User
 {
     void inject(ActivityHome activityBookTrip);
@@ -49,8 +48,6 @@ public interface User
     void inject(ActivityOnGoingTrips activityOnGoingTrips);
 
     RealmConfiguration getRealmConfiguration();
-
-    API getAPI();
 
     void inject(ActivityTripSummary activityTripSummary);
 

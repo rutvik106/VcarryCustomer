@@ -64,8 +64,6 @@ public class ActivityRegistrationForm extends BaseActivity implements Validator.
     String selectedCityId = null;
     String selectedAreaId = null;
     Validator validator;
-    @Inject
-    API api;
     private Call<List<City>> gettingCityList;
     private Call<List<Area>> gettingAreaList;
 
@@ -176,7 +174,7 @@ public class ActivityRegistrationForm extends BaseActivity implements Validator.
             gettingAreaList.cancel();
         }
         gettingAreaList =
-                api.getAreas(cityId, new RetrofitCallbacks<List<Area>>()
+                API.getInstance().getAreas(cityId, new RetrofitCallbacks<List<Area>>()
                 {
                     @Override
                     public void onResponse(Call<List<Area>> call, Response<List<Area>> response)
@@ -203,7 +201,7 @@ public class ActivityRegistrationForm extends BaseActivity implements Validator.
             gettingCityList.cancel();
         }
         gettingCityList =
-                api.getCities(new RetrofitCallbacks<List<City>>()
+                API.getInstance().getCities(new RetrofitCallbacks<List<City>>()
                 {
 
                     @Override
@@ -302,7 +300,7 @@ public class ActivityRegistrationForm extends BaseActivity implements Validator.
                     }
                 };
 
-        api.insertCustomer(selectedPrefixId,
+        API.getInstance().insertCustomer(selectedPrefixId,
                 etFullName.getText().toString(),
                 etAddressLineOne.getText().toString(),
                 etAddressLineTwo.getText().toString(),

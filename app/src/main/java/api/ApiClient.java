@@ -13,26 +13,23 @@ import static io.fusionbit.vcarrycustomer.Constants.API_BASE_URL;
  * Created by rutvik on 1/9/2017 at 3:23 PM.
  */
 
-public class ApiClient
-{
+public class ApiClient {
 
     private static Retrofit retrofit = null;
 
-    public static Retrofit getClient()
-    {
+    public static Retrofit getClient() {
+        if (retrofit == null) {
+            HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(httpLoggingInterceptor)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .build();
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(httpLoggingInterceptor)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .build();
 
-        if (retrofit == null)
-        {
             retrofit = new Retrofit.Builder()
                     .baseUrl(API_BASE_URL)
                     .client(okHttpClient)

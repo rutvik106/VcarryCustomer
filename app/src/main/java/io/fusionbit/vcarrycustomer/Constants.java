@@ -4,8 +4,9 @@ package io.fusionbit.vcarrycustomer;
  * Created by rutvik on 11/20/2016 at 4:22 PM.
  */
 
-public class Constants
-{
+public class Constants {
+
+    public static final boolean IS_EMULATOR = false;
 
     //public static final String API_BASE_URL = "";
     public static final String API_BASE_URL = "http://tapandtype.com/vcarry/webservice/";
@@ -77,8 +78,7 @@ public class Constants
     public static final String INTENT_EXTRA_CASH_RECEIVED = "INTENT_EXTRA_CASH_RECEIVED";
     public static final String CUSTOMER_TRIP_ID = "CUSTOMER_TRIP_ID";
 
-    public static final class NotificationType
-    {
+    public static final class NotificationType {
         public static final String SIMPLE = "simple";
         public static final String TRIP_CONFIRMATION = "trip_confirmation";
         public static final String DRIVER_ALLOCATED = "driver_allocated";
@@ -89,8 +89,7 @@ public class Constants
         public static final String TRIP_REJECTION = "trip_rejection";
     }
 
-    public static class AccountTripType
-    {
+    public static class AccountTripType {
         public static final String TODAY = "TODAY";
         public static final String THIS_MONTH = "THIS_MONTH";
         public static final String TOTAL = "TOTAL";

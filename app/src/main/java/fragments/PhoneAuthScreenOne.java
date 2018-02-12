@@ -32,8 +32,7 @@ import io.fusionbit.vcarrycustomer.R;
  * Created by rutvik on 6/15/2017 at 12:04 PM.
  */
 
-public class PhoneAuthScreenOne extends Fragment
-{
+public class PhoneAuthScreenOne extends Fragment {
     private static final String TAG = App.APP_TAG + PhoneAuthScreenOne.class.getSimpleName();
     @BindView(R.id.fabConfirmMobile)
     FloatingActionButton fabConfirmMobile;
@@ -47,8 +46,7 @@ public class PhoneAuthScreenOne extends Fragment
 
     String selectedCountryCode;
 
-    public static PhoneAuthScreenOne newInstance(PhoneAuthScreenOneCallbacks phoneAuthScreenOneCallbacks)
-    {
+    public static PhoneAuthScreenOne newInstance(PhoneAuthScreenOneCallbacks phoneAuthScreenOneCallbacks) {
         PhoneAuthScreenOne fragment = new PhoneAuthScreenOne();
         fragment.phoneAuthScreenOneCallbacks = phoneAuthScreenOneCallbacks;
         return fragment;
@@ -56,8 +54,7 @@ public class PhoneAuthScreenOne extends Fragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_phone_auth_screen_one, container, false);
 
@@ -65,11 +62,12 @@ public class PhoneAuthScreenOne extends Fragment
 
         parseCountryCodes();
 
+        spinner.setVisibility(View.GONE);
+
         return rootView;
     }
 
-    private void parseCountryCodes()
-    {
+    private void parseCountryCodes() {
         InputStream ims = getActivity().getResources().openRawResource(R.raw.country_codes);
 
         Gson gson = new Gson();
@@ -80,28 +78,23 @@ public class PhoneAuthScreenOne extends Fragment
 
     }
 
-    private void setSpinner(final CountryCodes[] countryCodes)
-    {
+    private void setSpinner(final CountryCodes[] countryCodes) {
         final ArrayList<String> countryCodesString = new ArrayList<>();
-        for (CountryCodes c : countryCodes)
-        {
+        for (CountryCodes c : countryCodes) {
             countryCodesString.add(c.getName() + " (" + c.getDialCode() + ")");
         }
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, countryCodesString);
 
         spinner.setAdapter(adapter);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
-            {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedCountryCode = countryCodes[i].getDialCode();
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView)
-            {
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
@@ -110,11 +103,9 @@ public class PhoneAuthScreenOne extends Fragment
 
     }
 
-    public boolean validatePhoneNumber()
-    {
+    public boolean validatePhoneNumber() {
         String phoneNumber = etPhoneNumber.getText().toString();
-        if (TextUtils.isEmpty(phoneNumber) || phoneNumber.length() > 10)
-        {
+        if (TextUtils.isEmpty(phoneNumber) || phoneNumber.length() > 10) {
             etPhoneNumber.setError("Invalid phone number.");
             return false;
         }
@@ -124,34 +115,28 @@ public class PhoneAuthScreenOne extends Fragment
 
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
 
     @OnClick(R.id.fabConfirmMobile)
-    public void onViewClicked()
-    {
-        if (!validatePhoneNumber())
-        {
+    public void onViewClicked() {
+        if (!validatePhoneNumber()) {
             return;
         }
         phoneAuthScreenOneCallbacks.verifyPhoneNumber(getMobileNo());
     }
 
-    public String getMobileNo()
-    {
+    public String getMobileNo() {
         return getSelectedCountryCode() + etPhoneNumber.getText().toString();
     }
 
-    public String getSelectedCountryCode()
-    {
+    public String getSelectedCountryCode() {
         return selectedCountryCode;
     }
 
-    public interface PhoneAuthScreenOneCallbacks
-    {
+    public interface PhoneAuthScreenOneCallbacks {
         void verifyPhoneNumber(String phoneNo);
     }
 }

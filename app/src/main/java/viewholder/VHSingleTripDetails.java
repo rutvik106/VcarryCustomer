@@ -430,7 +430,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                 @Override
                 public void onTick(long millisUntilFinished)
                 {
-                    Log.i(TAG, "ON COUNT DOWN TIMER TICK: " + millisUntilFinished);
+                    //Log.i(TAG, "ON COUNT DOWN TIMER TICK: " + millisUntilFinished);
                     final long seconds = (millisUntilFinished / 1000) % 60;
                     long minutes = ((millisUntilFinished - seconds) / 1000) / 60;
                     tvCountDownTime.setText(minutes + " Min " + seconds + " Sec");

@@ -43,8 +43,6 @@ public class ActivityTrips extends BaseActivity
     RecyclerView rvTrips;
     @Inject
     Realm realm;
-    @Inject
-    API api;
     @BindView(R.id.fl_noTripsFound)
     FrameLayout flNoTripsFound;
     @BindView(R.id.fl_somethingWentWrong)
@@ -153,7 +151,7 @@ public class ActivityTrips extends BaseActivity
 
         final String today = Utils.getDate(Calendar.getInstance().getTime());
 
-        api.getTripSummary(customerId, tripStatus, today, today, null,
+        API.getInstance().getTripSummary(customerId, tripStatus, today, today, null,
                 onGetTripSummary);
 
     }
@@ -198,7 +196,7 @@ public class ActivityTrips extends BaseActivity
                 -1 * (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1));
         final String monthInString = Utils.getDate(month);
 
-        api.getTripSummary(customerId, tripStatus, monthInString, today, null,
+        API.getInstance().getTripSummary(customerId, tripStatus, monthInString, today, null,
                 onGetTripSummary);
     }
 
@@ -239,7 +237,7 @@ public class ActivityTrips extends BaseActivity
                     }
                 };
 
-        api.getTripSummary(customerId, tripStatus, null, null, null,
+        API.getInstance().getTripSummary(customerId, tripStatus, null, null, null,
                 onGetTripSummary);
     }
 

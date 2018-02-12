@@ -40,8 +40,7 @@ import static java.lang.StrictMath.toDegrees;
  * Created by rutvik on 9/15/2016 at 1:48 PM.
  */
 
-public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnCameraIdleListener
-{
+public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnCameraIdleListener {
     private static final String TAG = App.APP_TAG + FragmentMap.class.getSimpleName();
     final Handler mHandler = new Handler();
     private final GetAddressFromIntentService addressFromIntentService =
@@ -57,8 +56,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
     private AddressResultReceiver mResultReceiver;
     private LatLng onCameraChangedLatLng;
 
-    public static FragmentMap newInstance(int index, Context context)
-    {
+    public static FragmentMap newInstance(int index, Context context) {
         FragmentMap fragmentMap = new FragmentMap();
         fragmentMap.context = context;
         Bundle b = new Bundle();
@@ -67,16 +65,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         return fragmentMap;
     }
 
-    public static int getPixelsFromDp(Context context, float dp)
-    {
+    public static int getPixelsFromDp(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_fragment, container, false);
 
         mapWrapperLayout = (MapWrapperLayout) view.findViewById(R.id.map_wrapper_layout);
@@ -95,10 +91,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         return view;
     }
 
-    public void placeCurrentLocationMarker(final LatLng latLng)
-    {
-        if (isReady)
-        {
+    public void placeCurrentLocationMarker(final LatLng latLng) {
+        if (isReady) {
 
             currentLatLng = latLng;
 
@@ -118,14 +112,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         }
     }
 
-    private void loadMapNow()
-    {
+    private void loadMapNow() {
         mapFragment.getMapAsync(this);
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap)
-    {
+    public void onMapReady(GoogleMap googleMap) {
         isReady = true;
 
         mMap = googleMap;
@@ -137,8 +129,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 &&
                 ActivityCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-        {
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
 
@@ -169,62 +160,51 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     @Override
-    public void onCameraChange(CameraPosition cameraPosition)
-    {
+    public void onCameraChange(CameraPosition cameraPosition) {
         etCurrentLocation.setText("Fetching location...");
         onCameraChangedLatLng = mMap.getCameraPosition().target;
         currentLatLng = mMap.getCameraPosition().target;
     }
 
     @Override
-    public void onCameraIdle()
-    {
+    public void onCameraIdle() {
         mHandler.removeCallbacks(addressFromIntentService);
         mHandler.postDelayed(addressFromIntentService, 800);
 
     }
 
-    public String getCurrentPlace()
-    {
+    public String getCurrentPlace() {
         return etCurrentLocation.getText().toString();
     }
 
-    public String getCurrentLat()
-    {
+    public String getCurrentLat() {
         return currentLatLng.latitude + "";
     }
 
-    public String getCurrentLng()
-    {
+    public String getCurrentLng() {
         return currentLatLng.longitude + "";
     }
 
-    public interface LatLngInterpolator
-    {
+    public interface LatLngInterpolator {
         public LatLng interpolate(float fraction, LatLng a, LatLng b);
 
-        public class Linear implements LatLngInterpolator
-        {
+        public class Linear implements LatLngInterpolator {
             @Override
-            public LatLng interpolate(float fraction, LatLng a, LatLng b)
-            {
+            public LatLng interpolate(float fraction, LatLng a, LatLng b) {
                 double lat = (b.latitude - a.latitude) * fraction + a.latitude;
                 double lng = (b.longitude - a.longitude) * fraction + a.longitude;
                 return new LatLng(lat, lng);
             }
         }
 
-        public class LinearFixed implements LatLngInterpolator
-        {
+        public class LinearFixed implements LatLngInterpolator {
             @Override
-            public LatLng interpolate(float fraction, LatLng a, LatLng b)
-            {
+            public LatLng interpolate(float fraction, LatLng a, LatLng b) {
                 double lat = (b.latitude - a.latitude) * fraction + a.latitude;
                 double lngDelta = b.longitude - a.longitude;
 
                 // Take the shortest path across the 180th meridian.
-                if (Math.abs(lngDelta) > 180)
-                {
+                if (Math.abs(lngDelta) > 180) {
                     lngDelta -= Math.signum(lngDelta) * 360;
                 }
                 double lng = lngDelta * fraction + a.longitude;
@@ -232,13 +212,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
             }
         }
 
-        public class Spherical implements LatLngInterpolator
-        {
+        public class Spherical implements LatLngInterpolator {
 
             /* From github.com/googlemaps/android-maps-utils */
             @Override
-            public LatLng interpolate(float fraction, LatLng from, LatLng to)
-            {
+            public LatLng interpolate(float fraction, LatLng from, LatLng to) {
                 // http://en.wikipedia.org/wiki/Slerp
                 double fromLat = toRadians(from.latitude);
                 double fromLng = toRadians(from.longitude);
@@ -250,8 +228,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                 // Computes Spherical interpolation coefficients.
                 double angle = computeAngleBetween(fromLat, fromLng, toLat, toLng);
                 double sinAngle = sin(angle);
-                if (sinAngle < 1E-6)
-                {
+                if (sinAngle < 1E-6) {
                     return from;
                 }
                 double a = sin((1 - fraction) * angle) / sinAngle;
@@ -268,8 +245,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                 return new LatLng(toDegrees(lat), toDegrees(lng));
             }
 
-            private double computeAngleBetween(double fromLat, double fromLng, double toLat, double toLng)
-            {
+            private double computeAngleBetween(double fromLat, double fromLng, double toLat, double toLng) {
                 // Haversine's formula
                 double dLat = fromLat - toLat;
                 double dLng = fromLng - toLng;
@@ -280,12 +256,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
     }
 
-    class GetAddressFromIntentService implements Runnable
-    {
+    class GetAddressFromIntentService implements Runnable {
 
         @Override
-        public void run()
-        {
+        public void run() {
             Intent intent = new Intent(getActivity(), GeocodeAddressIntentService.class);
             intent.putExtra(Constants.RECEIVER, mResultReceiver);
             intent.putExtra(Constants.FETCH_TYPE_EXTRA, Constants.USE_ADDRESS_LOCATION);
@@ -300,33 +274,29 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         }
     }
 
-    class AddressResultReceiver extends ResultReceiver
-    {
-        public AddressResultReceiver(Handler handler)
-        {
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
             super(handler);
         }
 
         @Override
-        protected void onReceiveResult(int resultCode, final Bundle resultData)
-        {
-            if (resultCode == Constants.SUCCESS_RESULT)
-            {
-                try
-                {
+        protected void onReceiveResult(int resultCode, final Bundle resultData) {
+            if (resultCode == Constants.SUCCESS_RESULT) {
+                try {
                     //final Address address = resultData.getParcelable(Constants.RESULT_ADDRESS);
-                    getActivity().runOnUiThread(new Runnable()
-                    {
+                    getActivity().runOnUiThread(new Runnable() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             String address = resultData.getString(Constants.RESULT_DATA_KEY);
-                            address = address.substring(0, address.length() - 2);
+                            try {
+                                address = address.substring(0, address.length() - 2);
+                            } catch (StringIndexOutOfBoundsException e) {
+                                e.printStackTrace();
+                            }
                             etCurrentLocation.setText(address);
                         }
                     });
-                } catch (NullPointerException e)
-                {
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
             } /*else

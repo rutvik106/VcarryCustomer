@@ -32,9 +32,6 @@ public class GeocodeAddressIntentService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-
-
-
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         String errorMessage = "";
         List<Address> addresses = null;

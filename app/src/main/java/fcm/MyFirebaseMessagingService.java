@@ -5,6 +5,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
+import api.API;
 import extra.Log;
 import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.NotificationHandler;
@@ -25,7 +26,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         Log.i(TAG, "DATA: " + data.toString() + " FROM: " + from);
 
         new NotificationHandler(this, ((App) getApplication()).getUser().getRealmConfiguration(),
-                ((App) getApplication()).getUser().getAPI(),
+                API.getInstance(),
                 message)
                 .handleNotification();
     }

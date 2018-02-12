@@ -145,6 +145,6 @@
     <string name="please_wait_you_will_receive_a_otp">Please wait, You will receive a OTP in 60 Seconds.</string>
     <string name="resend">Resend</string>
     <string name="select_country_code">Select Country Code</string>
-    <string name="enter_mobile_no">Enter Mobile No</string>
+    <string name="enter_mobile_no">Mobile Number</string>
 
 </resources>

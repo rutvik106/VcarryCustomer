@@ -5,22 +5,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
-public class ActivitySplash extends AppCompatActivity
-{
+public class ActivitySplash extends AppCompatActivity {
 
     private static final String TAG = App.APP_TAG + ActivitySplash.class.getSimpleName();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        new Handler().postDelayed(new Runnable()
-        {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void run()
-            {
-                Intent i = new Intent(ActivitySplash.this, ActivityPhoneAuth.class);
+            public void run() {
+                Intent i;
+                if (!Constants.IS_EMULATOR) {
+                    i = new Intent(ActivitySplash.this, ActivityPhoneAuth.class);
+                } else {
+                    i = new Intent(ActivitySplash.this, ActivityHome.class);
+                }
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(i);
             }
@@ -29,8 +30,7 @@ public class ActivitySplash extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
     }
 
 }

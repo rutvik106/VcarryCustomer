@@ -74,8 +74,6 @@ public class ActivityTripDetails extends BaseActivity
     @Inject
     Realm realm;
 
-    @Inject
-    API api;
     @BindView(R.id.tv_tripWeight)
     TextView tvTripWeight;
     @BindView(R.id.tv_tripDimension)
@@ -175,7 +173,7 @@ public class ActivityTripDetails extends BaseActivity
     {
         if (tripId != null)
         {
-            gettingTripDetails = api.getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripByCustomerId>()
+            gettingTripDetails = API.getInstance().getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripByCustomerId>()
             {
                 @Override
                 public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response)
@@ -189,7 +187,7 @@ public class ActivityTripDetails extends BaseActivity
             });
         } else if (tripNumber != null)
         {
-            gettingTripDetails = api.getTripDetailsByTripNo(tripNumber, new RetrofitCallbacks<TripByCustomerId>()
+            gettingTripDetails = API.getInstance().getTripDetailsByTripNo(tripNumber, new RetrofitCallbacks<TripByCustomerId>()
             {
 
                 @Override

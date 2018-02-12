@@ -41,8 +41,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import viewholder.VHSingleTripDetails;
 
-public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDetails.OnDriverPhotoClickListener, SwipeRefreshLayout.OnRefreshListener
-{
+public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDetails.OnDriverPhotoClickListener, SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = App.APP_TAG + ActivityOnGoingTrips.class.getSimpleName();
 
     @BindView(R.id.rv_onGoingTrips)
@@ -55,8 +54,6 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
     @Inject
     Realm realm;
 
-    @Inject
-    API api;
     TripDetailsAdapter adapter;
     @BindView(R.id.fl_noActiveTrips)
     FrameLayout flNoActiveTrips;
@@ -75,18 +72,15 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
     private int mShortAnimationDuration;
 
 
-    public static void start(Context context)
-    {
+    public static void start(Context context) {
         context.startActivity(new Intent(context, ActivityOnGoingTrips.class));
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getSupportActionBar() != null)
-        {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.active_trips);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -95,7 +89,7 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
         mShortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
-
+        srlRefreshActiveTrips.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
         srlRefreshActiveTrips.setOnRefreshListener(this);
 
         setupRecyclerView();
@@ -104,41 +98,36 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
         getTripsFromAPI();
 
+        logPendingTrips();
+
     }
 
-    private void setupRecyclerView()
-    {
+    private void setupRecyclerView() {
         rvOnGoingTrips.setLayoutManager(new LinearLayoutManager(this));
         rvOnGoingTrips.setHasFixedSize(true);
         adapter = new TripDetailsAdapter(this, this);
         rvOnGoingTrips.setAdapter(adapter);
     }
 
-    private void getOnGoingTripsFromRealm()
-    {
+    private void getOnGoingTripsFromRealm() {
 
         final RealmResults<BookedTrip> bookedTrips =
                 realm.where(BookedTrip.class)
                         .equalTo("tripStatus", Constants.TRIP_STATUS_PENDING)
                         .findAll();
 
-        for (BookedTrip bookedTrip : bookedTrips)
-        {
+        for (BookedTrip bookedTrip : bookedTrips) {
             Log.i(TAG, "REALM TRIP STATUS: " + bookedTrip.getTripStatus());
             adapter.addBookedTrip(BookedTrip.bakePendingTrip(bookedTrip));
         }
 
-        bookedTrips.addChangeListener(new RealmChangeListener<RealmResults<BookedTrip>>()
-        {
+        bookedTrips.addChangeListener(new RealmChangeListener<RealmResults<BookedTrip>>() {
             @Override
-            public void onChange(RealmResults<BookedTrip> element)
-            {
+            public void onChange(RealmResults<BookedTrip> element) {
                 Log.i(TAG, "BOOKED TRIP ON CHANGED REALM");
-                if (element.isEmpty())
-                {
+                if (element.isEmpty()) {
                     adapter.clearPendingTrips();
-                } else
-                {
+                } else {
                     Log.i(TAG, "BOOKED TRIP CHANGE SIZE: " + element.size());
                 }
             }
@@ -152,19 +141,16 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                         .notEqualTo("tripStatus", Constants.TRIP_STATUS_CANCELLED_BY_VCARRY)
                         .findAll();
 
-        for (TripByCustomerId trip : tripByCustomerIds)
-        {
+        for (TripByCustomerId trip : tripByCustomerIds) {
             Log.i(TAG, "getDriverDeviceToken: " + trip.getDriverDeviceToken());
             Log.i(TAG, "getDeviceToken: " + trip.getDeviceToken());
             adapter.addBookedTrip(trip);
         }
 
 
-        tripByCustomerIds.addChangeListener(new RealmChangeListener<RealmResults<TripByCustomerId>>()
-        {
+        tripByCustomerIds.addChangeListener(new RealmChangeListener<RealmResults<TripByCustomerId>>() {
             @Override
-            public void onChange(RealmResults<TripByCustomerId> element)
-            {
+            public void onChange(RealmResults<TripByCustomerId> element) {
 
                 adapter.clearAll();
 
@@ -174,8 +160,7 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                                 .findAll();
 
 
-                for (BookedTrip bookedTrip : bookedTrips)
-                {
+                for (BookedTrip bookedTrip : bookedTrips) {
                     Log.i(TAG, "REALM TRIP STATUS: " + bookedTrip.getTripStatus());
                     adapter.addBookedTrip(BookedTrip.bakePendingTrip(bookedTrip));
                 }
@@ -183,8 +168,7 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
                 Log.i(TAG, "tripByCustomerIds SIZE: " + tripByCustomerIds.size());
                 Log.i(TAG, "element SIZE: " + element.size());
-                for (TripByCustomerId trip : element)
-                {
+                for (TripByCustomerId trip : element) {
                     Log.i(TAG, "TRIP STATUS: " + trip.getStatus() + " STATUS NO: " + trip.getTripStatus());
                     Log.i(TAG, "ADDING TRIP FROM ON CHANGE REALM");
                     adapter.addBookedTrip(trip);
@@ -192,11 +176,9 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
                 Log.i(TAG, "ADAPTER SIZE: " + adapter.getItemCount());
 
-                if (adapter.getItemCount() > 0)
-                {
+                if (adapter.getItemCount() > 0) {
                     flNoActiveTrips.setVisibility(View.GONE);
-                } else
-                {
+                } else {
                     flNoActiveTrips.setVisibility(View.VISIBLE);
                 }
 
@@ -205,39 +187,30 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
         Log.i(TAG, "ADAPTER SIZE: " + adapter.getItemCount());
 
-        if (adapter.getItemCount() > 0)
-        {
+        if (adapter.getItemCount() > 0) {
             flNoActiveTrips.setVisibility(View.GONE);
         }
 
     }
 
-    private void getTripsFromAPI()
-    {
+    private void getTripsFromAPI() {
         srlRefreshActiveTrips.setRefreshing(true);
         final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CUSTOMER_ID, null);
-        if (customerId != null)
-        {
-            if (call != null)
-            {
+        if (customerId != null) {
+            if (call != null) {
                 call.cancel();
             }
-            call = api.getTripsByCustomerId(customerId, new RetrofitCallbacks<List<TripByCustomerId>>()
-            {
+            call = API.getInstance().getTripsByCustomerId(customerId, new RetrofitCallbacks<List<TripByCustomerId>>() {
                 @Override
-                public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
-                {
+                public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response) {
                     super.onResponse(call, response);
-                    if (srlRefreshActiveTrips.isRefreshing())
-                    {
+                    if (srlRefreshActiveTrips.isRefreshing()) {
                         srlRefreshActiveTrips.setRefreshing(false);
                     }
-                    if (response.isSuccessful())
-                    {
+                    if (response.isSuccessful()) {
                         realm.beginTransaction();
-                        for (TripByCustomerId trip : response.body())
-                        {
+                        for (TripByCustomerId trip : response.body()) {
                             realm.copyToRealmOrUpdate(trip);
                         }
                         realm.commitTransaction();
@@ -245,11 +218,9 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                 }
 
                 @Override
-                public void onFailure(Call<List<TripByCustomerId>> call, Throwable t)
-                {
+                public void onFailure(Call<List<TripByCustomerId>> call, Throwable t) {
                     super.onFailure(call, t);
-                    if (srlRefreshActiveTrips.isRefreshing())
-                    {
+                    if (srlRefreshActiveTrips.isRefreshing()) {
                         srlRefreshActiveTrips.setRefreshing(false);
                     }
                 }
@@ -258,59 +229,47 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
     }
 
     @Override
-    protected int getLayoutResourceId()
-    {
+    protected int getLayoutResourceId() {
         return R.layout.activity_on_going_trips;
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
-        if (sbNoInternet == null)
-        {
+    protected void internetNotAvailable() {
+        if (sbNoInternet == null) {
             sbNoInternet = Snackbar.make(clActivityOnGoingTrips, R.string.no_internet, Snackbar.LENGTH_INDEFINITE);
             sbNoInternet.show();
         }
     }
 
     @Override
-    protected void internetAvailable()
-    {
-        if (sbNoInternet != null)
-        {
-            if (sbNoInternet.isShown())
-            {
+    protected void internetAvailable() {
+        if (sbNoInternet != null) {
+            if (sbNoInternet.isShown()) {
                 sbNoInternet.show();
             }
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if (item.getItemId() == android.R.id.home)
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onDestroy()
-    {
-        if (call != null)
-        {
+    protected void onDestroy() {
+        if (call != null) {
             call.cancel();
         }
         super.onDestroy();
     }
 
-    private void zoomImageFromThumb(final View thumbView, String image)
-    {
+    private void zoomImageFromThumb(final View thumbView, String image) {
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.
-        if (mCurrentAnimator != null)
-        {
+        if (mCurrentAnimator != null) {
             mCurrentAnimator.cancel();
         }
 
@@ -349,16 +308,14 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
         // factor (the end scaling factor is always 1.0).
         float startScale;
         if ((float) finalBounds.width() / finalBounds.height()
-                > (float) startBounds.width() / startBounds.height())
-        {
+                > (float) startBounds.width() / startBounds.height()) {
             // Extend start bounds horizontally
             startScale = (float) startBounds.height() / finalBounds.height();
             float startWidth = startScale * finalBounds.width();
             float deltaWidth = (startWidth - startBounds.width()) / 2;
             startBounds.left -= deltaWidth;
             startBounds.right += deltaWidth;
-        } else
-        {
+        } else {
             // Extend start bounds vertically
             startScale = (float) startBounds.width() / finalBounds.width();
             float startHeight = startScale * finalBounds.height();
@@ -393,17 +350,14 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                 View.SCALE_Y, startScale, 1f));
         set.setDuration(mShortAnimationDuration);
         set.setInterpolator(new DecelerateInterpolator());
-        set.addListener(new AnimatorListenerAdapter()
-        {
+        set.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationEnd(Animator animation)
-            {
+            public void onAnimationEnd(Animator animation) {
                 mCurrentAnimator = null;
             }
 
             @Override
-            public void onAnimationCancel(Animator animation)
-            {
+            public void onAnimationCancel(Animator animation) {
                 mCurrentAnimator = null;
             }
         });
@@ -414,13 +368,10 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
         // to the original bounds and show the thumbnail instead of
         // the expanded image.
         final float startScaleFinal = startScale;
-        expandedImageView.setOnClickListener(new View.OnClickListener()
-        {
+        expandedImageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                if (mCurrentAnimator != null)
-                {
+            public void onClick(View view) {
+                if (mCurrentAnimator != null) {
                     mCurrentAnimator.cancel();
                 }
 
@@ -440,11 +391,9 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                                         View.SCALE_Y, startScaleFinal));
                 set.setDuration(mShortAnimationDuration);
                 set.setInterpolator(new DecelerateInterpolator());
-                set.addListener(new AnimatorListenerAdapter()
-                {
+                set.addListener(new AnimatorListenerAdapter() {
                     @Override
-                    public void onAnimationEnd(Animator animation)
-                    {
+                    public void onAnimationEnd(Animator animation) {
                         thumbView.setAlpha(1f);
                         expandedImageView.setVisibility(View.GONE);
                         flExpandedImage.setVisibility(View.GONE);
@@ -452,8 +401,7 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                     }
 
                     @Override
-                    public void onAnimationCancel(Animator animation)
-                    {
+                    public void onAnimationCancel(Animator animation) {
                         thumbView.setAlpha(1f);
                         expandedImageView.setVisibility(View.GONE);
                         flExpandedImage.setVisibility(View.GONE);
@@ -467,36 +415,41 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
     }
 
     @Override
-    public void openImageInFullView(View view, String image)
-    {
+    public void openImageInFullView(View view, String image) {
         zoomImageFromThumb(view, image);
     }
 
     @Override
-    public void onBackPressed()
-    {
-        if (mCurrentAnimator != null)
-        {
+    public void onBackPressed() {
+        if (mCurrentAnimator != null) {
             mCurrentAnimator.cancel();
             mCurrentAnimator = null;
-        } else
-        {
+        } else {
             super.onBackPressed();
         }
     }
 
     @Override
-    public void onRefresh()
-    {
+    public void onRefresh() {
         //getOnGoingTripsFromRealm();
 
         getTripsFromAPI();
     }
 
     @Override
-    protected void onStop()
-    {
+    protected void onStop() {
         adapter.stopTimers();
         super.onStop();
     }
+
+    private void logPendingTrips() {
+        RealmResults<BookedTrip> bookedTrips = realm.where(BookedTrip.class)
+                .findAll();
+
+        for (BookedTrip trip : bookedTrips) {
+            Log.i(TAG, "Booked Trip ID: " + trip.getCustomerTripId());
+        }
+
+    }
+
 }

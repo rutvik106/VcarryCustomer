@@ -2,20 +2,22 @@ package io.fusionbit.vcarrycustomer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import extra.LocaleHelper;
 import extra.Log;
 
-public class ActivitySettings extends BaseActivity
-{
+public class ActivitySettings extends BaseActivity {
     private static final String TAG = App.APP_TAG + ActivitySettings.class.getSimpleName();
 
     AppCompatSpinner spinSelectLanguage;
@@ -25,14 +27,14 @@ public class ActivitySettings extends BaseActivity
     boolean isChanged = false;
 
     int currentSelected;
+    @BindView(R.id.tv_deviceToken)
+    TextView tvDeviceToken;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getSupportActionBar() != null)
-        {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(getResources().getString(R.string.action_settings));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -54,81 +56,71 @@ public class ActivitySettings extends BaseActivity
 
         Log.i(TAG, "LANGUAGE: " + language);
 
-        if (language.equals("en"))
-        {
+        if (language.equals("en")) {
             spinSelectLanguage.setSelection(0);
             currentSelected = 0;
-        } else if (language.equals("gu"))
-        {
+        } else if (language.equals("gu")) {
             spinSelectLanguage.setSelection(1);
             currentSelected = 1;
         }
 
-        spinSelectLanguage.post(new Runnable()
-        {
+        spinSelectLanguage.post(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 spinSelectLanguage.setOnItemSelectedListener(new ChangeLanguage());
             }
         });
 
 
+        tvDeviceToken.setText(PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.FCM_INSTANCE_ID, "Not Found"));
+        tvDeviceToken.setTextIsSelectable(true);
+
+
     }
 
     @Override
-    protected int getLayoutResourceId()
-    {
+    protected int getLayoutResourceId() {
         return R.layout.activity_settings;
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
+    protected void internetNotAvailable() {
 
     }
 
     @Override
-    protected void internetAvailable()
-    {
+    protected void internetAvailable() {
 
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if (item.getItemId() == android.R.id.home)
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void finish()
-    {
+    public void finish() {
         Intent output = new Intent();
         output.putExtra(Constants.WAS_LANGUAGE_CHANGED, isChanged);
         setResult(RESULT_OK, output);
         super.finish();
     }
 
-    public void selected(int selection)
-    {
-        if ((currentSelected - selection) != 0)
-        {
+    public void selected(int selection) {
+        if ((currentSelected - selection) != 0) {
             isChanged = true;
         }
     }
 
-    class ChangeLanguage implements AdapterView.OnItemSelectedListener
-    {
+    class ChangeLanguage implements AdapterView.OnItemSelectedListener {
 
         @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
-        {
-            switch (adapterView.getSelectedItemPosition())
-            {
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            switch (adapterView.getSelectedItemPosition()) {
 
                 //English
                 case 0:
@@ -150,8 +142,7 @@ public class ActivitySettings extends BaseActivity
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> adapterView)
-        {
+        public void onNothingSelected(AdapterView<?> adapterView) {
 
         }
     }

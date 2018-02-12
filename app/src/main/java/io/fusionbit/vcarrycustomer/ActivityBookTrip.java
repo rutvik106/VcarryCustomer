@@ -94,8 +94,6 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     Validator validator;
     Call<List<Integer>> getFare;
     @Inject
-    API api;
-    @Inject
     Realm realm;
     @Inject
     UserActivities userActivities;
@@ -467,7 +465,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CUSTOMER_ID, null);
 
-        getFare = api.getFareForVehicleTypeLocations(fromShippingLocationId + "",
+        getFare = API.getInstance().getFareForVehicleTypeLocations(fromShippingLocationId + "",
                 toShippingLocationId + "", vehicleTypeId + "", customerId, onGetFairCallback);
 
     }
@@ -693,7 +691,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     }
                 };
 
-        api.getShippingLocationsForCustomer(customerId, onGetShippingLocationCallback);
+        API.getInstance().getShippingLocationsForCustomer(customerId, onGetShippingLocationCallback);
 
     }
 
@@ -727,7 +725,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     }
                 };
 
-        api.getVehicleTypes(onGetVehiclesCallback);
+        API.getInstance().getVehicleTypes(onGetVehiclesCallback);
 
     }
 
@@ -883,7 +881,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                 toPlace = actTo.getText().toString();
             }
 
-            api.insertCustomerTrip(fromShippingLocationId + "", toShippingLocationId + "",
+            API.getInstance().insertCustomerTrip(fromShippingLocationId + "", toShippingLocationId + "",
                     vehicleTypeId + "", customerId, fromPlace
                     , toPlace, fromLatLng, toLatLng, onInsertCustomerTrip);
         }

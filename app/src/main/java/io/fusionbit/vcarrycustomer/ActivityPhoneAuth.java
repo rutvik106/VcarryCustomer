@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,8 +51,6 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
     PhoneAuthScreenOne phoneAuthScreenOne;
     PhoneAuthScreenTwo phoneAuthScreenTwo;
     ProgressDialog pd;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     // [END declare_auth]
     // [START declare_auth]
@@ -135,6 +132,8 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
         setContentView(R.layout.activity_phone_auth);
 
         ButterKnife.bind(this);
+
+        setTitle("V Carry");
 
         intent = new Intent(this, ActivityHome.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

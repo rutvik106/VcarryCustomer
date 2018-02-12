@@ -24,8 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import fragments.FragmentMap;
 
-public class ActivityPickLocation extends BaseActivity
-{
+public class ActivityPickLocation extends BaseActivity {
 
     FragmentMap map;
 
@@ -35,19 +34,15 @@ public class ActivityPickLocation extends BaseActivity
     EditText etSearchLocation;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
 
-        if (getSupportActionBar() != null)
-        {
-            if (getIntent().getIntExtra("ACTIVITY_INTENT", 0) == Constants.SELECT_START_LOCATION_ACTIVITY)
-            {
+        if (getSupportActionBar() != null) {
+            if (getIntent().getIntExtra("ACTIVITY_INTENT", 0) == Constants.SELECT_START_LOCATION_ACTIVITY) {
                 getSupportActionBar().setTitle(getResources().getString(R.string.select_start_location));
-            } else if (getIntent().getIntExtra("ACTIVITY_INTENT", 0) == (Constants.SELECT_DESTINATION_LOCATION_ACTIVITY))
-            {
+            } else if (getIntent().getIntExtra("ACTIVITY_INTENT", 0) == (Constants.SELECT_DESTINATION_LOCATION_ACTIVITY)) {
                 getSupportActionBar().setTitle(getResources().getString(R.string.select_destination));
             }
         }
@@ -61,29 +56,22 @@ public class ActivityPickLocation extends BaseActivity
 
         flSelectLocation = (FrameLayout) findViewById(R.id.fl_selectLocation);
 
-        flSelectLocation.setOnClickListener(new View.OnClickListener()
-        {
+        flSelectLocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                if (!map.getCurrentPlace().equals(getString(R.string.fetching_location)))
-                {
+            public void onClick(View view) {
+                if (!map.getCurrentPlace().equals(getString(R.string.fetching_location))) {
                     setResultIntent();
-                } else
-                {
+                } else {
                     Toast.makeText(ActivityPickLocation.this, getString(R.string.fetching_location),
                             Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        etSearchLocation.setOnEditorActionListener(new TextView.OnEditorActionListener()
-        {
+        etSearchLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
-            {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH)
-                {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     onMapSearch(etSearchLocation.getText().toString());
                     return true;
                 }
@@ -94,26 +82,22 @@ public class ActivityPickLocation extends BaseActivity
     }
 
     @Override
-    protected int getLayoutResourceId()
-    {
+    protected int getLayoutResourceId() {
         return R.layout.activity_pick_location;
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
+    protected void internetNotAvailable() {
 
     }
 
     @Override
-    protected void internetAvailable()
-    {
+    protected void internetAvailable() {
 
     }
 
 
-    private void setResultIntent()
-    {
+    private void setResultIntent() {
         Intent i = new Intent();
         i.putExtra("PLACE", map.getCurrentPlace());
         i.putExtra("LAT", map.getCurrentLat());
@@ -122,27 +106,24 @@ public class ActivityPickLocation extends BaseActivity
         finish();
     }
 
-    public void onMapSearch(String location)
-    {
+    public void onMapSearch(String location) {
         List<Address> addressList = null;
 
-        if (location != null)
-        {
+        if (location != null) {
             Geocoder geocoder = new Geocoder(this);
-            try
-            {
+            try {
                 addressList = geocoder.getFromLocationName(location, 1, 22.832233, 72.350482,
                         23.329658, 72.969541);
 
-            } catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (addressList != null)
-            {
-                Address address = addressList.get(0);
-                LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                map.mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            if (addressList != null) {
+                if (addressList.size() > 0) {
+                    Address address = addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    map.mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                }
             }
         }
     }

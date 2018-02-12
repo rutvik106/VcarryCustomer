@@ -7,7 +7,6 @@ import components.User;
 import extra.LocaleHelper;
 import extra.Log;
 import io.realm.Realm;
-import module.ApiModule;
 import module.AppModule;
 import module.RealmConfigModule;
 
@@ -37,7 +36,6 @@ public class App extends Application
 
         user = DaggerUser.builder()
                 .appModule(new AppModule(this))
-                .apiModule(new ApiModule(Constants.API_BASE_URL))
                 .realmConfigModule(new RealmConfigModule(Constants.REALM_DATABASE_NAME))
                 .build();
     }

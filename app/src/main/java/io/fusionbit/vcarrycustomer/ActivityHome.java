@@ -54,17 +54,14 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static io.fusionbit.vcarrycustomer.Constants.IS_EMULATOR;
 import static io.fusionbit.vcarrycustomer.Constants.WAS_LANGUAGE_CHANGED;
 
 public class ActivityHome extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener
-{
+        implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
 
     FragmentTransaction ft;
-
-    @Inject
-    API api;
 
     @Inject
     Realm realm;
@@ -86,25 +83,19 @@ public class ActivityHome extends BaseActivity
     private Call<List<Integer>> getCustomerIdFromEmail;
     private boolean showIt = true;
 
-    private void checkInternetConnection()
-    {
-        if (!Utils.isDeviceOnline(this))
-        {
+    private void checkInternetConnection() {
+        if (!Utils.isDeviceOnline(this)) {
             showNoInternetView();
-        } else
-        {
-            if (snackbarNoInternet != null)
-            {
-                if (snackbarNoInternet.isShown())
-                {
+        } else {
+            if (snackbarNoInternet != null) {
+                if (snackbarNoInternet.isShown()) {
                     snackbarNoInternet.dismiss();
                 }
             }
         }
     }
 
-    private void showNoInternetView()
-    {
+    private void showNoInternetView() {
         snackbarNoInternet = Snackbar
                 .make(clNavActivityLayout, "No Internet", Snackbar.LENGTH_INDEFINITE);
 
@@ -112,8 +103,7 @@ public class ActivityHome extends BaseActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
@@ -147,9 +137,8 @@ public class ActivityHome extends BaseActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-        {
-            tryToGetCustomerIdFromCustomerPhone(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
+        if (FirebaseAuth.getInstance().getCurrentUser() != null || IS_EMULATOR == true) {
+            tryToGetCustomerIdFromCustomerPhone(IS_EMULATOR ? "9409210488" : FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
             /*Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
                     .bitmapTransform(new CropCircleTransformation(this))
@@ -159,7 +148,8 @@ public class ActivityHome extends BaseActivity
                     .setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());*/
 
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_subTitle))
-                    .setText(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
+                    .setText(IS_EMULATOR ? "9409210488" :
+                            FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
             ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_container, FragmentHome.newInstance(0));
@@ -167,21 +157,17 @@ public class ActivityHome extends BaseActivity
 
             navigationView.getMenu().getItem(0).setChecked(true);
 
-        } else
-        {
+        } else {
             finish();
         }
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
-        mNetworkDetectReceiver = new BroadcastReceiver()
-        {
+        mNetworkDetectReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, Intent intent)
-            {
+            public void onReceive(Context context, Intent intent) {
                 checkInternetConnection();
             }
         };
@@ -189,59 +175,47 @@ public class ActivityHome extends BaseActivity
     }
 
     @Override
-    protected void onStop()
-    {
-        if (mNetworkDetectReceiver != null)
-        {
+    protected void onStop() {
+        if (mNetworkDetectReceiver != null) {
             unregisterReceiver(mNetworkDetectReceiver);
         }
         super.onStop();
     }
 
     @Override
-    protected int getLayoutResourceId()
-    {
+    protected int getLayoutResourceId() {
         return R.layout.activity_home;
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
+    protected void internetNotAvailable() {
         showNoInternetView();
     }
 
     @Override
-    protected void internetAvailable()
-    {
+    protected void internetAvailable() {
         checkInternetConnection();
     }
 
-    private void tryToGetCustomerIdFromCustomerPhone(String phone)
-    {
+    private void tryToGetCustomerIdFromCustomerPhone(String phone) {
 
-        if (getCustomerIdFromEmail != null)
-        {
+        if (getCustomerIdFromEmail != null) {
             getCustomerIdFromEmail.cancel();
         }
 
         final RetrofitCallbacks<List<Integer>> onGetCustomerIdCallback =
-                new RetrofitCallbacks<List<Integer>>()
-                {
+                new RetrofitCallbacks<List<Integer>>() {
                     @Override
-                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response)
-                    {
+                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() == null)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() == null) {
                                 Toast.makeText(ActivityHome.this, "customer ID not found: " +
                                         "Response NULL", Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
-                            if (response.body().get(0) > 0)
-                            {
+                            if (response.body().get(0) > 0) {
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                                         .edit()
                                         .putString(Constants.CUSTOMER_ID, String.valueOf(response.body().get(0)))
@@ -253,10 +227,8 @@ public class ActivityHome extends BaseActivity
 
                                 Toast.makeText(ActivityHome.this, R.string.registered_customer, Toast.LENGTH_SHORT).show();
 
-                                if (notRegisterDialog != null)
-                                {
-                                    if (notRegisterDialog.isShowing())
-                                    {
+                                if (notRegisterDialog != null) {
+                                    if (notRegisterDialog.isShowing()) {
                                         notRegisterDialog.dismiss();
                                     }
                                 }
@@ -267,8 +239,7 @@ public class ActivityHome extends BaseActivity
                                     promptForRegistration();
                                 }*/
 
-                            } else
-                            {
+                            } else {
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                                         .edit()
                                         .putString(Constants.CUSTOMER_ID, null)
@@ -283,8 +254,7 @@ public class ActivityHome extends BaseActivity
 
                                 promptForRegistration();
                             }
-                        } else
-                        {
+                        } else {
                             Toast.makeText(ActivityHome.this, "cannot get customer ID API RESPONSE" +
                                     " not OK: " + response.code(), Toast.LENGTH_SHORT).show();
 
@@ -293,76 +263,64 @@ public class ActivityHome extends BaseActivity
                     }
 
                     @Override
-                    public void onFailure(Call<List<Integer>> call, Throwable t)
-                    {
+                    public void onFailure(Call<List<Integer>> call, Throwable t) {
                         super.onFailure(call, t);
-                        promptForRegistration();
-                        Toast.makeText(ActivityHome.this, "cannot get customer ID RETROFIT ON FAILURE: " +
-                                t.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (!call.isCanceled()) {
+                            promptForRegistration();
+                            Toast.makeText(ActivityHome.this, "cannot get customer ID RETROFIT ON FAILURE: " +
+                                    t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 };
 
-        getCustomerIdFromEmail = api.getCustomerIdFromPhone(phone, onGetCustomerIdCallback);
+        getCustomerIdFromEmail = API.getInstance().getCustomerIdFromPhone(phone, onGetCustomerIdCallback);
 
     }
 
-    private void updateFcmDeviceToken(String customerId)
-    {
+    private void updateFcmDeviceToken(String customerId) {
         final String fcmDeviceToken = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.FCM_INSTANCE_ID, null);
 
         final RetrofitCallbacks<ResponseBody> onUpdateDeviceTokenCallback =
-                new RetrofitCallbacks<ResponseBody>()
-                {
+                new RetrofitCallbacks<ResponseBody>() {
 
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-                    {
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         super.onResponse(call, response);
                     }
                 };
 
-        if (fcmDeviceToken != null)
-        {
-            api.updateDeviceTokenCustomer(customerId, fcmDeviceToken, onUpdateDeviceTokenCallback);
-        } else
-        {
+        if (fcmDeviceToken != null) {
+            API.getInstance().updateDeviceTokenCustomer(customerId, fcmDeviceToken, onUpdateDeviceTokenCallback);
+        } else {
             Toast.makeText(this, "FCM Instance ID not found!", Toast.LENGTH_SHORT).show();
         }
 
 
     }
 
-    private void setActionBarTitle(String title)
-    {
+    private void setActionBarTitle(String title) {
 
-        if (getSupportActionBar() != null)
-        {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
         }
 
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START))
-        {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else
-        {
-            if (exitApp)
-            {
+        } else {
+            if (exitApp) {
                 super.onBackPressed();
             }
             exitApp = true;
             Toast.makeText(this, "Press BACK again to exit", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(new Runnable()
-            {
+            new Handler().postDelayed(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     exitApp = false;
                 }
             }, 2000);
@@ -371,8 +329,7 @@ public class ActivityHome extends BaseActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_home, menu);
 
@@ -384,11 +341,9 @@ public class ActivityHome extends BaseActivity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setSuggestionsAdapter(tripSearchResultCursorAdapter);
 
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener()
-        {
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
-            public boolean onSuggestionClick(int position)
-            {
+            public boolean onSuggestionClick(int position) {
                 // Add clicked text to search box
                 CursorAdapter ca = searchView.getSuggestionsAdapter();
                 Cursor cursor = ca.getCursor();
@@ -402,47 +357,36 @@ public class ActivityHome extends BaseActivity
             }
 
             @Override
-            public boolean onSuggestionSelect(int position)
-            {
+            public boolean onSuggestionSelect(int position) {
                 return true;
             }
         });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
-        {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s)
-            {
+            public boolean onQueryTextSubmit(String s) {
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(final String s)
-            {
-                if (tripSearchCall != null)
-                {
+            public boolean onQueryTextChange(final String s) {
+                if (tripSearchCall != null) {
                     tripSearchCall.cancel();
                 }
 
-                tripSearchCall = api.getTripNumberLike(s, customerId, new RetrofitCallbacks<List<String>>()
-                {
+                tripSearchCall = API.getInstance().getTripNumberLike(s, customerId, new RetrofitCallbacks<List<String>>() {
 
                     @Override
-                    public void onResponse(Call<List<String>> call, Response<List<String>> response)
-                    {
+                    public void onResponse(Call<List<String>> call, Response<List<String>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() == null)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() == null) {
                                 return;
                             }
                             strArrData = response.body().toArray(new String[0]);
                             // Filter data
                             final MatrixCursor mc = new MatrixCursor(new String[]{BaseColumns._ID, "tripNumber"});
-                            for (int i = 0; i < strArrData.length; i++)
-                            {
-                                if (strArrData[i].toLowerCase().contains(s.toLowerCase()))
-                                {
+                            for (int i = 0; i < strArrData.length; i++) {
+                                if (strArrData[i].toLowerCase().contains(s.toLowerCase())) {
                                     mc.addRow(new Object[]{i, strArrData[i]});
                                 }
                             }
@@ -459,16 +403,14 @@ public class ActivityHome extends BaseActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
+        if (id == R.id.action_settings) {
             startActivityForResult(new Intent(this, ActivitySettings.class), Constants.CHANGE_LANGUAGE);
             return true;
         }
@@ -478,39 +420,31 @@ public class ActivityHome extends BaseActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item)
-    {
+    public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home)
-        {
+        if (id == R.id.nav_home) {
             currentFragment = FragmentHome.newInstance(0);
             setActionBarTitle(getString(R.string.app_name));
             searchMenu.setVisible(false);
-        } else if (id == R.id.nav_trips)
-        {
+        } else if (id == R.id.nav_trips) {
             currentFragment = FragmentTrips.newInstance(1);
             setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
             searchMenu.setVisible(true);
-        } else if (id == R.id.nav_accountBalance)
-        {
+        } else if (id == R.id.nav_accountBalance) {
             currentFragment = FragmentAccBalance.newInstance(2);
             setActionBarTitle(getResources().getString(R.string.nav_accountBalance));
             searchMenu.setVisible(false);
-        } else if (id == R.id.nav_tripsOnOffer)
-        {
+        } else if (id == R.id.nav_tripsOnOffer) {
             Toast.makeText(this, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_share)
-        {
+        } else if (id == R.id.nav_share) {
             Utils.ShareApp(this);
-        } else if (id == R.id.nav_sendFeedback)
-        {
+        } else if (id == R.id.nav_sendFeedback) {
             Utils.sendFeedback(this);
         }
 
-        if (currentFragment != null)
-        {
+        if (currentFragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_container, currentFragment);
             ft.commitAllowingStateLoss();
@@ -522,16 +456,12 @@ public class ActivityHome extends BaseActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (resultCode == Activity.RESULT_OK)
-        {
-            switch (requestCode)
-            {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
                 case Constants.CHANGE_LANGUAGE:
                     boolean wasChanged = data.getExtras().getBoolean(WAS_LANGUAGE_CHANGED, false);
-                    if (wasChanged)
-                    {
+                    if (wasChanged) {
                         this.recreate();
                     }
                     break;
@@ -539,24 +469,25 @@ public class ActivityHome extends BaseActivity
         }
     }
 
-    private void promptForRegistration()
-    {
-        notRegisterDialog = new AlertDialog.Builder(this)
-                .setTitle("Not Registered")
-                .setMessage("Dear Customer, you're not yet registered with V-Carry. \n" +
-                        "\n" +
-                        "Please call 079-2755-0007 to register your account, and let us take load off your business.")
-                .setCancelable(false)
-                .setPositiveButton("Try Again", new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
-                        tryToGetCustomerIdFromCustomerPhone(FirebaseAuth.getInstance()
-                                .getCurrentUser().getPhoneNumber());
-                    }
-                })
-                .show();
+    private void promptForRegistration() {
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                .getString(Constants.CUSTOMER_ID, null);
+        if (customerId == null) {
+            notRegisterDialog = new AlertDialog.Builder(this)
+                    .setTitle("Not Registered")
+                    .setMessage("Dear Customer, you're not yet registered with V-Carry. \n" +
+                            "\n" +
+                            "Please call 079-2755-0007 to register your account, and let us take load off your business.")
+                    .setCancelable(false)
+                    .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            tryToGetCustomerIdFromCustomerPhone(IS_EMULATOR ? "9409210488" : FirebaseAuth.getInstance()
+                                    .getCurrentUser().getPhoneNumber());
+                        }
+                    })
+                    .show();
+        }
         /*final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                 .getString(Constants.CUSTOMER_ID, null);
         ActivityHome.this.customerId = customerId;
@@ -569,20 +500,16 @@ public class ActivityHome extends BaseActivity
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void setupConnectionMonitor()
-    {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
+    private void setupConnectionMonitor() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             new ConnectionStateMonitor().enable(this);
         }
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
-        if (currentFragment != null)
-        {
+        if (currentFragment != null) {
             getSupportFragmentManager().beginTransaction().detach(currentFragment).attach(currentFragment).commit();
         }
     }

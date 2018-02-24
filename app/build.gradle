@@ -9,8 +9,8 @@ android {
         applicationId "io.fusionbit.vcarrycustomer"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 18
-        versionName "2.1"
+        versionCode 20
+        versionName "2.3"
     }
 
     buildTypes {

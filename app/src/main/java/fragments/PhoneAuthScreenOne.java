@@ -44,7 +44,7 @@ public class PhoneAuthScreenOne extends Fragment {
     @BindView(R.id.spinner)
     Spinner spinner;
 
-    String selectedCountryCode;
+    private String selectedCountryCode="+91";
 
     public static PhoneAuthScreenOne newInstance(PhoneAuthScreenOneCallbacks phoneAuthScreenOneCallbacks) {
         PhoneAuthScreenOne fragment = new PhoneAuthScreenOne();

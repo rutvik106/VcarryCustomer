@@ -157,13 +157,13 @@
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_map_black_48dp"/>
+                        android:src="@drawable/ic_close_grey_600_48dp"/>
 
-                    <TextView
+                    <!--<TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/map"
-                        android:textSize="13sp"/>
+                        android:textSize="13sp"/>-->
 
                 </LinearLayout>
 
@@ -208,13 +208,13 @@
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_map_black_48dp"/>
+                        android:src="@drawable/ic_close_grey_600_48dp"/>
 
-                    <TextView
+                    <!--<TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/map"
-                        android:textSize="13sp"/>
+                        android:textSize="13sp"/>-->
 
                 </LinearLayout>
 

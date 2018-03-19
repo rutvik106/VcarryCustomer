@@ -23,8 +23,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import javax.inject.Inject;
-
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripByCustomerId;
@@ -38,8 +36,7 @@ import models.BookedTrip;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ActivityTripDetails extends BaseActivity
-{
+public class ActivityTripDetails extends BaseActivity {
     private static final String TAG = App.APP_TAG + ActivityTripDetails.class.getSimpleName();
 
     @BindView(R.id.tv_tripStatus)
@@ -71,8 +68,7 @@ public class ActivityTripDetails extends BaseActivity
 
     TripByCustomerId tripDetails;
 
-    @Inject
-    Realm realm;
+    Realm realm = Realm.getDefaultInstance();
 
     @BindView(R.id.tv_tripWeight)
     TextView tvTripWeight;
@@ -102,15 +98,13 @@ public class ActivityTripDetails extends BaseActivity
     private Call<TripByCustomerId> gettingTripDetails;
     private String tripNote;
 
-    public static void start(Context context, String tripId)
-    {
+    public static void start(Context context, String tripId) {
         Intent i = new Intent(context, ActivityTripDetails.class);
         i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
         context.startActivity(i);
     }
 
-    public static void start(String tripNumber, Context context)
-    {
+    public static void start(String tripNumber, Context context) {
         Intent i = new Intent(context, ActivityTripDetails.class);
         i.putExtra(Constants.INTENT_EXTRA_TRIP_NUMBER, tripNumber);
 
@@ -119,8 +113,7 @@ public class ActivityTripDetails extends BaseActivity
                 .equalTo("tripNo", tripNumber)
                 .findFirst();
 
-        if (trip != null)
-        {
+        if (trip != null) {
             i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, trip.getTripId());
         }
 
@@ -128,14 +121,11 @@ public class ActivityTripDetails extends BaseActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
         tripNumber = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_NUMBER);
-        ((App) getApplication()).getUser().inject(this);
-        if (getSupportActionBar() != null)
-        {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Trip Details");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -148,11 +138,9 @@ public class ActivityTripDetails extends BaseActivity
                 .bitmapTransform(new CropCircleTransformation(this))
                 .into(ivDriverPhoto);
 
-        ivDriverPhoto.setOnClickListener(new View.OnClickListener()
-        {
+        ivDriverPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 zoomImageFromThumb(ivDriverPhoto, tripDetails.getDriverImage());
             }
         });
@@ -160,8 +148,7 @@ public class ActivityTripDetails extends BaseActivity
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
 
         tryToGetFromRealm();
@@ -169,33 +156,24 @@ public class ActivityTripDetails extends BaseActivity
 
     }
 
-    private void getTripDetails()
-    {
-        if (tripId != null)
-        {
-            gettingTripDetails = API.getInstance().getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripByCustomerId>()
-            {
+    private void getTripDetails() {
+        if (tripId != null) {
+            gettingTripDetails = API.getInstance().getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripByCustomerId>() {
                 @Override
-                public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response)
-                {
+                public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response) {
                     super.onResponse(call, response);
-                    if (response.isSuccessful())
-                    {
+                    if (response.isSuccessful()) {
                         handleResponse(response);
                     }
                 }
             });
-        } else if (tripNumber != null)
-        {
-            gettingTripDetails = API.getInstance().getTripDetailsByTripNo(tripNumber, new RetrofitCallbacks<TripByCustomerId>()
-            {
+        } else if (tripNumber != null) {
+            gettingTripDetails = API.getInstance().getTripDetailsByTripNo(tripNumber, new RetrofitCallbacks<TripByCustomerId>() {
 
                 @Override
-                public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response)
-                {
+                public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response) {
                     super.onResponse(call, response);
-                    if (response.isSuccessful())
-                    {
+                    if (response.isSuccessful()) {
                         handleResponse(response);
                     }
                 }
@@ -203,10 +181,8 @@ public class ActivityTripDetails extends BaseActivity
         }
     }
 
-    private void handleResponse(Response<TripByCustomerId> response)
-    {
-        if (response.body() != null)
-        {
+    private void handleResponse(Response<TripByCustomerId> response) {
+        if (response.body() != null) {
             realm.beginTransaction();
             realm.copyToRealmOrUpdate(response.body());
             realm.commitTransaction();
@@ -215,25 +191,19 @@ public class ActivityTripDetails extends BaseActivity
         }
     }
 
-    private void tryToGetFromRealm()
-    {
-        if (tripId != null)
-        {
+    private void tryToGetFromRealm() {
+        if (tripId != null) {
             tripDetails =
                     realm.where(TripByCustomerId.class).equalTo("tripId", tripId).findFirst();
-        } else if (tripNumber != null)
-        {
+        } else if (tripNumber != null) {
             tripDetails = realm.where(TripByCustomerId.class).equalTo("tripNo", tripNumber).findFirst();
         }
 
-        if (tripDetails != null)
-        {
+        if (tripDetails != null) {
             bindDataToUi();
-            tripDetails.addChangeListener(new RealmChangeListener<TripByCustomerId>()
-            {
+            tripDetails.addChangeListener(new RealmChangeListener<TripByCustomerId>() {
                 @Override
-                public void onChange(TripByCustomerId tripDetails)
-                {
+                public void onChange(TripByCustomerId tripDetails) {
                     bindDataToUi();
                 }
             });
@@ -243,25 +213,20 @@ public class ActivityTripDetails extends BaseActivity
 
     }
 
-    private void tryToGetBookedTrip()
-    {
-        if (tripDetails != null)
-        {
+    private void tryToGetBookedTrip() {
+        if (tripDetails != null) {
             BookedTrip bt = realm.where(BookedTrip.class)
                     .equalTo("tripId", tripDetails.getTripId())
                     .findFirst();
-            if (bt != null)
-            {
+            if (bt != null) {
                 tripNote = bt.getNote();
             }
 
         }
     }
 
-    private void bindDataToUi()
-    {
-        switch (tripDetails.getTripStatus())
-        {
+    private void bindDataToUi() {
+        switch (tripDetails.getTripStatus()) {
             case Constants.TRIP_STATUS_PENDING:
                 tvTripStatus.setText(R.string.pending_confirmation);
                 tvTripStatus.setTextColor(getResources()
@@ -325,81 +290,66 @@ public class ActivityTripDetails extends BaseActivity
 
         }
 
-        if (tripDetails.getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
-        {
+        if (tripDetails.getTripStatus().equals(Constants.TRIP_STATUS_FINISHED)) {
             tvTripChargesDetails.setVisibility(View.VISIBLE);
-            tvTripChargesDetails.setOnClickListener(new View.OnClickListener()
-            {
+            tvTripChargesDetails.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view)
-                {
+                public void onClick(View view) {
                     ActivityFareDetails.start(ActivityTripDetails.this,
                             tripDetails.getTripId(), tripDetails.getCashReceived());
                 }
             });
-        } else
-        {
+        } else {
             tvTripChargesDetails.setVisibility(View.GONE);
         }
 
-        if (tripDetails.getTripNo() != null)
-        {
+        if (tripDetails.getTripNo() != null) {
             tvTripNumber.setText(tripDetails.getTripNo());
-        } else
-        {
+        } else {
             tvTripNumber.setVisibility(View.GONE);
         }
 
         tvTripDetailTime.setText(tripDetails.getTripDatetimeDmy());
 
-        if (tripDetails.getDriverName() != null)
-        {
+        if (tripDetails.getDriverName() != null) {
             tvDriverName.setText(tripDetails.getDriverName());
             tvVehicleNo.setText(tripDetails.getVehicleRegNo() != null ?
                     !tripDetails.getVehicleRegNo().isEmpty() ? tripDetails.getVehicleRegNo() : "NA" : "NA");
             tvTripDriverLicenceNo.setText(tripDetails.getLicenceNo() != null ?
                     !tripDetails.getLicenceNo().isEmpty() ? tripDetails.getLicenceNo() : "NA" : "NA");
-            if (tripDetails.getDriverImage() != null)
-            {
+            if (tripDetails.getDriverImage() != null) {
                 Glide.with(getApplicationContext())
                         .load(tripDetails.getDriverImage())
                         .bitmapTransform(new CropCircleTransformation(this))
                         .into(ivDriverPhoto);
             }
 
-            rbRateDriver.setOnTouchListener(new View.OnTouchListener()
-            {
+            rbRateDriver.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public boolean onTouch(View view, MotionEvent motionEvent)
-                {
+                public boolean onTouch(View view, MotionEvent motionEvent) {
                     new DriverRatingDialog(ActivityTripDetails.this, tripDetails.getDriverId(),
                             tripDetails.getDriverName(), tripDetails.getDriverImage()).show();
                     return false;
                 }
             });
 
-        } else
-        {
+        } else {
             llTripStartedDetails.setVisibility(View.GONE);
         }
 
 
-        if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu"))
-        {
+        if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu")) {
             tvTripLocation.setText(tripDetails.getFromGujaratiAddress());
             tvTripDestination.setText(tripDetails.getToGujaratiAddress());
-        } else
-        {
+        } else {
             tvTripLocation.setText(tripDetails.getFromShippingLocation());
             tvTripDestination.setText(tripDetails.getToShippingLocation());
         }
 
-        if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu"))
-        {
+        if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu")) {
             tvTripFromCompanyName.setText(tripDetails.getFromGujaratiName());
             tvTripToCompanyName.setText(tripDetails.getToGujaratiName());
-        } else
-        {
+        } else {
             tvTripFromCompanyName.setText(tripDetails.getFromCompanyName());
             tvTripToCompanyName.setText(tripDetails.getToCompanyName());
         }
@@ -420,28 +370,22 @@ public class ActivityTripDetails extends BaseActivity
     }
 
     @Override
-    protected int getLayoutResourceId()
-    {
+    protected int getLayoutResourceId() {
         return R.layout.activity_trip_details;
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
-        if (sbNoInternet == null)
-        {
+    protected void internetNotAvailable() {
+        if (sbNoInternet == null) {
             sbNoInternet = Snackbar.make(clActivityTripDetails, R.string.no_internet, Snackbar.LENGTH_INDEFINITE);
             sbNoInternet.show();
         }
     }
 
     @Override
-    protected void internetAvailable()
-    {
-        if (sbNoInternet != null)
-        {
-            if (sbNoInternet.isShown())
-            {
+    protected void internetAvailable() {
+        if (sbNoInternet != null) {
+            if (sbNoInternet.isShown()) {
                 sbNoInternet.dismiss();
                 sbNoInternet = null;
             }
@@ -450,29 +394,24 @@ public class ActivityTripDetails extends BaseActivity
 
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if (item.getItemId() == android.R.id.home)
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         tripDetails.removeChangeListeners();
         super.onDestroy();
     }
 
 
-    private void zoomImageFromThumb(final View thumbView, String image)
-    {
+    private void zoomImageFromThumb(final View thumbView, String image) {
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.
-        if (mCurrentAnimator != null)
-        {
+        if (mCurrentAnimator != null) {
             mCurrentAnimator.cancel();
         }
 
@@ -511,16 +450,14 @@ public class ActivityTripDetails extends BaseActivity
         // factor (the end scaling factor is always 1.0).
         float startScale;
         if ((float) finalBounds.width() / finalBounds.height()
-                > (float) startBounds.width() / startBounds.height())
-        {
+                > (float) startBounds.width() / startBounds.height()) {
             // Extend start bounds horizontally
             startScale = (float) startBounds.height() / finalBounds.height();
             float startWidth = startScale * finalBounds.width();
             float deltaWidth = (startWidth - startBounds.width()) / 2;
             startBounds.left -= deltaWidth;
             startBounds.right += deltaWidth;
-        } else
-        {
+        } else {
             // Extend start bounds vertically
             startScale = (float) startBounds.width() / finalBounds.width();
             float startHeight = startScale * finalBounds.height();
@@ -555,17 +492,14 @@ public class ActivityTripDetails extends BaseActivity
                 View.SCALE_Y, startScale, 1f));
         set.setDuration(mShortAnimationDuration);
         set.setInterpolator(new DecelerateInterpolator());
-        set.addListener(new AnimatorListenerAdapter()
-        {
+        set.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationEnd(Animator animation)
-            {
+            public void onAnimationEnd(Animator animation) {
                 mCurrentAnimator = null;
             }
 
             @Override
-            public void onAnimationCancel(Animator animation)
-            {
+            public void onAnimationCancel(Animator animation) {
                 mCurrentAnimator = null;
             }
         });
@@ -576,13 +510,10 @@ public class ActivityTripDetails extends BaseActivity
         // to the original bounds and show the thumbnail instead of
         // the expanded image.
         final float startScaleFinal = startScale;
-        expandedImageView.setOnClickListener(new View.OnClickListener()
-        {
+        expandedImageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                if (mCurrentAnimator != null)
-                {
+            public void onClick(View view) {
+                if (mCurrentAnimator != null) {
                     mCurrentAnimator.cancel();
                 }
 
@@ -602,11 +533,9 @@ public class ActivityTripDetails extends BaseActivity
                                         View.SCALE_Y, startScaleFinal));
                 set.setDuration(mShortAnimationDuration);
                 set.setInterpolator(new DecelerateInterpolator());
-                set.addListener(new AnimatorListenerAdapter()
-                {
+                set.addListener(new AnimatorListenerAdapter() {
                     @Override
-                    public void onAnimationEnd(Animator animation)
-                    {
+                    public void onAnimationEnd(Animator animation) {
                         thumbView.setAlpha(1f);
                         expandedImageView.setVisibility(View.GONE);
                         flExpandedImage.setVisibility(View.GONE);
@@ -614,8 +543,7 @@ public class ActivityTripDetails extends BaseActivity
                     }
 
                     @Override
-                    public void onAnimationCancel(Animator animation)
-                    {
+                    public void onAnimationCancel(Animator animation) {
                         thumbView.setAlpha(1f);
                         expandedImageView.setVisibility(View.GONE);
                         flExpandedImage.setVisibility(View.GONE);
@@ -629,10 +557,8 @@ public class ActivityTripDetails extends BaseActivity
     }
 
     @Override
-    public void finish()
-    {
-        if (gettingTripDetails != null)
-        {
+    public void finish() {
+        if (gettingTripDetails != null) {
             gettingTripDetails.cancel();
             gettingTripDetails = null;
         }

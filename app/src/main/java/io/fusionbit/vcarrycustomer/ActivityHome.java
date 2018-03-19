@@ -38,8 +38,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import api.API;
 import api.RetrofitCallbacks;
 import butterknife.BindView;
@@ -63,8 +61,7 @@ public class ActivityHome extends BaseActivity
 
     FragmentTransaction ft;
 
-    @Inject
-    Realm realm;
+    Realm realm = Realm.getDefaultInstance();
 
     @BindView(R.id.cl_navActivityLayout)
     CoordinatorLayout clNavActivityLayout;
@@ -112,8 +109,6 @@ public class ActivityHome extends BaseActivity
         setSupportActionBar(toolbar);
 
         setActionBarTitle(getString(R.string.app_name));
-
-        ((App) getApplication()).getUser().inject(this);
 
         setupConnectionMonitor();
 
@@ -267,8 +262,8 @@ public class ActivityHome extends BaseActivity
                         super.onFailure(call, t);
                         if (!call.isCanceled()) {
                             promptForRegistration();
-                            Toast.makeText(ActivityHome.this, "cannot get customer ID RETROFIT ON FAILURE: " +
-                                    t.getMessage(), Toast.LENGTH_SHORT).show();
+                            /*Toast.makeText(ActivityHome.this, "cannot get customer ID RETROFIT ON FAILURE: " +
+                                    t.getMessage(), Toast.LENGTH_SHORT).show();*/
                         }
                     }
                 };

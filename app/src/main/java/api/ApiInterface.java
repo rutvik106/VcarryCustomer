@@ -7,6 +7,7 @@ import apimodels.AccountSummaryNew;
 import apimodels.Area;
 import apimodels.City;
 import apimodels.FromLocation;
+import apimodels.PendingTrips;
 import apimodels.TripBreakUpDetails;
 import apimodels.TripByCustomerId;
 import apimodels.Vehicle;
@@ -20,8 +21,7 @@ import retrofit2.http.POST;
  * Created by rutvik on 1/9/2017 at 3:22 PM.
  */
 
-public interface ApiInterface
-{
+public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("webservice.php")
@@ -133,5 +133,10 @@ public interface ApiInterface
     @POST("webservice.php")
     Call<List<TripBreakUpDetails>> getTripBreakUpDetails(@Field("method") String method,
                                                          @Field("trip_id") String tripId);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<PendingTrips> getAllPendingTrips(@Field("method") String method,
+                                          @Field("customer_id") String customerId);
 
 }

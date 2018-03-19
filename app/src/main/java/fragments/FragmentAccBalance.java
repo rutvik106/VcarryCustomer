@@ -16,7 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
 
 import adapters.AccountBalanceAdapter;
 import api.API;
@@ -96,7 +95,6 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        ((App) getActivity().getApplication()).getUser().inject(this);
         super.onCreate(savedInstanceState);
     }
 

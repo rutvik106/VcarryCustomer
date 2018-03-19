@@ -1,6 +1,7 @@
 package io.fusionbit.vcarrycustomer;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -65,7 +66,7 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
 
     private void checkForPermissions()
     {
-        new TedPermission(this)
+        TedPermission.with(ActivityLogin.this)
                 .setPermissionListener(this)
                 .setDeniedMessage("If you reject any permission, you can not use this App\n\nPlease turn on permissions at [Setting] > [Permission]")
                 .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION,

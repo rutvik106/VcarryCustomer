@@ -17,8 +17,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import adapters.TripsAdapter;
 import api.API;
 import api.RetrofitCallbacks;
@@ -29,8 +27,7 @@ import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ActivityTrips extends BaseActivity
-{
+public class ActivityTrips extends BaseActivity {
 
     private static final String TAG = App.APP_TAG + ActivityTrips.class.getSimpleName();
 
@@ -41,8 +38,7 @@ public class ActivityTrips extends BaseActivity
 
     @BindView(R.id.rv_accountTrips)
     RecyclerView rvTrips;
-    @Inject
-    Realm realm;
+    Realm realm = Realm.getDefaultInstance();
     @BindView(R.id.fl_noTripsFound)
     FrameLayout flNoTripsFound;
     @BindView(R.id.fl_somethingWentWrong)
@@ -57,31 +53,25 @@ public class ActivityTrips extends BaseActivity
     private List<TripByCustomerId> trips = new ArrayList<>();
     private String customerId;
 
-    public static void start(Context context, String accountTripType)
-    {
+    public static void start(Context context, String accountTripType) {
         final Intent i = new Intent(context, ActivityTrips.class);
         i.putExtra(Constants.ACCOUNT_TRIP_TYPE, accountTripType);
         context.startActivity(i);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        ((App) getApplication()).getUser().inject(this);
 
         tripsType = getIntent().getStringExtra(Constants.ACCOUNT_TRIP_TYPE);
 
         customerId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CUSTOMER_ID, null);
 
-        if (getSupportActionBar() != null)
-        {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            switch (tripsType)
-            {
+            switch (tripsType) {
                 case Constants.AccountTripType.TODAY:
                     getSupportActionBar().setTitle(R.string.trips_today);
                     getTripForToday();
@@ -107,42 +97,33 @@ public class ActivityTrips extends BaseActivity
     }
 
     @Override
-    protected int getLayoutResourceId()
-    {
+    protected int getLayoutResourceId() {
         return R.layout.activity_trips;
     }
 
 
-    private void getTripForToday()
-    {
+    private void getTripForToday() {
         final RetrofitCallbacks<List<TripByCustomerId>> onGetTripSummary =
-                new RetrofitCallbacks<List<TripByCustomerId>>()
-                {
+                new RetrofitCallbacks<List<TripByCustomerId>>() {
 
                     @Override
-                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
-                    {
+                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() != null)
-                            {
-                                for (TripByCustomerId tripsByDriverMail : response.body())
-                                {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                for (TripByCustomerId tripsByDriverMail : response.body()) {
                                     trips.add(tripsByDriverMail);
                                 }
                                 updateRealmObjectsAndAddTripsToAdapter();
                             }
-                        } else
-                        {
+                        } else {
                             flLoadingTrips.setVisibility(View.GONE);
                             flSomethingWentWrong.setVisibility(View.VISIBLE);
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<List<TripByCustomerId>> call, Throwable t)
-                    {
+                    public void onFailure(Call<List<TripByCustomerId>> call, Throwable t) {
                         super.onFailure(call, t);
                         flLoadingTrips.setVisibility(View.GONE);
                         flSomethingWentWrong.setVisibility(View.VISIBLE);
@@ -156,35 +137,27 @@ public class ActivityTrips extends BaseActivity
 
     }
 
-    private void getTripForThisMonth()
-    {
+    private void getTripForThisMonth() {
         final RetrofitCallbacks<List<TripByCustomerId>> onGetTripSummary =
-                new RetrofitCallbacks<List<TripByCustomerId>>()
-                {
+                new RetrofitCallbacks<List<TripByCustomerId>>() {
                     @Override
-                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
-                    {
+                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() != null)
-                            {
-                                for (TripByCustomerId tripsByDriverMail : response.body())
-                                {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                for (TripByCustomerId tripsByDriverMail : response.body()) {
                                     trips.add(tripsByDriverMail);
                                 }
                                 updateRealmObjectsAndAddTripsToAdapter();
                             }
-                        } else
-                        {
+                        } else {
                             flLoadingTrips.setVisibility(View.GONE);
                             flSomethingWentWrong.setVisibility(View.VISIBLE);
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<List<TripByCustomerId>> call, Throwable t)
-                    {
+                    public void onFailure(Call<List<TripByCustomerId>> call, Throwable t) {
                         super.onFailure(call, t);
                         flLoadingTrips.setVisibility(View.GONE);
                         flSomethingWentWrong.setVisibility(View.VISIBLE);
@@ -200,37 +173,29 @@ public class ActivityTrips extends BaseActivity
                 onGetTripSummary);
     }
 
-    private void getTotalTrips()
-    {
+    private void getTotalTrips() {
         final RetrofitCallbacks<List<TripByCustomerId>> onGetTripSummary =
-                new RetrofitCallbacks<List<TripByCustomerId>>()
-                {
+                new RetrofitCallbacks<List<TripByCustomerId>>() {
 
                     @Override
-                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response)
-                    {
+                    public void onResponse(Call<List<TripByCustomerId>> call, Response<List<TripByCustomerId>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
+                        if (response.isSuccessful()) {
                             Log.i(TAG, "TOTAL TRIPS: " + response.body().size());
-                            if (response.body() != null)
-                            {
-                                for (TripByCustomerId tripsByDriverMail : response.body())
-                                {
+                            if (response.body() != null) {
+                                for (TripByCustomerId tripsByDriverMail : response.body()) {
                                     trips.add(tripsByDriverMail);
                                 }
                                 updateRealmObjectsAndAddTripsToAdapter();
                             }
-                        } else
-                        {
+                        } else {
                             flLoadingTrips.setVisibility(View.GONE);
                             flSomethingWentWrong.setVisibility(View.VISIBLE);
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<List<TripByCustomerId>> call, Throwable t)
-                    {
+                    public void onFailure(Call<List<TripByCustomerId>> call, Throwable t) {
                         super.onFailure(call, t);
                         flLoadingTrips.setVisibility(View.GONE);
                         flSomethingWentWrong.setVisibility(View.VISIBLE);
@@ -241,47 +206,37 @@ public class ActivityTrips extends BaseActivity
                 onGetTripSummary);
     }
 
-    private void updateRealmObjectsAndAddTripsToAdapter()
-    {
+    private void updateRealmObjectsAndAddTripsToAdapter() {
         flLoadingTrips.setVisibility(View.GONE);
-        if (trips.isEmpty())
-        {
+        if (trips.isEmpty()) {
             flNoTripsFound.setVisibility(View.VISIBLE);
             return;
         }
-        for (TripByCustomerId trip : trips)
-        {
+        for (TripByCustomerId trip : trips) {
             adapter.addTrip(trip);
         }
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
-        if (sbNoInternet == null)
-        {
+    protected void internetNotAvailable() {
+        if (sbNoInternet == null) {
             sbNoInternet = Snackbar.make(clActivityTrips, R.string.no_internet, Snackbar.LENGTH_INDEFINITE);
             sbNoInternet.show();
         }
     }
 
     @Override
-    protected void internetAvailable()
-    {
-        if (sbNoInternet != null)
-        {
-            if (sbNoInternet.isShown())
-            {
+    protected void internetAvailable() {
+        if (sbNoInternet != null) {
+            if (sbNoInternet.isShown()) {
                 sbNoInternet.dismiss();
             }
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if (item.getItemId() == android.R.id.home)
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);

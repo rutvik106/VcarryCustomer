@@ -27,6 +27,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
@@ -35,7 +36,6 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
 
 import adapters.CustomListAdapter;
 import api.API;
@@ -45,20 +45,16 @@ import apimodels.SpinnerModel;
 import apimodels.Vehicle;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import components.DaggerFirebaseOperations;
-import components.FirebaseOperations;
 import extra.LocaleHelper;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import models.BookedTrip;
 import models.UserActivities;
-import module.FirebaseRemoteConfigSettingsModule;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ActivityBookTrip extends BaseActivity implements Validator.ValidationListener
-{
+public class ActivityBookTrip extends BaseActivity implements Validator.ValidationListener {
 
     final Handler mHandler = new Handler();
     final List<FromLocation> shippingLocationList = new ArrayList<>();
@@ -88,15 +84,11 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     RadioButton rbReturn;
     String fromPlace, fromLat, fromLng;
     String toPlace, toLat, toLng;
-    FirebaseOperations firebaseOperations;
     RealmResults<Vehicle> realmVehicles;
     RealmResults<FromLocation> realmFromLocations;
     Validator validator;
     Call<List<Integer>> getFare;
-    @Inject
-    Realm realm;
-    @Inject
-    UserActivities userActivities;
+    Realm realm = Realm.getDefaultInstance();
     @BindView(R.id.tv_tripSchedule)
     TextView tvTripSchedule;
     @BindView(R.id.ll_tripScheduleDetails)
@@ -109,34 +101,50 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     private int vehicleTypeId = 0;
     private String vehicleName = "N/A";
     private String tripFare = "N/A";
+    private Call<List<Vehicle>> getVehicles;
+    private Call<List<FromLocation>> getShippingLocations;
+    private Call<List<Integer>> insertTrip;
+
+    private void cancelApiCalls() {
+        if (getVehicles != null) {
+            if (!getVehicles.isCanceled()) {
+                getVehicles.cancel();
+            }
+        }
+
+        if (getShippingLocations != null) {
+            if (!getShippingLocations.isCanceled()) {
+                getShippingLocations.cancel();
+            }
+        }
+
+        if (insertTrip != null) {
+            if (!insertTrip.isCanceled()) {
+                insertTrip.cancel();
+            }
+        }
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
-
-        ((App) getApplication()).getUser().inject(this);
 
         validator = new Validator(this);
         validator.setValidationListener(this);
 
         final boolean isSchedulingTrip = getIntent().getBooleanExtra(Constants.IS_SCHEDULING_TRIP, false);
 
-        if (isSchedulingTrip)
-        {
+        if (isSchedulingTrip) {
             getScheduleDetails(getIntent().getBundleExtra(Constants.SCHEDULE_DETAILS));
         }
 
-        if (getSupportActionBar() != null)
-        {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            if (isSchedulingTrip)
-            {
+            if (isSchedulingTrip) {
                 getSupportActionBar().setTitle(getResources().getString(R.string.schedule_trip));
-            } else
-            {
+            } else {
                 getSupportActionBar().setTitle(getResources().getString(R.string.book_a_trip));
             }
         }
@@ -148,15 +156,10 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                         .setDeveloperModeEnabled(BuildConfig.DEBUG)
                         .build();
 
-        firebaseOperations = DaggerFirebaseOperations.builder()
-                .firebaseRemoteConfigSettingsModule(new FirebaseRemoteConfigSettingsModule(configSettings))
-                .build();
 
-        spinVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        spinVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
-            {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
                 vehicleTypeId = model.getId();
                 vehicleName = model.getLabel();
@@ -164,44 +167,44 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView)
-            {
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
 
 
-        ivSelectFrom.setOnClickListener(new View.OnClickListener()
-        {
+        ivSelectFrom.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
 
-                Intent i = new Intent(ActivityBookTrip.this, ActivityPickLocation.class);
+                actFrom.setText("");
+                selectedFromLocation = -1;
+
+                /*Intent i = new Intent(ActivityBookTrip.this, ActivityPickLocation.class);
                 i.putExtra("ACTIVITY_INTENT", Constants.SELECT_START_LOCATION_ACTIVITY);
 
-                startActivityForResult(i, Constants.SELECT_START_LOCATION_ACTIVITY);
+                startActivityForResult(i, Constants.SELECT_START_LOCATION_ACTIVITY);*/
 
             }
         });
 
-        ivSelectTo.setOnClickListener(new View.OnClickListener()
-        {
+        ivSelectTo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                Intent i = new Intent(ActivityBookTrip.this, ActivityPickLocation.class);
+            public void onClick(View view) {
+
+                actTo.setText("");
+                selectedToLocation = -1;
+
+                /*Intent i = new Intent(ActivityBookTrip.this, ActivityPickLocation.class);
                 i.putExtra("ACTIVITY_INTENT", Constants.SELECT_DESTINATION_LOCATION_ACTIVITY);
 
-                startActivityForResult(i, Constants.SELECT_DESTINATION_LOCATION_ACTIVITY);
+                startActivityForResult(i, Constants.SELECT_DESTINATION_LOCATION_ACTIVITY);*/
             }
         });
 
-        btnRequestTrip.setOnClickListener(new View.OnClickListener()
-        {
+        btnRequestTrip.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 validator.validate();
             }
         });
@@ -222,102 +225,78 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     }
 
     @Override
-    protected int getLayoutResourceId()
-    {
+    protected int getLayoutResourceId() {
         return R.layout.activity_book_trip;
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
+    protected void internetNotAvailable() {
 
     }
 
     @Override
-    protected void internetAvailable()
-    {
+    protected void internetAvailable() {
 
     }
 
-    private void setListenersForAutoCompleteTextView()
-    {
-        actTo.setOnFocusChangeListener(new View.OnFocusChangeListener()
-        {
+    private void setListenersForAutoCompleteTextView() {
+        actTo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onFocusChange(View view, boolean inFocus)
-            {
+            public void onFocusChange(View view, boolean inFocus) {
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
             }
         });
 
-        actFrom.setOnFocusChangeListener(new View.OnFocusChangeListener()
-        {
+        actFrom.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onFocusChange(View view, boolean inFocus)
-            {
+            public void onFocusChange(View view, boolean inFocus) {
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
             }
         });
 
-        actFrom.setOnClickListener(new View.OnClickListener()
-        {
+        actFrom.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 actFrom.showDropDown();
             }
         });
 
-        actTo.setOnClickListener(new View.OnClickListener()
-        {
+        actTo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 actTo.showDropDown();
             }
         });
 
-        actFrom.setOnFocusChangeListener(new View.OnFocusChangeListener()
-        {
+        actFrom.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onFocusChange(View view, boolean inFocus)
-            {
-                if (inFocus)
-                {
+            public void onFocusChange(View view, boolean inFocus) {
+                if (inFocus) {
                     actFrom.showDropDown();
                 }
             }
         });
 
-        actTo.setOnFocusChangeListener(new View.OnFocusChangeListener()
-        {
+        actTo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onFocusChange(View view, boolean inFocus)
-            {
-                if (inFocus)
-                {
+            public void onFocusChange(View view, boolean inFocus) {
+                if (inFocus) {
                     actTo.showDropDown();
                 }
             }
         });
 
-        actTo.addTextChangedListener(new TextWatcher()
-        {
+        actTo.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)
-            {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
-            {
-                if (charSequence.length() == 0)
-                {
-                    mHandler.post(new Runnable()
-                    {
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+                    mHandler.post(new Runnable() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             actTo.showDropDown();
                         }
                     });
@@ -325,29 +304,22 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             }
 
             @Override
-            public void afterTextChanged(Editable editable)
-            {
+            public void afterTextChanged(Editable editable) {
             }
         });
 
-        actFrom.addTextChangedListener(new TextWatcher()
-        {
+        actFrom.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)
-            {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
-            {
-                if (charSequence.length() == 0)
-                {
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
                     //Toast.makeText(ActivityBookTrip.this, "Empty", Toast.LENGTH_SHORT).show();
-                    mHandler.post(new Runnable()
-                    {
+                    mHandler.post(new Runnable() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             actFrom.showDropDown();
                         }
                     });
@@ -355,14 +327,12 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             }
 
             @Override
-            public void afterTextChanged(Editable editable)
-            {
+            public void afterTextChanged(Editable editable) {
             }
         });
     }
 
-    private void getScheduleDetails(Bundle scheduleDetails)
-    {
+    private void getScheduleDetails(Bundle scheduleDetails) {
         llTripScheduleDetails.setVisibility(View.VISIBLE);
         final int day = scheduleDetails.getInt(Constants.DAY);
         final int month = scheduleDetails.getInt(Constants.MONTH);
@@ -372,66 +342,53 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
 
         String sMinute;
 
-        if (minute == 0)
-        {
+        if (minute == 0) {
             sMinute = "00";
-        } else if (minute < 10)
-        {
+        } else if (minute < 10) {
             sMinute = "0" + minute;
-        } else
-        {
+        } else {
             sMinute = minute + "";
         }
 
         final boolean isPm = scheduleDetails.getBoolean(Constants.IS_PM);
 
-        if (isPm)
-        {
+        if (isPm) {
             tvTripSchedule.setText(day + "/" + (month + 1) + "/" + year +
                     " " + ((hour % 12) == 0 ? 12 : (hour % 12)) + ":" + sMinute + " PM");
-        } else
-        {
+        } else {
             tvTripSchedule.setText(day + "/" + (month + 1) + "/" + year +
                     " " + ((hour % 12) == 0 ? 12 : (hour % 12)) + ":" + sMinute + " AM");
         }
 
     }
 
-    private void getFair()
-    {
+    private void getFair() {
         pbLoadingTripCost.setVisibility(View.VISIBLE);
 
-        if (getFare != null)
-        {
+        if (getFare != null) {
             getFare.cancel();
         }
 
         final RetrofitCallbacks<List<Integer>> onGetFairCallback =
-                new RetrofitCallbacks<List<Integer>>()
-                {
+                new RetrofitCallbacks<List<Integer>>() {
 
                     @Override
-                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response)
-                    {
+                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
                         super.onResponse(call, response);
                         //Toast.makeText(ActivityBookTrip.this, "RESPONSE CODE: " + response.code(),
                         //Toast.LENGTH_SHORT).show();
-                        if (response.isSuccessful())
-                        {
+                        if (response.isSuccessful()) {
                             //Toast.makeText(ActivityBookTrip.this, "Response body: " +
                             //response.body(),
                             //Toast.LENGTH_SHORT).show();
-                            if (response.body().get(0) > 0)
-                            {
+                            if (response.body().get(0) > 0) {
                                 tripFare = response.body().get(0) + "";
                                 tvTripFare.setText(getResources().getString(R.string.rs) + " " + response.body().get(0));
-                            } else
-                            {
+                            } else {
                                 tripFare = "N/A";
                                 tvTripFare.setText("N/A");
                             }
-                        } else
-                        {
+                        } else {
                             /*try
                             {
                                 //Toast.makeText(ActivityBookTrip.this, "Response error body: " +
@@ -449,8 +406,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     }
 
                     @Override
-                    public void onFailure(Call<List<Integer>> call, Throwable t)
-                    {
+                    public void onFailure(Call<List<Integer>> call, Throwable t) {
                         super.onFailure(call, t);
 
                         //Toast.makeText(ActivityBookTrip.this, "On Failure: " + t.getMessage(),
@@ -470,44 +426,35 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
 
     }
 
-    private void getShippingLocationsFromRealm()
-    {
+    private void getShippingLocationsFromRealm() {
 
         realmFromLocations = realm.where(FromLocation.class).findAll();
 
-        realmFromLocations.addChangeListener(new RealmChangeListener<RealmResults<FromLocation>>()
-        {
+        realmFromLocations.addChangeListener(new RealmChangeListener<RealmResults<FromLocation>>() {
             @Override
-            public void onChange(RealmResults<FromLocation> element)
-            {
+            public void onChange(RealmResults<FromLocation> element) {
                 setShippingLocationListAdapter();
             }
         });
 
     }
 
-    private void setShippingLocationListAdapter()
-    {
+    private void setShippingLocationListAdapter() {
         shippingLocationList.addAll(realm.copyFromRealm(realmFromLocations));
 
-        if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu"))
-        {
-            for (FromLocation location : shippingLocationList)
-            {
+        if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu")) {
+            for (FromLocation location : shippingLocationList) {
                 location.setReturnGujaratiAddress(true);
             }
         }
 
         CustomListAdapter<FromLocation> fromAdapter = new CustomListAdapter<FromLocation>(this,
-                android.R.layout.simple_list_item_1, shippingLocationList)
-        {
+                android.R.layout.simple_list_item_1, shippingLocationList) {
 
             @Override
-            public View getView(int position, View convertView, ViewGroup parent)
-            {
+            public View getView(int position, View convertView, ViewGroup parent) {
                 // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
-                if (convertView == null)
-                {
+                if (convertView == null) {
                     convertView = LayoutInflater.from(ActivityBookTrip.this)
                             .inflate(R.layout.single_address_with_company_name, parent, false);
                 }
@@ -529,11 +476,9 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             }
 
             @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent)
-            {
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
-                if (convertView == null)
-                {
+                if (convertView == null) {
                     convertView = LayoutInflater.from(ActivityBookTrip.this)
                             .inflate(R.layout.single_address_with_company_name, parent, false);
                 }
@@ -560,15 +505,12 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                 fromAdapter.suggestedSpinnerModelList, fromAdapter));
 
         CustomListAdapter<FromLocation> toAdapter = new CustomListAdapter<FromLocation>(this,
-                android.R.layout.simple_list_item_1, shippingLocationList)
-        {
+                android.R.layout.simple_list_item_1, shippingLocationList) {
 
             @Override
-            public View getView(int position, View convertView, ViewGroup parent)
-            {
+            public View getView(int position, View convertView, ViewGroup parent) {
                 // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
-                if (convertView == null)
-                {
+                if (convertView == null) {
                     convertView = LayoutInflater.from(ActivityBookTrip.this)
                             .inflate(R.layout.single_address_with_company_name, parent, false);
                 }
@@ -590,11 +532,9 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             }
 
             @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent)
-            {
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
-                if (convertView == null)
-                {
+                if (convertView == null) {
                     convertView = LayoutInflater.from(ActivityBookTrip.this)
                             .inflate(R.layout.single_address_with_company_name, parent, false);
                 }
@@ -623,11 +563,9 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         actFrom.setAdapter(fromAdapter);
         actTo.setAdapter(toAdapter);
 
-        final AdapterView.OnItemClickListener actFromListener = new AdapterView.OnItemClickListener()
-        {
+        final AdapterView.OnItemClickListener actFromListener = new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
                 actFrom.setText(model.getLabel());
                 fromShippingLocationId = model.getId() + "";
@@ -639,13 +577,10 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             }
         };
 
-        final AdapterView.OnItemClickListener actToListener = new AdapterView.OnItemClickListener()
-        {
+        final AdapterView.OnItemClickListener actToListener = new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                if (selectedFromLocation == i)
-                {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (selectedFromLocation == i) {
                     Toast.makeText(ActivityBookTrip.this, R.string.from_to_cannot_be_same, Toast.LENGTH_SHORT).show();
                     actTo.setText("");
                     return;
@@ -665,24 +600,18 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         actTo.setOnItemClickListener(actToListener);
     }
 
-    private void getShippingLocations(String customerId)
-    {
+    private void getShippingLocations(String customerId) {
 
         final RetrofitCallbacks<List<FromLocation>> onGetShippingLocationCallback =
-                new RetrofitCallbacks<List<FromLocation>>()
-                {
+                new RetrofitCallbacks<List<FromLocation>>() {
 
                     @Override
-                    public void onResponse(Call<List<FromLocation>> call, Response<List<FromLocation>> response)
-                    {
+                    public void onResponse(Call<List<FromLocation>> call, Response<List<FromLocation>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() != null)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
                                 realm.beginTransaction();
-                                for (FromLocation location : response.body())
-                                {
+                                for (FromLocation location : response.body()) {
                                     realm.copyToRealmOrUpdate(location);
                                 }
                                 realm.commitTransaction();
@@ -691,26 +620,21 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     }
                 };
 
-        API.getInstance().getShippingLocationsForCustomer(customerId, onGetShippingLocationCallback);
+        getShippingLocations = API.getInstance().getShippingLocationsForCustomer(customerId, onGetShippingLocationCallback);
 
     }
 
-    private void getVehiclesFromApi()
-    {
+    private void getVehiclesFromApi() {
 
         final RetrofitCallbacks<List<Vehicle>> onGetVehiclesCallback =
-                new RetrofitCallbacks<List<Vehicle>>()
-                {
+                new RetrofitCallbacks<List<Vehicle>>() {
 
                     @Override
-                    public void onResponse(Call<List<Vehicle>> call, Response<List<Vehicle>> response)
-                    {
+                    public void onResponse(Call<List<Vehicle>> call, Response<List<Vehicle>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
+                        if (response.isSuccessful()) {
                             realm.beginTransaction();
-                            for (Vehicle vehicle : response.body())
-                            {
+                            for (Vehicle vehicle : response.body()) {
                                 realm.copyToRealmOrUpdate(vehicle);
                             }
                             realm.commitTransaction();
@@ -718,33 +642,30 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     }
 
                     @Override
-                    public void onFailure(Call<List<Vehicle>> call, Throwable t)
-                    {
+                    public void onFailure(Call<List<Vehicle>> call, Throwable t) {
                         super.onFailure(call, t);
-                        Toast.makeText(ActivityBookTrip.this, "cannot get vehicle list", Toast.LENGTH_SHORT).show();
+                        if (!call.isCanceled()) {
+                            Toast.makeText(ActivityBookTrip.this, "cannot get vehicle list", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 };
 
-        API.getInstance().getVehicleTypes(onGetVehiclesCallback);
+        getVehicles = API.getInstance().getVehicleTypes(onGetVehiclesCallback);
 
     }
 
-    private void getVehiclesFromRealm()
-    {
+    private void getVehiclesFromRealm() {
         realmVehicles = realm.where(Vehicle.class).findAll();
 
-        realmVehicles.addChangeListener(new RealmChangeListener<RealmResults<Vehicle>>()
-        {
+        realmVehicles.addChangeListener(new RealmChangeListener<RealmResults<Vehicle>>() {
             @Override
-            public void onChange(RealmResults<Vehicle> element)
-            {
+            public void onChange(RealmResults<Vehicle> element) {
                 setVehicleListAdapter();
             }
         });
     }
 
-    private void setVehicleListAdapter()
-    {
+    private void setVehicleListAdapter() {
         final List<Vehicle> vehicleList = new ArrayList<>();
         vehicleList.addAll(realmVehicles);
 
@@ -756,13 +677,10 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (resultCode == Activity.RESULT_OK)
-        {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
 
-            switch (requestCode)
-            {
+            switch (requestCode) {
                 case Constants.SELECT_START_LOCATION_ACTIVITY:
 
                     fromPlace = data.getExtras().getString("PLACE");
@@ -788,45 +706,36 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     }
 
     @Override
-    public void onValidationSucceeded()
-    {
+    public void onValidationSucceeded() {
         promptUserForBookingTrip();
     }
 
-    private void promptUserForBookingTrip()
-    {
+    private void promptUserForBookingTrip() {
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.book_trip))
                 .setMessage(R.string.book_trip_prompt_msg)
                 .setIcon(android.R.drawable.ic_dialog_info)
-                .setPositiveButton(getString(R.string.book_trip), new DialogInterface.OnClickListener()
-                {
+                .setPositiveButton(getString(R.string.book_trip), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         tryInsertingNewTrip();
                     }
                 }).setNegativeButton("CANCEL", null)
                 .show();
     }
 
-    private void tryInsertingNewTrip()
-    {
+    private void tryInsertingNewTrip() {
         btnRequestTrip.setVisibility(View.GONE);
         final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityBookTrip.this)
                 .getString(Constants.CUSTOMER_ID, null);
 
         final RetrofitCallbacks<List<Integer>> onInsertCustomerTrip =
-                new RetrofitCallbacks<List<Integer>>()
-                {
+                new RetrofitCallbacks<List<Integer>>() {
                     @Override
-                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response)
-                    {
+                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body().get(0) > 0)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body().get(0) > 0) {
                                 realm.beginTransaction();
                                 final BookedTrip bt = new BookedTrip(response.body().get(0).toString(),
                                         shippingLocationList.get(selectedFromLocation)
@@ -839,16 +748,13 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
 
                                 Utils.showSimpleAlertBox(ActivityBookTrip.this,
                                         getString(R.string.booking_request_success_message),
-                                        new DialogInterface.OnClickListener()
-                                        {
+                                        new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(DialogInterface dialogInterface, int i)
-                                            {
+                                            public void onClick(DialogInterface dialogInterface, int i) {
                                                 finish();
                                             }
                                         });
-                            } else
-                            {
+                            } else {
                                 Toast.makeText(ActivityBookTrip.this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -856,32 +762,27 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                     }
 
                     @Override
-                    public void onFailure(Call<List<Integer>> call, Throwable t)
-                    {
+                    public void onFailure(Call<List<Integer>> call, Throwable t) {
                         super.onFailure(call, t);
-                        if (!call.isCanceled())
-                        {
-                            Toast.makeText(ActivityBookTrip.this, R.string.check_internet, Toast.LENGTH_SHORT).show();
+                        if (!call.isCanceled()) {
+                            //Toast.makeText(ActivityBookTrip.this, R.string.check_internet, Toast.LENGTH_SHORT).show();
                         }
                         btnRequestTrip.setVisibility(View.GONE);
                     }
                 };
 
-        if (customerId != null)
-        {
+        if (customerId != null) {
             final String fromLatLng = fromLat + "," + fromLng;
             final String toLatLng = toLat + "," + toLng;
 
-            if (fromPlace == null)
-            {
+            if (fromPlace == null) {
                 fromPlace = actFrom.getText().toString();
             }
-            if (toPlace == null)
-            {
+            if (toPlace == null) {
                 toPlace = actTo.getText().toString();
             }
 
-            API.getInstance().insertCustomerTrip(fromShippingLocationId + "", toShippingLocationId + "",
+            insertTrip = API.getInstance().insertCustomerTrip(fromShippingLocationId + "", toShippingLocationId + "",
                     vehicleTypeId + "", customerId, fromPlace
                     , toPlace, fromLatLng, toLatLng, onInsertCustomerTrip);
         }
@@ -889,29 +790,23 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     }
 
     @Override
-    public void onValidationFailed(List<ValidationError> errors)
-    {
-        for (ValidationError error : errors)
-        {
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
             View view = error.getView();
             String message = error.getCollatedErrorMessage(this);
 
             // Display error messages ;)
-            if (view instanceof AutoCompleteTextView)
-            {
+            if (view instanceof AutoCompleteTextView) {
                 ((AutoCompleteTextView) view).setError(message);
-            } else
-            {
+            } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if (item.getItemId() == android.R.id.home)
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);

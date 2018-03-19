@@ -8,15 +8,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import javax.inject.Inject;
-
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
 import io.realm.Realm;
 import models.BookedTrip;
 
-public class ActivityTripSummary extends BaseActivity
-{
+public class ActivityTripSummary extends BaseActivity {
 
     private static final String TAG = App.APP_TAG + ActivityTripSummary.class.getSimpleName();
 
@@ -32,28 +29,22 @@ public class ActivityTripSummary extends BaseActivity
     @BindView(R.id.tv_canceledByVcarryTrips)
     TextView tvCanceledByVcarryTrips;
 
-    @Inject
-    Realm realm;
+    Realm realm = Realm.getDefaultInstance();
     @BindView(R.id.tv_activeTrips)
     TextView tvActiveTrips;
 
-    public static void start(Context context)
-    {
+    public static void start(Context context) {
         context.startActivity(new Intent(context, ActivityTripSummary.class));
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getSupportActionBar() != null)
-        {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.trip_summary);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        ((App) getApplication()).getUser().inject(this);
 
         getTotalTripsFromRealm();
 
@@ -71,8 +62,7 @@ public class ActivityTripSummary extends BaseActivity
 
     }
 
-    private void getTotalTripsFromRealm()
-    {
+    private void getTotalTripsFromRealm() {
         final int count = realm.where(TripByCustomerId.class)
                 .findAll()
                 .size();
@@ -80,8 +70,7 @@ public class ActivityTripSummary extends BaseActivity
         Log.i(TAG, "TOTAL TRIPS IN REALM: " + count);
     }
 
-    private void getActiveTripsFromRealm()
-    {
+    private void getActiveTripsFromRealm() {
         final int count = realm.where(TripByCustomerId.class)
                 .equalTo("tripStatus", Constants.TRIP_STATUS_TRIP_STARTED)
                 .or()
@@ -98,8 +87,7 @@ public class ActivityTripSummary extends BaseActivity
         tvActiveTrips.setText(count + "");
     }
 
-    private void getCancelledByVcarryTripsFromRealm()
-    {
+    private void getCancelledByVcarryTripsFromRealm() {
         final int count = realm.where(TripByCustomerId.class)
                 .equalTo("tripStatus", Constants.TRIP_STATUS_CANCELLED_BY_VCARRY)
                 .findAll()
@@ -108,8 +96,7 @@ public class ActivityTripSummary extends BaseActivity
         tvCanceledByVcarryTrips.setText(count + "");
     }
 
-    private void getCancelledByCustomerTripsFromRealm()
-    {
+    private void getCancelledByCustomerTripsFromRealm() {
         final int count = realm.where(TripByCustomerId.class)
                 .equalTo("tripStatus", Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER)
                 .findAll()
@@ -118,8 +105,7 @@ public class ActivityTripSummary extends BaseActivity
         tvCanceledByCustomerTrips.setText(count + "");
     }
 
-    private void getCanceledByDriverTripsFromRealm()
-    {
+    private void getCanceledByDriverTripsFromRealm() {
         final int count = realm.where(TripByCustomerId.class)
                 .equalTo("tripStatus", Constants.TRIP_STATUS_CANCELLED_BY_DRIVER)
                 .findAll()
@@ -128,8 +114,7 @@ public class ActivityTripSummary extends BaseActivity
         tvCanceledByDriverTrips.setText(count + "");
     }
 
-    private void getFinishedTripsFromRealm()
-    {
+    private void getFinishedTripsFromRealm() {
         final int count = realm.where(TripByCustomerId.class)
                 .equalTo("tripStatus", Constants.TRIP_STATUS_FINISHED)
                 .findAll()
@@ -138,8 +123,7 @@ public class ActivityTripSummary extends BaseActivity
         tvFinishedTrips.setText(count + "");
     }
 
-    private void getPendingTripsFromRealm()
-    {
+    private void getPendingTripsFromRealm() {
         final int count = realm.where(BookedTrip.class)
                 .equalTo("tripStatus", Constants.TRIP_STATUS_PENDING)
                 .findAll()
@@ -149,14 +133,12 @@ public class ActivityTripSummary extends BaseActivity
     }
 
     @Override
-    protected int getLayoutResourceId()
-    {
+    protected int getLayoutResourceId() {
         return R.layout.activity_trip_summary;
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
+    protected void internetNotAvailable() {
         /*if (sbNoInternet == null)
         {
             sbNoInternet = Snackbar.make(clActivityTripSummary, R.string.no_internet, Snackbar.LENGTH_INDEFINITE);
@@ -165,8 +147,7 @@ public class ActivityTripSummary extends BaseActivity
     }
 
     @Override
-    protected void internetAvailable()
-    {
+    protected void internetAvailable() {
         /*if (sbNoInternet != null)
         {
             if (sbNoInternet.isShown())
@@ -178,10 +159,8 @@ public class ActivityTripSummary extends BaseActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if (item.getItemId() == android.R.id.home)
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);

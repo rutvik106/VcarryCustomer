@@ -202,7 +202,7 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
 
     private void checkForPermissions()
     {
-        new TedPermission(this)
+        TedPermission.with(this)
                 .setPermissionListener(this)
                 .setDeniedMessage("If you reject any permission, you can not use this App\n\nPlease turn on permissions at [Setting] > [Permission]")
                 .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION,

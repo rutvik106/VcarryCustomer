@@ -32,8 +32,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
  * Created by rutvik on 1/26/2017 at 10:44 AM.
  */
 
-public class VHSingleTripDetails extends RecyclerView.ViewHolder
-{
+public class VHSingleTripDetails extends RecyclerView.ViewHolder {
     private static final String TAG = App.APP_TAG + VHSingleTripDetails.class.getSimpleName();
 
     final Context context;
@@ -85,61 +84,52 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
 
     public VHSingleTripDetails(final Context context, View itemView,
                                final OnDriverPhotoClickListener onDriverPhotoClickListener,
-                               final CountDownTimerReferenceHolder countDownTimerReferenceHolder)
-    {
+                               final CountDownTimerReferenceHolder countDownTimerReferenceHolder) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         this.context = context;
 
         this.onDriverPhotoClickListener = onDriverPhotoClickListener;
 
-        ibSingleTripDriverLocation.setOnClickListener(new View.OnClickListener()
-        {
+        ibSingleTripDriverLocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 Intent i = new Intent(context, ActivityDriverLocation.class);
                 i.putExtra(Constants.TRIP_ID, tripDetails.getTripId());
                 context.startActivity(i);
             }
         });
 
-        ibSingleTripCallDriver.setOnClickListener(new View.OnClickListener()
-        {
+        ibSingleTripCallDriver.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                if (tripDetails.getDriverNumber() != null)
-                {
+            public void onClick(View view) {
+                if (tripDetails.getDriverNumber() != null) {
                     Intent intent = new Intent(Intent.ACTION_DIAL);
                     intent.setData(Uri.parse("tel:" + tripDetails.getDriverNumber()));
                     context.startActivity(intent);
-                } else
-                {
+                } else {
                     Toast.makeText(context, "Driver contact number not found", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        rlTripRowItem.setOnClickListener(new View.OnClickListener()
-        {
+        rlTripRowItem.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
 
-                if (tripDetails.getStatus().equals(Constants.TRIP_STATUS_PENDING))
-                {
+                if (tripDetails.getStatus().equals(Constants.TRIP_STATUS_PENDING)) {
+                    android.util.Log.e(TAG, "CUSTOMER TRIP ID: " + tripDetails.getCustomerTripId());
+                    android.util.Log.e(TAG, "TRIP ID: " + tripDetails.getTripId());
+                    android.util.Log.e(TAG, "TRIP STATUS: " + tripDetails.getTripStatus());
                     Toast.makeText(context, R.string.trip_not_confirmed, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (tripDetails != null)
-                {
+                if (tripDetails != null) {
                     Log.i(TAG, "tripDetails is not NULL");
                     Log.i(TAG, "tripDetails tripId is: " + tripDetails.getTripId());
                     ActivityTripDetails.start(context, tripDetails.getTripId());
-                } else if (tripDetails != null)
-                {
+                } else if (tripDetails != null) {
                     Log.i(TAG, "BookedTrip is not NULL");
                     Log.i(TAG, "BookedTrip tripId is: " + tripDetails.getTripId());
                     Log.i(TAG, "BookedTrip driverTripId is: " + tripDetails.getTripId());
@@ -150,13 +140,10 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
             }
         });
 
-        ivDriverImage.setOnClickListener(new View.OnClickListener()
-        {
+        ivDriverImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                if (onDriverPhotoClickListener != null)
-                {
+            public void onClick(View view) {
+                if (onDriverPhotoClickListener != null) {
                     onDriverPhotoClickListener.openImageInFullView(ivDriverImage, tripDetails.getDriverImage());
                 }
             }
@@ -168,8 +155,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
 
     public static VHSingleTripDetails create(final Context context, final ViewGroup parent,
                                              final OnDriverPhotoClickListener onDriverPhotoClickListener,
-                                             final CountDownTimerReferenceHolder countDownTimerReferenceHolder)
-    {
+                                             final CountDownTimerReferenceHolder countDownTimerReferenceHolder) {
         return new VHSingleTripDetails(context, LayoutInflater.from(context)
                 .inflate(R.layout.single_trip_row_item, parent, false), onDriverPhotoClickListener,
                 countDownTimerReferenceHolder);
@@ -271,16 +257,13 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
 
     }*/
 
-    public static void bind(final VHSingleTripDetails vh, TripByCustomerId model)
-    {
+    public static void bind(final VHSingleTripDetails vh, TripByCustomerId model) {
         vh.tripDetails = model;
 
-        if (model.getTripStatus().equals(Constants.TRIP_STATUS_PENDING))
-        {
+        if (model.getTripStatus().equals(Constants.TRIP_STATUS_PENDING)) {
             vh.tvSingleTripFrom.setText(model.getBookedFromLocation());
             vh.tvSingleTripTo.setText(model.getBookedToLocation());
-        } else
-        {
+        } else {
             /*vh.tvSingleTripFrom.setText(model.getFromShippingLocation());
             vh.tvSingleTripTo.setText(model.getToShippingLocation());*/
             vh.tvSingleTripFrom.setText(model.getFromCompanyName());
@@ -292,35 +275,28 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                 " " + model.getFare());
 
 
-        if (model.getDriverName() != null)
-        {
-            if (!model.getDriverName().isEmpty())
-            {
+        if (model.getDriverName() != null) {
+            if (!model.getDriverName().isEmpty()) {
                 vh.llSingleTripDriverDetailsContainer.setVisibility(View.VISIBLE);
                 vh.tvSingleTripDriverName.setText(model.getDriverName());
             }
         }
 
-        if (model.getTripNo() != null)
-        {
+        if (model.getTripNo() != null) {
             vh.llTripNumberContainer.setVisibility(View.VISIBLE);
             vh.tvTripNumber.setText(model.getTripNo());
-        } else
-        {
+        } else {
             vh.llTripNumberContainer.setVisibility(View.GONE);
             vh.tvTripNumber.setText("");
         }
 
-        if (model.getTripStatus().equals(Constants.TRIP_STATUS_PENDING))
-        {
+        if (model.getTripStatus().equals(Constants.TRIP_STATUS_PENDING)) {
             vh.tvCountDownTime.setVisibility(View.VISIBLE);
-        } else
-        {
+        } else {
             vh.tvCountDownTime.setVisibility(View.GONE);
         }
 
-        switch (model.getTripStatus())
-        {
+        switch (model.getTripStatus()) {
             case Constants.TRIP_STATUS_PENDING:
                 vh.llSingleTripDriverDetailsContainer.setVisibility(View.GONE);
                 vh.tvSingleTripStatus.setText(R.string.pending_confirmation);
@@ -420,16 +396,12 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
         }
     }
 
-    private void startCountDown()
-    {
-        if (tripDetails.getCountDownTime() > System.currentTimeMillis())
-        {
+    private void startCountDown() {
+        if (tripDetails.getCountDownTime() > System.currentTimeMillis()) {
             Log.i(TAG, "STARTING COUNT DOWN TIMER");
-            final CountDownTimer cdt = new CountDownTimer(tripDetails.getCountDownTime() - System.currentTimeMillis(), 1000)
-            {
+            final CountDownTimer cdt = new CountDownTimer(tripDetails.getCountDownTime() - System.currentTimeMillis(), 1000) {
                 @Override
-                public void onTick(long millisUntilFinished)
-                {
+                public void onTick(long millisUntilFinished) {
                     //Log.i(TAG, "ON COUNT DOWN TIMER TICK: " + millisUntilFinished);
                     final long seconds = (millisUntilFinished / 1000) % 60;
                     long minutes = ((millisUntilFinished - seconds) / 1000) / 60;
@@ -437,26 +409,22 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                 }
 
                 @Override
-                public void onFinish()
-                {
+                public void onFinish() {
                     tvCountDownTime.setVisibility(View.GONE);
                 }
             }.start();
 
-            if (countDownTimerReferenceHolder != null)
-            {
+            if (countDownTimerReferenceHolder != null) {
                 countDownTimerReferenceHolder.onCountDownCreated(cdt);
             }
 
-        } else
-        {
+        } else {
             Log.i(TAG, "NOT STARTING COUNT DOWN TIMER");
             tvCountDownTime.setVisibility(View.GONE);
         }
     }
 
-    private void loadDriverImage()
-    {
+    private void loadDriverImage() {
         Glide.with(context)
                 .load(tripDetails.getDriverImage() != null ?
                         tripDetails.getDriverImage() : R.drawable.driver_photo_placeholder)
@@ -465,13 +433,11 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder
                 .into(ivDriverImage);
     }
 
-    public interface OnDriverPhotoClickListener
-    {
+    public interface OnDriverPhotoClickListener {
         void openImageInFullView(View view, String image);
     }
 
-    public interface CountDownTimerReferenceHolder
-    {
+    public interface CountDownTimerReferenceHolder {
         void onCountDownCreated(CountDownTimer cdt);
     }
 

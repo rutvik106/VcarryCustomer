@@ -3,7 +3,6 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
 
 import apimodels.TripByCustomerId;
 import io.realm.Realm;
@@ -19,7 +18,6 @@ public class UserActivities
     Realm realm;
     private List<TripByCustomerId> bookedTripRealmList;
 
-    @Inject
     public UserActivities(Realm realm)
     {
         this.realm = realm;

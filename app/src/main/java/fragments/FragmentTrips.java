@@ -27,8 +27,6 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import adapters.TripDetailsAdapter;
 import api.API;
 import api.RetrofitCallbacks;
@@ -62,8 +60,7 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     @BindView(R.id.srl_refreshTrips)
     SwipeRefreshLayout srlRefreshTrips;
     TripDetailsAdapter adapter;
-    @Inject
-    Realm realm;
+    Realm realm = Realm.getDefaultInstance();
     View view;
     private RealmResults<TripByCustomerId> bookedTripRealmResults;
     // Hold a reference to the current animator,
@@ -91,8 +88,6 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
             view = inflater.inflate(R.layout.fragment_trips, container, false);
 
             ButterKnife.bind(this, view);
-
-            ((App) getActivity().getApplication()).getUser().inject(this);
 
             mShortAnimationDuration = getResources().getInteger(
                     android.R.integer.config_shortAnimTime);
@@ -174,8 +169,8 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
             @Override
             public void onFailure(Call<List<TripByCustomerId>> call, Throwable t) {
                 super.onFailure(call, t);
-                Toast.makeText(getActivity(), R.string.something_went_wrong,
-                        Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(getActivity(), R.string.something_went_wrong,
+                        Toast.LENGTH_SHORT).show();*/
                 if (srlRefreshTrips.isRefreshing()) {
                     srlRefreshTrips.setRefreshing(false);
                 }

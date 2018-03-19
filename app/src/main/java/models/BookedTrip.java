@@ -12,8 +12,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by rutvik on 4/18/2017 at 1:10 PM.
  */
 
-public class BookedTrip extends RealmObject
-{
+public class BookedTrip extends RealmObject {
 
     private static final String TAG = App.APP_TAG + BookedTrip.class.getSimpleName();
 
@@ -29,18 +28,16 @@ public class BookedTrip extends RealmObject
     String tripFare;
     String tripNo;
     String note;
-    String tripStatus;
+    String tripStatus = "0";
     TripByCustomerId tripDetails;
     long countDownTime;
 
-    public BookedTrip()
-    {
+    public BookedTrip() {
 
     }
 
     public BookedTrip(String customerTripId, String tripFrom, String tripTo, String tripFare,
-                      String vehicleType, String note)
-    {
+                      String vehicleType, String note) {
         this.customerTripId = customerTripId;
         this.tripFrom = tripFrom;
         this.tripTo = tripTo;
@@ -51,10 +48,9 @@ public class BookedTrip extends RealmObject
         tripStatus = Constants.TRIP_STATUS_PENDING;
     }
 
-    public static TripByCustomerId bakePendingTrip(BookedTrip bookedTrip)
-    {
-        if (bookedTrip.getTripDetails() != null)
-        {
+    public static TripByCustomerId bakePendingTrip(BookedTrip bookedTrip) {
+        Log.e(TAG, "CREATING PENDING TRIP CARD");
+        if (bookedTrip.getTripDetails() != null) {
             return bookedTrip.getTripDetails();
         }
         final TripByCustomerId pendingTrip = new TripByCustomerId();
@@ -67,133 +63,107 @@ public class BookedTrip extends RealmObject
         return pendingTrip;
     }
 
-    public long getCountDownTime()
-    {
+    public long getCountDownTime() {
         return countDownTime;
     }
 
-    public void setCountDownTime(long countDownTime)
-    {
+    public void setCountDownTime(long countDownTime) {
         this.countDownTime = countDownTime;
     }
 
-    public String getCustomerTripId()
-    {
+    public String getCustomerTripId() {
         return customerTripId;
     }
 
-    public void setCustomerTripId(TripByCustomerId tripDetails)
-    {
+    public void setCustomerTripId(TripByCustomerId tripDetails) {
         this.tripDetails = tripDetails;
     }
 
-    public String getTripId()
-    {
+    public String getTripId() {
         return tripId;
     }
 
-    public void setTripId(String tripId)
-    {
+    public void setTripId(String tripId) {
         this.tripId = tripId;
     }
 
-    public String getTripFrom()
-    {
+    public String getTripFrom() {
         return tripFrom;
     }
 
-    public void setTripFrom(String tripFrom)
-    {
+    public void setTripFrom(String tripFrom) {
         this.tripFrom = tripFrom;
     }
 
-    public String getTripTo()
-    {
+    public String getTripTo() {
         return tripTo;
     }
 
-    public void setTripTo(String tripTo)
-    {
+    public void setTripTo(String tripTo) {
         this.tripTo = tripTo;
     }
 
-    public String getVehicleType()
-    {
+    public String getVehicleType() {
         return vehicleType;
     }
 
-    public String getDriverName()
-    {
+    public String getDriverName() {
         return driverName;
     }
 
-    public void setDriverName(String driverName)
-    {
+    public void setDriverName(String driverName) {
         this.driverName = driverName;
     }
 
-    public String getDriverContactNo()
-    {
+    public String getDriverContactNo() {
         return driverContactNo;
     }
 
-    public void setDriverContactNo(String driverContactNo)
-    {
+    public void setDriverContactNo(String driverContactNo) {
         this.driverContactNo = driverContactNo;
     }
 
-    public String getDriverDeviceToken()
-    {
+    public String getDriverDeviceToken() {
         return driverDeviceToken;
     }
 
-    public void setDriverDeviceToken(String driverDeviceToken)
-    {
+    public void setDriverDeviceToken(String driverDeviceToken) {
         this.driverDeviceToken = driverDeviceToken;
     }
 
-    public String getTripFare()
-    {
+    public String getTripFare() {
         return tripFare;
     }
 
-    public void setTripFare(String tripFare)
-    {
+    public void setTripFare(String tripFare) {
         this.tripFare = tripFare;
     }
 
-    public String getTripNo()
-    {
+    public String getTripNo() {
         return tripNo;
     }
 
-    public void setTripNo(String tripNo)
-    {
+    public void setTripNo(String tripNo) {
         this.tripNo = tripNo;
     }
 
-    public String getTripStatus()
-    {
+    public String getTripStatus() {
         return tripStatus;
     }
 
-    public void setTripStatus(String tripStatus)
-    {
+    public void setTripStatus(String tripStatus) {
         this.tripStatus = tripStatus;
     }
 
-    public TripByCustomerId getTripDetails()
-    {
+    public TripByCustomerId getTripDetails() {
         return tripDetails;
     }
 
-    public String getNote()
-    {
+    public String getNote() {
         return note;
     }
 
-    public void setNote(String note)
-    {
+    public void setNote(String note) {
         this.note = note;
     }
 }

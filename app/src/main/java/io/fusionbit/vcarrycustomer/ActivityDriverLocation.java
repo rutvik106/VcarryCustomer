@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import javax.inject.Inject;
 
 import apimodels.FcmResponse;
 import apimodels.TripByCustomerId;
@@ -24,30 +23,24 @@ import fcm.FCM;
 import fragments.FragmentDriverLocation;
 import io.realm.Realm;
 
-public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCMCallbackListener, FragmentDriverLocation.Callbacks
-{
+public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCMCallbackListener, FragmentDriverLocation.Callbacks {
 
     final OnReceiveDriverLocation onReceiveDriverLocation = new OnReceiveDriverLocation();
     @BindView(R.id.fl_driverLocationFragmentContainer)
     FrameLayout flDriverLocationFragmentContainer;
     FragmentDriverLocation fragmentDriverLocation;
-    @Inject
-    Realm realm;
+    Realm realm = Realm.getDefaultInstance();
     @BindView(R.id.activity_driver_location)
     CoordinatorLayout activityDriverLocation;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_location);
 
         ButterKnife.bind(this);
 
-        ((App) getApplication()).getUser().inject(this);
-
-        if (getSupportActionBar() != null)
-        {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.getting_driver_location);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -64,8 +57,7 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         registerReceiver(onReceiveDriverLocation, new IntentFilter(Constants
                 .NotificationType.DRIVER_CURRENT_LOCATION));
@@ -73,53 +65,40 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
 
 
     @Override
-    protected void onStop()
-    {
+    protected void onStop() {
         unregisterReceiver(onReceiveDriverLocation);
         super.onStop();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if (item.getItemId() == android.R.id.home)
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void sentNotificationHttpStatus(final int statusCode, FcmResponse fcmResponse)
-    {
+    public void sentNotificationHttpStatus(final int statusCode, FcmResponse fcmResponse) {
         //Toast.makeText(this, "Http Status Code: " + statusCode, Toast.LENGTH_SHORT).show();
 
-        if (statusCode > 300)
-        {
-            runOnUiThread(new Runnable()
-            {
+        if (statusCode > 300) {
+            runOnUiThread(new Runnable() {
                 @Override
-                public void run()
-                {
-                    if (getSupportActionBar() != null)
-                    {
+                public void run() {
+                    if (getSupportActionBar() != null) {
                         getSupportActionBar().setTitle(R.string.cannot_get_location);
                         //Toast.makeText(ActivityDriverLocation.this, "STATUS: " + statusCode, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         }
-        if (fcmResponse != null)
-        {
-            if (fcmResponse.getFailure() == 1)
-            {
+        if (fcmResponse != null) {
+            if (fcmResponse.getFailure() == 1) {
                 Toast.makeText(this, "Failed to send Notification", Toast.LENGTH_SHORT).show();
-                if (fcmResponse.getResults() != null)
-                {
-                    if (fcmResponse.getResults().size() > 0)
-                    {
-                        if (fcmResponse.getResults().get(0) != null)
-                        {
+                if (fcmResponse.getResults() != null) {
+                    if (fcmResponse.getResults().size() > 0) {
+                        if (fcmResponse.getResults().get(0) != null) {
                             Toast.makeText(this, fcmResponse.getResults().get(0).getError(), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -129,15 +108,11 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
     }
 
     @Override
-    public void driverDeviceTokenNotFound(TripByCustomerId trip)
-    {
-        runOnUiThread(new Runnable()
-        {
+    public void driverDeviceTokenNotFound(TripByCustomerId trip) {
+        runOnUiThread(new Runnable() {
             @Override
-            public void run()
-            {
-                if (getSupportActionBar() != null)
-                {
+            public void run() {
+                if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(R.string.not_eligible_for_tracking);
                 }
                 Snackbar.make(activityDriverLocation, R.string.not_eligible_for_tracking, Snackbar.LENGTH_INDEFINITE)
@@ -147,29 +122,23 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
 
     }
 
-    class OnReceiveDriverLocation extends BroadcastReceiver
-    {
+    class OnReceiveDriverLocation extends BroadcastReceiver {
 
         @Override
-        public void onReceive(Context context, Intent intent)
-        {
+        public void onReceive(Context context, Intent intent) {
             final LatLng latLng = new LatLng(Double.parseDouble(intent.getStringExtra("LAT")),
                     Double.parseDouble(intent.getStringExtra("LNG")));
 
             final int driverType = intent.getIntExtra("DRIVER_TYPE", -1);
 
-            runOnUiThread(new Runnable()
-            {
+            runOnUiThread(new Runnable() {
                 @Override
-                public void run()
-                {
-                    if (getSupportActionBar() != null)
-                    {
+                public void run() {
+                    if (getSupportActionBar() != null) {
                         getSupportActionBar().setTitle(getString(R.string.driver_location));
                     }
 
-                    if (driverType == 1)
-                    {
+                    if (driverType == 1) {
                         Snackbar.make(activityDriverLocation, R.string.cannot_track_multi_trip_drivers, Snackbar.LENGTH_INDEFINITE)
                                 .show();
                     }

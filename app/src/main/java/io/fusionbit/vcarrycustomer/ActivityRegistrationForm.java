@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import adapters.CustomListAdapter;
 import api.API;
 import api.RetrofitCallbacks;
@@ -80,8 +78,6 @@ public class ActivityRegistrationForm extends BaseActivity implements Validator.
         }
 
         ButterKnife.bind(this);
-
-        ((App) getApplication()).getUser().inject(this);
 
         validator = new Validator(this);
 

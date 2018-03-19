@@ -26,11 +26,11 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import javax.inject.Inject;
 
 import adapters.TripDetailsAdapter;
 import api.API;
 import api.RetrofitCallbacks;
+import apimodels.PendingTrips;
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
 import io.realm.Realm;
@@ -38,6 +38,7 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import models.BookedTrip;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import viewholder.VHSingleTripDetails;
 
@@ -51,8 +52,7 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
     Snackbar sbNoInternet;
 
-    @Inject
-    Realm realm;
+    Realm realm = Realm.getDefaultInstance();
 
     TripDetailsAdapter adapter;
     @BindView(R.id.fl_noActiveTrips)
@@ -85,8 +85,6 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        ((App) getApplication()).getUser().inject(this);
-
         mShortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
         srlRefreshActiveTrips.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
@@ -100,6 +98,54 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
         logPendingTrips();
 
+    }
+
+    private void removePendingTrips() {
+        Log.i(TAG, "API CALL for remove pending trips");
+        final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.CUSTOMER_ID, null);
+        API.getInstance().getPendingTrips(customerId, new Callback<PendingTrips>() {
+            @Override
+            public void onResponse(Call<PendingTrips> call, Response<PendingTrips> response) {
+                if (response.isSuccessful()) {
+                    Log.i(TAG, "response successful");
+                    if (response.body() != null) {
+                        Log.i(TAG, "response body not null");
+                        realm.beginTransaction();
+                        final RealmResults<BookedTrip> trips = realm.where(BookedTrip.class)
+                                .equalTo("tripStatus", Constants.TRIP_STATUS_PENDING)
+                                .findAll();
+                        Log.i(TAG, "TRIPS FOUND IN REALM: " + trips.size());
+                        if (response.body().getPending_trips() != null) {
+                            Log.i(TAG, "trips not null");
+                            if (response.body().getPending_trips().size() > 0) {
+                                Log.i(TAG, "trips size > 0");
+                                for (BookedTrip trip : trips) {
+                                    if (!response.body().getPending_trips().contains(new Integer(trip.getCustomerTripId()))) {
+                                        Log.e(TAG, "REMOVED PENDING TRIP FROM REALM ID: (" + trip.getCustomerTripId() + ")");
+                                        trip.deleteFromRealm();
+                                    }
+                                }
+
+                            } else {
+                                Log.i(TAG, "deleting all pending trips from realm");
+                                trips.deleteAllFromRealm();
+                            }
+
+                        }else {
+                            Log.i(TAG, "deleting all pending trips from realm");
+                            trips.deleteAllFromRealm();
+                        }
+                        realm.commitTransaction();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PendingTrips> call, Throwable t) {
+
+            }
+        });
     }
 
     private void setupRecyclerView() {
@@ -118,7 +164,9 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
         for (BookedTrip bookedTrip : bookedTrips) {
             Log.i(TAG, "REALM TRIP STATUS: " + bookedTrip.getTripStatus());
-            adapter.addBookedTrip(BookedTrip.bakePendingTrip(bookedTrip));
+            if (bookedTrip.getCustomerTripId() != null) {
+                adapter.addBookedTrip(BookedTrip.bakePendingTrip(bookedTrip));
+            }
         }
 
         bookedTrips.addChangeListener(new RealmChangeListener<RealmResults<BookedTrip>>() {
@@ -129,6 +177,9 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                     adapter.clearPendingTrips();
                 } else {
                     Log.i(TAG, "BOOKED TRIP CHANGE SIZE: " + element.size());
+                    for (BookedTrip bookedTrip : element) {
+                        Log.i(TAG, "BOOKED TRIP CUSTOMER TRIP ID: " + bookedTrip.getCustomerTripId());
+                    }
                 }
             }
         });
@@ -162,7 +213,9 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
 
                 for (BookedTrip bookedTrip : bookedTrips) {
                     Log.i(TAG, "REALM TRIP STATUS: " + bookedTrip.getTripStatus());
-                    adapter.addBookedTrip(BookedTrip.bakePendingTrip(bookedTrip));
+                    if (bookedTrip.getCustomerTripId() != null) {
+                        adapter.addBookedTrip(BookedTrip.bakePendingTrip(bookedTrip));
+                    }
                 }
 
 
@@ -226,6 +279,7 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                 }
             });
         }
+        removePendingTrips();
     }
 
     @Override

@@ -9,28 +9,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.inject.Inject;
 
 /**
  * Created by rutvik on 11/20/2016 at 5:02 PM.
  */
 
 
-public class TripOperations
-{
+public class TripOperations {
 
     FirebaseDatabase firebaseDatabase;
     FirebaseRemoteConfig remoteConfig;
 
-    @Inject
-    TripOperations(FirebaseDatabase firebaseDatabase, FirebaseRemoteConfig remoteConfig)
-    {
-        this.firebaseDatabase = firebaseDatabase;
-        this.remoteConfig = remoteConfig;
+    TripOperations() {
+        this.firebaseDatabase = FirebaseDatabase.getInstance();
+        this.remoteConfig = FirebaseRemoteConfig.getInstance();
     }
 
-    public void bookTrip(final String from, final String to, final TripOperationListener tripOperationListener)
-    {
+    public void bookTrip(final String from, final String to, final TripOperationListener tripOperationListener) {
 
         DatabaseReference dbRef = firebaseDatabase.getReference();
         dbRef.getRoot();
@@ -45,24 +40,19 @@ public class TripOperations
         data.put("to", to);
         data.put("id", requestId);
 
-        dbRef.child("request").child(requestId).updateChildren(data, new DatabaseReference.CompletionListener()
-        {
+        dbRef.child("request").child(requestId).updateChildren(data, new DatabaseReference.CompletionListener() {
             @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference)
-            {
-                if (databaseError == null)
-                {
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError == null) {
                     tripOperationListener.tripBookedSuccessfully();
-                } else
-                {
+                } else {
                     tripOperationListener.failedToBookTrip(databaseError);
                 }
             }
         });
     }
 
-    public interface TripOperationListener
-    {
+    public interface TripOperationListener {
 
         void tripBookedSuccessfully();
 

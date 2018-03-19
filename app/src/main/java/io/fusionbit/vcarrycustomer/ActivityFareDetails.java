@@ -15,8 +15,6 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripBreakUpDetails;
@@ -57,8 +55,6 @@ public class ActivityFareDetails extends BaseActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        ((App) getApplication()).getUser().inject(this);
 
         if (getSupportActionBar() != null)
         {

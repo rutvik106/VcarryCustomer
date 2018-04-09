@@ -46,6 +46,7 @@ import apimodels.Vehicle;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import extra.LocaleHelper;
+import extra.Log;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -570,7 +571,8 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                 actFrom.setText(model.getLabel());
                 fromShippingLocationId = model.getId() + "";
                 getFair();
-                selectedFromLocation = i;
+                selectedFromLocation = model.getId();
+
                 fromPlace = null;
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
                 actTo.requestFocus();
@@ -580,15 +582,18 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         final AdapterView.OnItemClickListener actToListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (selectedFromLocation == i) {
+
+
+
+                final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
+                if (selectedFromLocation == model.getId()) {
                     Toast.makeText(ActivityBookTrip.this, R.string.from_to_cannot_be_same, Toast.LENGTH_SHORT).show();
                     actTo.setText("");
                     return;
                 }
-
-                final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
                 actTo.setText(model.getLabel());
                 toShippingLocationId = model.getId() + "";
+
                 getFair();
                 selectedToLocation = i;
                 toPlace = null;

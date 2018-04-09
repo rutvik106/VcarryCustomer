@@ -153,6 +153,9 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:clickable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="5dp"
                         android:id="@+id/iv_selectFrom"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
@@ -204,6 +207,9 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:clickable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="5dp"
                         android:id="@+id/iv_selectTo"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
@@ -261,6 +267,7 @@
                     android:textSize="15sp"/>
 
                 <RadioButton
+                    android:visibility="gone"
                     android:id="@+id/rb_return"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

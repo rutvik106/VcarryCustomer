@@ -437,6 +437,8 @@ public class ActivityHome extends BaseActivity
             Utils.ShareApp(this);
         } else if (id == R.id.nav_sendFeedback) {
             Utils.sendFeedback(this);
+        } else if (id == R.id.nav_signOut) {
+            confirmLogout();
         }
 
         if (currentFragment != null) {
@@ -448,6 +450,23 @@ public class ActivityHome extends BaseActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void confirmLogout() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.nav_signOut))
+                .setMessage(getString(R.string.logout_message))
+                .setPositiveButton(getString(R.string.nav_signOut), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int j) {
+                        FirebaseAuth.getInstance().signOut();
+                        final Intent i = new Intent(ActivityHome.this, ActivityPhoneAuth.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
     }
 
     @Override
@@ -479,6 +498,15 @@ public class ActivityHome extends BaseActivity
                         public void onClick(DialogInterface dialogInterface, int i) {
                             tryToGetCustomerIdFromCustomerPhone(IS_EMULATOR ? "9409210488" : FirebaseAuth.getInstance()
                                     .getCurrentUser().getPhoneNumber());
+                        }
+                    })
+                    .setNeutralButton("LOGOUT", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int j) {
+                            FirebaseAuth.getInstance().signOut();
+                            final Intent i = new Intent(ActivityHome.this, ActivityPhoneAuth.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
                         }
                     })
                     .show();

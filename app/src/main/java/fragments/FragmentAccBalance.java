@@ -55,6 +55,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
     SwipeRefreshLayout swipeRefreshLayout;
     String customerId;
     boolean busyLoadingData = false;
+    private Call<AccountSummaryNew> getAccSummary;
 
     public static FragmentAccBalance newInstance(int index) {
         FragmentAccBalance fragmentAccBalance = new FragmentAccBalance();
@@ -116,7 +117,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
     }
 
     private void getAccountBalanceSummary(String customerId) {
-        API.getInstance().getAccountSummary(customerId,
+        getAccSummary = API.getInstance().getAccountSummary(customerId,
                 new RetrofitCallbacks<AccountSummaryNew>() {
                     @Override
                     public void onResponse(Call<AccountSummaryNew> call, Response<AccountSummaryNew> response) {
@@ -143,12 +144,14 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     @Override
                     public void onFailure(Call<AccountSummaryNew> call, Throwable t) {
                         super.onFailure(call, t);
-                        Toast.makeText(getContext(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
-                        if (busyLoadingData) {
-                            if (swipeRefreshLayout.isRefreshing()) {
-                                swipeRefreshLayout.setRefreshing(false);
+                        //Toast.makeText(getContext(), R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                        if (!call.isCanceled()) {
+                            if (busyLoadingData) {
+                                if (swipeRefreshLayout.isRefreshing()) {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                                busyLoadingData = false;
                             }
-                            busyLoadingData = false;
                         }
                     }
                 });
@@ -344,10 +347,29 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
 
     }
 
+    @Override
+    public void onDestroy() {
+        cancelCall();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+        cancelCall();
+        super.onDestroyView();
+    }
 
     @Override
     public void onRefresh() {
         getAccountBalance();
+    }
+
+    public void cancelCall() {
+        if (getAccSummary != null) {
+            if (!getAccSummary.isCanceled()) {
+                getAccSummary.cancel();
+            }
+        }
     }
 
 

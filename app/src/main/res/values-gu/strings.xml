@@ -138,16 +138,19 @@
     <string name="motorist_no_app">આ મોટરચાલક પાસે એપ્લિકેશન નથી</string>
     <string name="not_eligible_for_tracking">મોટરગાડી જીપીએસ ટ્રેકિંગ માટે પાત્ર નથી.</string>
     <string name="note">નૉૅધ</string>
-    <string name="code_not_sent">Code not yet sent. Please wait for OTP.</string>
-    <string name="please_wait">Please Wait...</string>
-    <string name="verifying_otp">Verifying OTP...</string>
-    <string name="verify_phone">Verifying Phone Number...</string>
-    <string name="phone_verification">Phone Verification</string>
-    <string name="enter_otp">Enter OTP</string>
-    <string name="please_wait_you_will_receive_a_otp">Please wait, You will receive a OTP in 60 Seconds.</string>
-    <string name="resend">Resend</string>
-    <string name="select_country_code">Select Country Code</string>
-    <string name="enter_mobile_no">Mobile Number</string>
+    <string name="code_not_sent">કોડ હજી મોકલ્યો નથી ઓટીપી માટે કૃપા કરી રાહ જુઓ.</string>
+    <string name="please_wait">મહેરબાની કરી રાહ જુવો...</string>
+    <string name="verifying_otp">OTP ચકાસવું...</string>
+    <string name="verify_phone">ફોન નંબર તપાસવું...</string>
+    <string name="phone_verification">ફોન ચકાસણી</string>
+    <string name="enter_otp">OTP દાખલ કરો</string>
+    <string name="please_wait_you_will_receive_a_otp">કૃપા કરીને રાહ જુઓ, તમને 60 સેકન્ડ્સમાં એક OTP પ્રાપ્ત થશે.</string>
+    <string name="resend">ફરી મોકલો</string>
+    <string name="select_country_code">દેશ કોડ પસંદ કરો</string>
+    <string name="enter_mobile_no">મોબાઇલ નંબર</string>
 
+    <string name="nav_signOut">સાઇન આઉટ કરો</string>
+    <string name="logout_message">શું તમે ખરેખર લૉગઆઉટ કરવા માંગો છો?</string>
+    <string name="cancel">રદ કરો</string>
 
 </resources>

@@ -79,7 +79,7 @@ public class NotificationHandler {
                             rejectTrip();
                             break;
                         case Constants.NotificationType.TRIP_CONFIRMATION:
-                            //confirmTrip();
+                            confirmTrip();
                             break;
                         case Constants.NotificationType.DRIVER_ALLOCATED:
                             confirmDriver();

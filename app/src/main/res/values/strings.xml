@@ -147,4 +147,9 @@
     <string name="select_country_code">Select Country Code</string>
     <string name="enter_mobile_no">Mobile Number</string>
 
+    <string name="nav_signOut">Sign Out</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
+    <string name="cancel">Cancel</string>
+
+
 </resources>

@@ -9,17 +9,23 @@ android {
         applicationId "io.fusionbit.vcarrycustomer"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 20
-        versionName "2.3"
+        versionCode 21
+        versionName "2.4"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            debuggable false
+            shrinkResources true
+            minifyEnabled true
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled false
+            debuggable true
+            shrinkResources true
+            minifyEnabled true
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
         }
     }

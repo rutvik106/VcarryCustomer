@@ -132,9 +132,6 @@ public class ActivityOnGoingTrips extends BaseActivity implements VHSingleTripDe
                                 trips.deleteAllFromRealm();
                             }
 
-                        }else {
-                            Log.i(TAG, "deleting all pending trips from realm");
-                            trips.deleteAllFromRealm();
                         }
                         realm.commitTransaction();
                     }

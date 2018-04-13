@@ -4,6 +4,7 @@ import android.app.Application;
 
 import extra.LocaleHelper;
 import extra.Log;
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 
 /**

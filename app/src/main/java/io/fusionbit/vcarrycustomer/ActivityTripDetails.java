@@ -290,13 +290,13 @@ public class ActivityTripDetails extends BaseActivity {
 
         }
 
-        if (tripDetails.getTripStatus().equals(Constants.TRIP_STATUS_FINISHED)) {
+        if (tripDetails.getTripStatus().equals(Constants.TRIP_STATUS_FINISHED) && tripDetails.getSalesId() > 0) {
             tvTripChargesDetails.setVisibility(View.VISIBLE);
             tvTripChargesDetails.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ActivityFareDetails.start(ActivityTripDetails.this,
-                            tripDetails.getTripId(), tripDetails.getCashReceived());
+                    ActivityWebInvoice.start(ActivityTripDetails.this,
+                            tripDetails.getSalesId());
                 }
             });
         } else {

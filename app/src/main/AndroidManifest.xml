@@ -118,6 +118,7 @@
             android:name=".ActivityPhoneAuth"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity android:name=".ActivityWebInvoice"></activity>
     </application>
 
 </manifest>

@@ -322,6 +322,10 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     private String fromContactNo;
     @SerializedName("to_contact_no")
     private String toContactNo;
+
+    @SerializedName("sales_id")
+    private int salesId;
+
     public TripByCustomerId()
     {
     }
@@ -1146,5 +1150,13 @@ public class TripByCustomerId extends RealmObject implements Comparable<TripByCu
     public void setToContactNo(String toContactNo)
     {
         this.toContactNo = toContactNo;
+    }
+
+    public int getSalesId() {
+        return salesId;
+    }
+
+    public void setSalesId(int salesId) {
+        this.salesId = salesId;
     }
 }

@@ -1,3 +1,4 @@
+
 apply plugin: 'com.android.application'
 
 apply plugin: 'realm-android'
@@ -9,8 +10,8 @@ android {
         applicationId "io.fusionbit.vcarrycustomer"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 21
-        versionName "2.4"
+        versionCode 22
+        versionName "2.5"
     }
 
     buildTypes {
@@ -39,50 +40,32 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    //SUPPORT LIBRARIES
-
-    //GOOGLE PLAY SERVICES
-
-    //FIREBASE
-
-    //GLIDE
-
-    //TED PERMISSIONS
-
-    //BUTTER KNIFE
-
-    //RETROFIT AND GSON
-
-    //DAGGER
-    //VALIDATIONS LIBRARY
-    //ANNOTATION PROCESSOR FOR BUTTER KNIFE
-    //ANNOTATION PROCESSOR FOR DAGGER
-    compile 'com.android.support:cardview-v7:27.0.2'
-    compile 'com.android.support:recyclerview-v7:27.0.2'
-    compile 'com.android.support:support-fragment:27.0.2'
-    compile 'com.android.support:design:27.0.2'
-    compile 'com.google.android.gms:play-services-maps:11.0.0'
-    compile 'com.google.android.gms:play-services-auth:11.0.0'
-    compile 'com.google.firebase:firebase-core:11.0.0'
-    compile 'com.google.firebase:firebase-database:11.0.0'
-    compile 'com.google.firebase:firebase-crash:11.0.0'
-    compile 'com.google.firebase:firebase-auth:11.0.0'
-    compile 'com.google.firebase:firebase-config:11.0.0'
-    compile 'com.google.firebase:firebase-messaging:11.0.0'
-    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'jp.wasabeef:glide-transformations:2.0.1'
-    compile 'gun0912.ted:tedpermission:2.0.1'
-    compile 'com.jakewharton:butterknife:8.8.1'
-    compile 'com.google.code.gson:gson:2.8.2'
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
-    compile 'com.mobsandgeeks:android-saripaar:2.0.3'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:cardview-v7:27.0.2'
+    implementation 'com.android.support:recyclerview-v7:27.0.2'
+    implementation 'com.android.support:support-fragment:27.0.2'
+    implementation 'com.android.support:design:27.0.2'
+    implementation 'com.google.android.gms:play-services-maps:11.0.0'
+    implementation 'com.google.android.gms:play-services-auth:11.0.0'
+    implementation 'com.google.firebase:firebase-core:11.0.0'
+    implementation 'com.google.firebase:firebase-database:11.0.0'
+    implementation 'com.google.firebase:firebase-auth:11.0.0'
+    implementation 'com.google.firebase:firebase-config:11.0.0'
+    implementation 'com.google.firebase:firebase-messaging:11.0.0'
+    implementation 'com.firebaseui:firebase-ui-auth:1.2.0'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'jp.wasabeef:glide-transformations:2.0.1'
+    implementation 'gun0912.ted:tedpermission:2.0.1'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+    implementation 'com.mobsandgeeks:android-saripaar:2.0.3'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     provided 'javax.annotation:jsr250-api:1.0'
 
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+
 }
 apply plugin: 'com.google.gms.google-services'

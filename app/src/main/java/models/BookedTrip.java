@@ -60,6 +60,7 @@ public class BookedTrip extends RealmObject {
         pendingTrip.setVehicleType(bookedTrip.getVehicleType());
         pendingTrip.setStatus(bookedTrip.getTripStatus());
         pendingTrip.setCountDownTime(bookedTrip.getCountDownTime());
+        pendingTrip.setNote(bookedTrip.getNote());
         return pendingTrip;
     }
 

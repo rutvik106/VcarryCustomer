@@ -129,7 +129,7 @@
     <string name="amount">રકમ</string>
     <string name="discount">ડિસ્કાઉન્ટ</string>
     <string name="net_amount">નેટ રકમ</string>
-    <string name="fare_details">ભાડું વિગતો</string>
+    <string name="fare_details">ટ્રીપ ભરતિયું</string>
     <string name="registered_customer">તમે નોંધાયેલા ગ્રાહક છો</string>
     <string name="no_active_trips_found">કોઈ સક્રિય સફરો નથી</string>
     <string name="from_to_cannot_be_same">પ્રતિ અને સ્થાન માટે સમાન ન હોઈ શકે</string>
@@ -152,5 +152,6 @@
     <string name="nav_signOut">સાઇન આઉટ કરો</string>
     <string name="logout_message">શું તમે ખરેખર લૉગઆઉટ કરવા માંગો છો?</string>
     <string name="cancel">રદ કરો</string>
+    <string name="select_weight">વજન પસંદ કરો</string>
 
 </resources>

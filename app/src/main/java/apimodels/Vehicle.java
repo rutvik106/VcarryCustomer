@@ -54,4 +54,9 @@ public class Vehicle extends RealmObject implements SpinnerModel
     {
         return getVehicleType();
     }
+
+    @Override
+    public String companyName() {
+        return null;
+    }
 }

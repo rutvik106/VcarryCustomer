@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,8 +24,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
  * Created by rutvik on 5/9/2017 at 5:20 PM.
  */
 
-public class DriverRatingDialog extends Dialog
-{
+public class DriverRatingDialog extends Dialog {
     final String driverId, driverName, driverImage;
     @BindView(R.id.iv_ratingBoxDriverImage)
     ImageView ivRatingBoxDriverImage;
@@ -35,8 +35,7 @@ public class DriverRatingDialog extends Dialog
     @BindView(R.id.btn_ratingBoxSubmit)
     Button btnRatingBoxSubmit;
 
-    public DriverRatingDialog(Context context, String driverId, String driverName, String image)
-    {
+    public DriverRatingDialog(Context context, String driverId, String driverName, String image) {
         super(context);
         this.driverImage = image;
         this.driverName = driverName;
@@ -44,8 +43,7 @@ public class DriverRatingDialog extends Dialog
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         super.onCreate(savedInstanceState);
@@ -54,19 +52,21 @@ public class DriverRatingDialog extends Dialog
 
         ButterKnife.bind(this);
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             WindowManager.LayoutParams params = getWindow().getAttributes();
             params.width = WindowManager.LayoutParams.MATCH_PARENT;
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             getWindow().setAttributes(params);
         }
 
-        Glide.with(getContext())
-                .load(driverImage)
+        RequestOptions requestOptions = new RequestOptions()
                 .placeholder(R.drawable.driver_photo_placeholder)
                 .error(R.drawable.driver_photo_placeholder)
-                .bitmapTransform(new CropCircleTransformation(getContext()))
+                .transform(new CropCircleTransformation());
+
+        Glide.with(getContext())
+                .setDefaultRequestOptions(requestOptions)
+                .load(driverImage)
                 .into(ivRatingBoxDriverImage);
 
         tvRatingBoxText.setText("How much would you like to rate " + driverName + " out of 5?");
@@ -74,8 +74,7 @@ public class DriverRatingDialog extends Dialog
     }
 
     @OnClick(R.id.btn_ratingBoxSubmit)
-    public void onClick()
-    {
+    public void onClick() {
         Toast.makeText(getContext(), "Thank you.", Toast.LENGTH_SHORT).show();
         dismiss();
     }

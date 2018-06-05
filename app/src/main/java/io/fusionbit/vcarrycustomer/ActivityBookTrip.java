@@ -24,10 +24,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
@@ -35,7 +35,6 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 import adapters.CustomListAdapter;
 import api.API;
@@ -46,12 +45,10 @@ import apimodels.Vehicle;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import extra.LocaleHelper;
-import extra.Log;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import models.BookedTrip;
-import models.UserActivities;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -95,8 +92,13 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     @BindView(R.id.ll_tripScheduleDetails)
     LinearLayout llTripScheduleDetails;
     int selectedFromLocation, selectedToLocation;
+    String selectedFromLocationName, selectedToLocationName;
     @BindView(R.id.et_tripNote)
     EditText etTripNote;
+    @BindView(R.id.sb_weight)
+    SeekBar sbWeight;
+    @BindView(R.id.tv_selectedWeight)
+    TextView tvSelectedWeight;
     private String fromShippingLocationId = null;
     private String toShippingLocationId = null;
     private int vehicleTypeId = 0;
@@ -105,6 +107,8 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     private Call<List<Vehicle>> getVehicles;
     private Call<List<FromLocation>> getShippingLocations;
     private Call<List<Integer>> insertTrip;
+
+    private int selectedWeight = 100;
 
     private void cancelApiCalls() {
         if (getVehicles != null) {
@@ -180,6 +184,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
 
                 actFrom.setText("");
                 selectedFromLocation = -1;
+                selectedFromLocationName = "";
 
                 /*Intent i = new Intent(ActivityBookTrip.this, ActivityPickLocation.class);
                 i.putExtra("ACTIVITY_INTENT", Constants.SELECT_START_LOCATION_ACTIVITY);
@@ -195,6 +200,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
 
                 actTo.setText("");
                 selectedToLocation = -1;
+                selectedToLocationName = "";
 
                 /*Intent i = new Intent(ActivityBookTrip.this, ActivityPickLocation.class);
                 i.putExtra("ACTIVITY_INTENT", Constants.SELECT_DESTINATION_LOCATION_ACTIVITY);
@@ -206,11 +212,35 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         btnRequestTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (selectedWeight < 100) {
+                    Toast.makeText(ActivityBookTrip.this, "Please select proper weight.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 validator.validate();
             }
         });
 
         setListenersForAutoCompleteTextView();
+
+
+        sbWeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                selectedWeight = 100 * i;
+                tvSelectedWeight.setText(selectedWeight + " Kg");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
 
         final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CUSTOMER_ID, null);
@@ -441,6 +471,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     }
 
     private void setShippingLocationListAdapter() {
+        shippingLocationList.clear();
         shippingLocationList.addAll(realm.copyFromRealm(realmFromLocations));
 
         if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu")) {
@@ -572,7 +603,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                 fromShippingLocationId = model.getId() + "";
                 getFair();
                 selectedFromLocation = model.getId();
-
+                selectedFromLocationName = model.companyName();
                 fromPlace = null;
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
                 actTo.requestFocus();
@@ -582,7 +613,6 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         final AdapterView.OnItemClickListener actToListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
 
 
                 final SpinnerModel model = (SpinnerModel) adapterView.getAdapter().getItem(i);
@@ -595,7 +625,8 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                 toShippingLocationId = model.getId() + "";
 
                 getFair();
-                selectedToLocation = i;
+                selectedToLocation = model.getId();
+                selectedToLocationName = model.companyName();
                 toPlace = null;
                 Utils.hideSoftKeyboard(ActivityBookTrip.this);
             }
@@ -743,9 +774,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                             if (response.body().get(0) > 0) {
                                 realm.beginTransaction();
                                 final BookedTrip bt = new BookedTrip(response.body().get(0).toString(),
-                                        shippingLocationList.get(selectedFromLocation)
-                                                .getCompanyName(), shippingLocationList.get(selectedToLocation)
-                                        .getCompanyName(),
+                                        selectedFromLocationName, selectedToLocationName,
                                         tripFare, vehicleName, etTripNote.getText().toString());
                                 bt.setCountDownTime(System.currentTimeMillis() + (1000 * 60 * 30));
                                 realm.copyToRealmOrUpdate(bt);
@@ -789,7 +818,7 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
 
             insertTrip = API.getInstance().insertCustomerTrip(fromShippingLocationId + "", toShippingLocationId + "",
                     vehicleTypeId + "", customerId, fromPlace
-                    , toPlace, fromLatLng, toLatLng, onInsertCustomerTrip);
+                    , toPlace, fromLatLng, toLatLng, selectedWeight, onInsertCustomerTrip);
         }
 
     }

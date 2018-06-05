@@ -78,7 +78,8 @@ public interface ApiInterface {
                                            @Field("from_new_address") String fromNewAddress,
                                            @Field("to_new_address") String toNewAddress,
                                            @Field("from_lat_long") String fromLatLng,
-                                           @Field("to_lat_long") String toLatLng);
+                                           @Field("to_lat_long") String toLatLng,
+                                           @Field("selected_weight") int weight);
 
     @FormUrlEncoded
     @POST("webservice.php")

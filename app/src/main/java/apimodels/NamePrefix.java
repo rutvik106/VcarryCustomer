@@ -31,4 +31,9 @@ public class NamePrefix implements SpinnerModel
     {
         return label;
     }
+
+    @Override
+    public String companyName() {
+        return null;
+    }
 }

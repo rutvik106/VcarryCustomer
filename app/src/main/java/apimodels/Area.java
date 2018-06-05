@@ -54,4 +54,9 @@ public class Area implements SpinnerModel
     {
         return areaName;
     }
+
+    @Override
+    public String companyName() {
+        return null;
+    }
 }

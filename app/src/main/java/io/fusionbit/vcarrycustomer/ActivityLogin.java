@@ -14,7 +14,6 @@ import android.support.annotation.StyleRes;
 import android.view.View;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -110,13 +109,13 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
 
         //user not logged in
         //show firebase login methods using firebase auth UI
-        startActivityForResult(
+        /*startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
                         .setTheme(getSelectedTheme())
                         .setTosUrl(getSelectedTosUrl())
                         .setLogo(getSelectedLogo())
                         .setProviders(getSelectedProviders())
-                        .build(), RC_SIGN_IN);
+                        .build(), RC_SIGN_IN);*/
 
 
     }
@@ -151,7 +150,8 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
     private int getSelectedTheme()
     {
 
-        return R.style.LoginTheme; // AuthUI.getDefaultTheme();
+        //return R.style.LoginTheme; // AuthUI.getDefaultTheme();
+        return 0; // AuthUI.getDefaultTheme();
 
     }
 
@@ -168,7 +168,7 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
     {
         ArrayList<String> selectedProviders = new ArrayList<>();
 
-        selectedProviders.add(AuthUI.GOOGLE_PROVIDER);
+        //selectedProviders.add(AuthUI.GOOGLE_PROVIDER);
 
         return selectedProviders.toArray(new String[selectedProviders.size()]);
     }

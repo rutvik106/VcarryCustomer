@@ -7,8 +7,10 @@ package apimodels;
 public interface SpinnerModel
 {
 
-    public int getId();
+    int getId();
 
-    public String getLabel();
+    String getLabel();
+
+    String companyName();
 
 }

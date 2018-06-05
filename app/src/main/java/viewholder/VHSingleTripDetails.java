@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import apimodels.TripByCustomerId;
 import butterknife.BindView;
@@ -425,11 +426,14 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder {
     }
 
     private void loadDriverImage() {
+        RequestOptions requestOptions = new RequestOptions()
+                .transform(new CropCircleTransformation())
+                .error(R.drawable.driver_photo_placeholder);
+
         Glide.with(context)
+                .setDefaultRequestOptions(requestOptions)
                 .load(tripDetails.getDriverImage() != null ?
                         tripDetails.getDriverImage() : R.drawable.driver_photo_placeholder)
-                .error(R.drawable.driver_photo_placeholder)
-                .bitmapTransform(new CropCircleTransformation(context))
                 .into(ivDriverImage);
     }
 

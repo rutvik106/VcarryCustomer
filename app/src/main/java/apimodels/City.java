@@ -54,4 +54,9 @@ public class City implements SpinnerModel
     {
         return cityName;
     }
+
+    @Override
+    public String companyName() {
+        return null;
+    }
 }

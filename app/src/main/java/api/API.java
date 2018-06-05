@@ -134,11 +134,12 @@ public class API {
                                                   final String toNewAddress,
                                                   final String fromLatLng,
                                                   final String toLatLng,
+                                                  final int selectedWeight,
                                                   RetrofitCallbacks<List<Integer>> callback) {
         Call<List<Integer>> call =
                 apiService.insertCustomerTrip("insert_customer_trip",
                         fromShippingId, toShippingId, vehicleTypeId, customerId, fromNewAddress,
-                        toNewAddress, fromLatLng, toLatLng);
+                        toNewAddress, fromLatLng, toLatLng,selectedWeight);
 
         call.enqueue(callback);
 

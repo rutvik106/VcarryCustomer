@@ -192,16 +192,19 @@ public class NotificationHandler {
                             public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response) {
                                 super.onResponse(call, response);
                                 if (response.isSuccessful()) {
-                                    final Realm realm = Realm.getInstance(realmConfiguration);
-                                    realm.beginTransaction();
-                                    bookedTrip.setTripStatus(Constants.TRIP_STATUS_NEW);
-                                    bookedTrip.setTripId(tripId);
-                                    bookedTrip.setTripFare(fare);
-                                    bookedTrip.setTripNo(tripNo);
-                                    bookedTrip.setCustomerTripId(realm
-                                            .copyToRealmOrUpdate(response.body()));
-                                    realm.copyToRealmOrUpdate(bookedTrip);
-                                    realm.commitTransaction();
+                                    if (response.body() != null) {
+                                        final Realm realm = Realm.getInstance(realmConfiguration);
+                                        realm.beginTransaction();
+                                        bookedTrip.setTripStatus(Constants.TRIP_STATUS_NEW);
+                                        bookedTrip.setTripId(tripId);
+                                        bookedTrip.setTripFare(fare);
+                                        bookedTrip.setTripNo(tripNo);
+                                        TripByCustomerId tripByCustomerId = realm.copyToRealmOrUpdate(response.body());
+                                        tripByCustomerId.setNote(bookedTrip.getNote());
+                                        bookedTrip.setCustomerTripId(tripByCustomerId);
+                                        realm.copyToRealmOrUpdate(bookedTrip);
+                                        realm.commitTransaction();
+                                    }
                                 }
                             }
                         });

@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import api.API;
 import api.RetrofitCallbacks;
@@ -133,9 +134,12 @@ public class ActivityTripDetails extends BaseActivity {
         mShortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
 
+        RequestOptions requestOptions = new RequestOptions()
+                .transform(new CropCircleTransformation());
+
         Glide.with(this)
+                .setDefaultRequestOptions(requestOptions)
                 .load(R.drawable.driver_photo_placeholder)
-                .bitmapTransform(new CropCircleTransformation(this))
                 .into(ivDriverPhoto);
 
         ivDriverPhoto.setOnClickListener(new View.OnClickListener() {
@@ -220,6 +224,10 @@ public class ActivityTripDetails extends BaseActivity {
                     .findFirst();
             if (bt != null) {
                 tripNote = bt.getNote();
+            } else {
+                if (tripDetails.getNote() != null) {
+                    tripNote = tripDetails.getNote();
+                }
             }
 
         }
@@ -318,9 +326,12 @@ public class ActivityTripDetails extends BaseActivity {
             tvTripDriverLicenceNo.setText(tripDetails.getLicenceNo() != null ?
                     !tripDetails.getLicenceNo().isEmpty() ? tripDetails.getLicenceNo() : "NA" : "NA");
             if (tripDetails.getDriverImage() != null) {
+
+                RequestOptions requestOptions = new RequestOptions()
+                        .transform(new CropCircleTransformation());
+
                 Glide.with(getApplicationContext())
                         .load(tripDetails.getDriverImage())
-                        .bitmapTransform(new CropCircleTransformation(this))
                         .into(ivDriverPhoto);
             }
 
@@ -403,7 +414,7 @@ public class ActivityTripDetails extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        tripDetails.removeChangeListeners();
+        tripDetails.removeAllChangeListeners();
         super.onDestroy();
     }
 

@@ -11,8 +11,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by rutvik on 1/13/2017 at 11:26 PM.
  */
 
-public class FromLocation extends RealmObject implements SpinnerModel
-{
+public class FromLocation extends RealmObject implements SpinnerModel {
 
 
     /**
@@ -76,227 +75,186 @@ public class FromLocation extends RealmObject implements SpinnerModel
 
     private boolean returnGujaratiAddress;
 
-    public void setReturnGujaratiAddress(boolean returnGujaratiAddress)
-    {
+    public void setReturnGujaratiAddress(boolean returnGujaratiAddress) {
         this.returnGujaratiAddress = returnGujaratiAddress;
     }
 
-    public String getShippingLocationId()
-    {
+    public String getShippingLocationId() {
         return shippingLocationId;
     }
 
-    public void setShippingLocationId(String shippingLocationId)
-    {
+    public void setShippingLocationId(String shippingLocationId) {
         this.shippingLocationId = shippingLocationId;
     }
 
-    public String getShippingName()
-    {
+    public String getShippingName() {
         return shippingName;
     }
 
-    public void setShippingName(String shippingName)
-    {
+    public void setShippingName(String shippingName) {
         this.shippingName = shippingName;
     }
 
-    public String getShippingAddress()
-    {
+    public String getShippingAddress() {
         return shippingAddress + ", " + getAreaName() + ", " + getCityName();
     }
 
-    public void setShippingAddress(String shippingAddress)
-    {
+    public void setShippingAddress(String shippingAddress) {
         this.shippingAddress = shippingAddress;
     }
 
-    public String getCompanyName()
-    {
+    public String getCompanyName() {
         return shippingName;
     }
 
-    public String getShippingAddress2()
-    {
+    public String getShippingAddress2() {
         return shippingAddress2;
     }
 
-    public void setShippingAddress2(String shippingAddress2)
-    {
+    public void setShippingAddress2(String shippingAddress2) {
         this.shippingAddress2 = shippingAddress2;
     }
 
-    public String getCityId()
-    {
+    public String getCityId() {
         return cityId;
     }
 
-    public void setCityId(String cityId)
-    {
+    public void setCityId(String cityId) {
         this.cityId = cityId;
     }
 
-    public String getCityName()
-    {
+    public String getCityName() {
         return cityName;
     }
 
-    public void setCityName(String cityName)
-    {
+    public void setCityName(String cityName) {
         this.cityName = cityName;
     }
 
-    public String getAreaName()
-    {
+    public String getAreaName() {
         return areaName;
     }
 
-    public void setAreaName(String areaName)
-    {
+    public void setAreaName(String areaName) {
         this.areaName = areaName;
     }
 
-    public String getAreaId()
-    {
+    public String getAreaId() {
         return areaId;
     }
 
-    public void setAreaId(String areaId)
-    {
+    public void setAreaId(String areaId) {
         this.areaId = areaId;
     }
 
-    public String getCpName()
-    {
+    public String getCpName() {
         return cpName;
     }
 
-    public void setCpName(String cpName)
-    {
+    public void setCpName(String cpName) {
         this.cpName = cpName;
     }
 
-    public String getCpContactNo()
-    {
+    public String getCpContactNo() {
         return cpContactNo;
     }
 
-    public void setCpContactNo(String cpContactNo)
-    {
+    public void setCpContactNo(String cpContactNo) {
         this.cpContactNo = cpContactNo;
     }
 
-    public String getRecessTimingsFrom()
-    {
+    public String getRecessTimingsFrom() {
         return recessTimingsFrom;
     }
 
-    public void setRecessTimingsFrom(String recessTimingsFrom)
-    {
+    public void setRecessTimingsFrom(String recessTimingsFrom) {
         this.recessTimingsFrom = recessTimingsFrom;
     }
 
-    public String getRecessTimingsTo()
-    {
+    public String getRecessTimingsTo() {
         return recessTimingsTo;
     }
 
-    public void setRecessTimingsTo(String recessTimingsTo)
-    {
+    public void setRecessTimingsTo(String recessTimingsTo) {
         this.recessTimingsTo = recessTimingsTo;
     }
 
-    public String getGoodsType()
-    {
+    public String getGoodsType() {
         return goodsType;
     }
 
-    public void setGoodsType(String goodsType)
-    {
+    public void setGoodsType(String goodsType) {
         this.goodsType = goodsType;
     }
 
-    public String getGoodsWeightRange()
-    {
+    public String getGoodsWeightRange() {
         return goodsWeightRange;
     }
 
-    public void setGoodsWeightRange(String goodsWeightRange)
-    {
+    public void setGoodsWeightRange(String goodsWeightRange) {
         this.goodsWeightRange = goodsWeightRange;
     }
 
-    public String getCustomerId()
-    {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId)
-    {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
-    public String getPrimaryLocation()
-    {
+    public String getPrimaryLocation() {
         return primaryLocation;
     }
 
-    public void setPrimaryLocation(String primaryLocation)
-    {
+    public void setPrimaryLocation(String primaryLocation) {
         this.primaryLocation = primaryLocation;
     }
 
     @Override
-    public int getId()
-    {
+    public int getId() {
         return Integer.valueOf(getShippingLocationId());
     }
 
     @Override
-    public String getLabel()
-    {
-        if (returnGujaratiAddress)
-        {
+    public String getLabel() {
+        if (returnGujaratiAddress) {
             return getGujaratiAddress();
         }
         return getShippingAddress();
     }
 
-    public String getComparisionAddress()
-    {
+    @Override
+    public String companyName() {
+        return getCompanyName();
+    }
+
+    public String getComparisionAddress() {
         return getShippingAddress() + " " + getShippingName();
     }
 
-    public String getGujaratiAddress()
-    {
-        try
-        {
-            if (gujaratiAddress != null)
-            {
-                if (!gujaratiAddress.isEmpty())
-                {
+    public String getGujaratiAddress() {
+        try {
+            if (gujaratiAddress != null) {
+                if (!gujaratiAddress.isEmpty()) {
                     // Convert from Unicode to UTF-8
                     String string = gujaratiAddress;
                     byte[] utf8 = string.getBytes("UTF-8");
 
                     // Convert from UTF-8 to Unicode
                     return new String(utf8, "UTF-8");
-                } else
-                {
+                } else {
                     return getShippingAddress();
                 }
-            } else
-            {
+            } else {
                 return getShippingAddress();
             }
-        } catch (UnsupportedEncodingException e)
-        {
+        } catch (UnsupportedEncodingException e) {
             return getShippingAddress();
         }
     }
 
-    public void setGujaratiAddress(String gujaratiAddress)
-    {
+    public void setGujaratiAddress(String gujaratiAddress) {
         this.gujaratiAddress = gujaratiAddress;
     }
 }

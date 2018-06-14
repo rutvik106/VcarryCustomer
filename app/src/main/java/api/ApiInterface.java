@@ -25,17 +25,17 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<City>> getCities(@Field("method") String method);
+    Call<List<City>> getCities(@Field("method") String method); //get_cities
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<Area>> getAreas(@Field("method") String method,
+    Call<List<Area>> getAreas(@Field("method") String method, //get_areas_for_city
                               @Field("city_id") String cityId);
 
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<ResponseBody> insertCustomer(@Field("method") String method,
+    Call<ResponseBody> insertCustomer(@Field("method") String method, //insert_customer
                                       @Field("prefix") String customerNamePrefix,
                                       @Field("customer_name") String customerName,
                                       @Field("customer_address") String customerAddress,
@@ -48,21 +48,21 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<Vehicle>> getVehicleTypes(@Field("method") String method);
+    Call<List<Vehicle>> getVehicleTypes(@Field("method") String method); //get_vehicle_types
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<Integer>> getCustomerIdFromPhone(@Field("method") String method,
+    Call<List<Integer>> getCustomerIdFromPhone(@Field("method") String method, //get_customer_id_from_customer_contact_no
                                                @Field("contact_no") String phone);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<FromLocation>> getShippingLocationsForCustomer(@Field("method") String method,
+    Call<List<FromLocation>> getShippingLocationsForCustomer(@Field("method") String method, //get_shipping_locations_for_customer
                                                              @Field("customer_id") String customerId);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<Integer>> getFareForVehicleTypeLocations(@Field("method") String method,
+    Call<List<Integer>> getFareForVehicleTypeLocations(@Field("method") String method, //get_fare_for_vehicle_type_locations
                                                        @Field("from_shipping_id") String fromShippingId,
                                                        @Field("to_shipping_id") String toShippingLocation,
                                                        @Field("vehicle_type_id") String vehicleTypeId,
@@ -70,7 +70,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<Integer>> insertCustomerTrip(@Field("method") String method,
+    Call<List<Integer>> insertCustomerTrip(@Field("method") String method, //insert_customer_trip
                                            @Field("from_shipping_id") String fromShippingId,
                                            @Field("to_shipping_id") String toShippingLocation,
                                            @Field("vehicle_type_id") String vehicleTypeId,
@@ -83,25 +83,25 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<ResponseBody> updateDeviceTokenCustomer(@Field("method") String method,
+    Call<ResponseBody> updateDeviceTokenCustomer(@Field("method") String method, //update_device_token_customer
                                                  @Field("customer_id") String customerId,
                                                  @Field("device_token") String deviceToken);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<AccountSummary> getAccountSummary(@Field("method") String method,
+    Call<AccountSummary> getAccountSummary(@Field("method") String method, //get_customer_balance
                                            @Field("from") String fromDate,
                                            @Field("to") String toDate,
                                            @Field("customer_id") String email);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<TripByCustomerId>> getTripsByCustomerId(@Field("method") String method,
+    Call<List<TripByCustomerId>> getTripsByCustomerId(@Field("method") String method, //get_trips_by_customer_id
                                                       @Field("customer_id") String customerId);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<TripByCustomerId>> getTripSummary(@Field("method") String method,
+    Call<List<TripByCustomerId>> getTripSummary(@Field("method") String method, //get_trips_by_trip_status
                                                 @Field("customer_id") String customerId,
                                                 @Field("trip_status") String tripStatus,
                                                 @Field("from_date") String fromDate,
@@ -110,34 +110,34 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<TripByCustomerId> getTripDetailsByTripId(@Field("method") String method,
+    Call<TripByCustomerId> getTripDetailsByTripId(@Field("method") String method, //get_trip_details_by_trip_id
                                                   @Field("trip_id") String tripId);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<TripByCustomerId> getTripDetailsByTripNo(@Field("method") String method,
+    Call<TripByCustomerId> getTripDetailsByTripNo(@Field("method") String method, //get_trip_details_by_trip_no
                                                   @Field("trip_no") String tripNo);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<String>> getTripNumberLike(@Field("method") String method,
+    Call<List<String>> getTripNumberLike(@Field("method") String method, //get_trip_nos_like_no
                                          @Field("driver_id") String driverId,
                                          @Field("customer_id") String customerId,
                                          @Field("no") String tripNo);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<AccountSummaryNew> getAccountSummary(@Field("method") String method,
+    Call<AccountSummaryNew> getAccountSummary(@Field("method") String method, //get_full_customer_balance_summary
                                               @Field("customer_id") String customerId);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<List<TripBreakUpDetails>> getTripBreakUpDetails(@Field("method") String method,
+    Call<List<TripBreakUpDetails>> getTripBreakUpDetails(@Field("method") String method, //getTripBreakUpForTripIdCustomer
                                                          @Field("trip_id") String tripId);
 
     @FormUrlEncoded
     @POST("webservice.php")
-    Call<PendingTrips> getAllPendingTrips(@Field("method") String method,
+    Call<PendingTrips> getAllPendingTrips(@Field("method") String method, //get_pending_customer_trip_ids
                                           @Field("customer_id") String customerId);
 
 }

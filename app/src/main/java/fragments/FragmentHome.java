@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dialogs.DateTimePickerDialog;
+import dialogs.SelectCityAreaDialog;
 import io.fusionbit.vcarrycustomer.ActivityBookTrip;
 import io.fusionbit.vcarrycustomer.ActivityOnGoingTrips;
 import io.fusionbit.vcarrycustomer.ActivityTripSummary;
@@ -22,8 +23,7 @@ import io.fusionbit.vcarrycustomer.R;
  * Created by rutvik on 11/17/2016 at 10:49 PM.
  */
 
-public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDateTimeSetListener
-{
+public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDateTimeSetListener {
 
     @BindView(R.id.ll_bookTrip)
     LinearLayout llBookTrip;
@@ -37,8 +37,7 @@ public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDat
     @BindView(R.id.ll_tripSummary)
     LinearLayout llTripSummary;
 
-    public static FragmentHome newInstance(int index)
-    {
+    public static FragmentHome newInstance(int index) {
         FragmentHome fragmentHome = new FragmentHome();
         Bundle b = new Bundle();
         b.putInt("index", index);
@@ -49,8 +48,7 @@ public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDat
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         ButterKnife.bind(this, view);
@@ -61,34 +59,27 @@ public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDat
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState)
-    {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        llScheduleTrip.setOnClickListener(new View.OnClickListener()
-        {
+        llScheduleTrip.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 dateTimePickerDialog = new DateTimePickerDialog(getActivity(), "SELECT DATE & TIME",
                         FragmentHome.this);
                 dateTimePickerDialog.show();
             }
         });
 
-        llOngoingTrip.setOnClickListener(new View.OnClickListener()
-        {
+        llOngoingTrip.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 ActivityOnGoingTrips.start(getActivity());
             }
         });
 
-        llTripSummary.setOnClickListener(new View.OnClickListener()
-        {
+        llTripSummary.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 ActivityTripSummary.start(getActivity());
             }
         });
@@ -96,8 +87,7 @@ public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDat
     }
 
     @Override
-    public void onDateTimeSet(DateTimePickerDialog dialog, int dayOfMonth, int month, int year, int hourIn24, int minute)
-    {
+    public void onDateTimeSet(DateTimePickerDialog dialog, int dayOfMonth, int month, int year, int hourIn24, int minute) {
         dialog.dismiss();
 
         Intent i = new Intent(getActivity(), ActivityBookTrip.class);
@@ -108,11 +98,9 @@ public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDat
         bundle.putInt(Constants.YEAR, year);
         bundle.putInt(Constants.HOUR, hourIn24);
         bundle.putInt(Constants.MINUTE, minute);
-        if (hourIn24 >= 12)
-        {
+        if (hourIn24 >= 12) {
             bundle.putBoolean(Constants.IS_PM, true);
-        } else
-        {
+        } else {
             bundle.putBoolean(Constants.IS_PM, false);
         }
 
@@ -123,12 +111,11 @@ public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDat
         startActivity(i);
     }
 
-    class BookTrip implements View.OnClickListener
-    {
+    class BookTrip implements View.OnClickListener {
         @Override
-        public void onClick(View view)
-        {
-            startActivity(new Intent(getActivity(), ActivityBookTrip.class));
+        public void onClick(View view) {
+            new SelectCityAreaDialog(getActivity()).show();
+            //startActivity(new Intent(getActivity(), ActivityBookTrip.class));
         }
     }
 

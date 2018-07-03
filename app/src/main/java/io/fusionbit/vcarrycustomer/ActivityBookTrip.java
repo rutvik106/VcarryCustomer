@@ -1,6 +1,7 @@
 package io.fusionbit.vcarrycustomer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,17 +46,17 @@ import apimodels.Vehicle;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import extra.LocaleHelper;
+import extra.Log;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import models.BookedTrip;
+import models.Weights;
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class ActivityBookTrip extends BaseActivity implements Validator.ValidationListener {
 
-    final Handler mHandler = new Handler();
-    final List<FromLocation> shippingLocationList = new ArrayList<>();
     @BindView(R.id.btn_requestTrip)
     Button btnRequestTrip;
     @BindView(R.id.iv_selectFrom)
@@ -80,25 +81,34 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     RadioButton rbOneWay;
     @BindView(R.id.rb_return)
     RadioButton rbReturn;
-    String fromPlace, fromLat, fromLng;
-    String toPlace, toLat, toLng;
-    RealmResults<Vehicle> realmVehicles;
-    RealmResults<FromLocation> realmFromLocations;
-    Validator validator;
-    Call<List<Integer>> getFare;
-    Realm realm = Realm.getDefaultInstance();
     @BindView(R.id.tv_tripSchedule)
     TextView tvTripSchedule;
     @BindView(R.id.ll_tripScheduleDetails)
     LinearLayout llTripScheduleDetails;
-    int selectedFromLocation, selectedToLocation;
-    String selectedFromLocationName, selectedToLocationName;
     @BindView(R.id.et_tripNote)
     EditText etTripNote;
-    @BindView(R.id.sb_weight)
-    SeekBar sbWeight;
-    @BindView(R.id.tv_selectedWeight)
-    TextView tvSelectedWeight;
+    //@BindView(R.id.tv_selectedWeight)
+    //TextView tvSelectedWeight;
+    @BindView(R.id.spin_weights)
+    AppCompatSpinner spinWeights;
+
+
+    final Handler mHandler = new Handler();
+    final List<FromLocation> shippingLocationList = new ArrayList<>();
+    final List<FromLocation> ToShippingLocationList = new ArrayList<>();
+
+
+    String fromPlace, fromLat, fromLng;
+    String toPlace, toLat, toLng;
+    RealmResults<Vehicle> realmVehicles;
+    Validator validator;
+    Call<List<Integer>> getFare;
+    Realm realm = Realm.getDefaultInstance();
+
+    int selectedFromLocation, selectedToLocation;
+    String selectedFromLocationName, selectedToLocationName;
+
+
     private String fromShippingLocationId = null;
     private String toShippingLocationId = null;
     private int vehicleTypeId = 0;
@@ -108,7 +118,10 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
     private Call<List<FromLocation>> getShippingLocations;
     private Call<List<Integer>> insertTrip;
 
-    private int selectedWeight = 100;
+    private String selectedFromAreaId = null;
+    private String selectedToAreaId = null;
+
+    private String selectedWeight = "0-500 Kg";
 
     private void cancelApiCalls() {
         if (getVehicles != null) {
@@ -135,6 +148,12 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
+
+        selectedFromAreaId = getIntent().getStringExtra(Constants.INTENT_EXTRA_FROM_AREA_ID);
+        selectedToAreaId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TO_AREA_ID);
+
+        Log.i(App.APP_TAG, "Selected FROM AREA ID: " + selectedFromAreaId);
+        Log.i(App.APP_TAG, "Selected TO AREA ID: " + selectedToAreaId);
 
         validator = new Validator(this);
         validator.setValidationListener(this);
@@ -185,6 +204,9 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                 actFrom.setText("");
                 selectedFromLocation = -1;
                 selectedFromLocationName = "";
+                fromShippingLocationId = null;
+
+                getFair();
 
                 /*Intent i = new Intent(ActivityBookTrip.this, ActivityPickLocation.class);
                 i.putExtra("ACTIVITY_INTENT", Constants.SELECT_START_LOCATION_ACTIVITY);
@@ -201,6 +223,9 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
                 actTo.setText("");
                 selectedToLocation = -1;
                 selectedToLocationName = "";
+                toShippingLocationId = null;
+
+                getFair();
 
                 /*Intent i = new Intent(ActivityBookTrip.this, ActivityPickLocation.class);
                 i.putExtra("ACTIVITY_INTENT", Constants.SELECT_DESTINATION_LOCATION_ACTIVITY);
@@ -212,35 +237,28 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         btnRequestTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (selectedWeight < 100) {
-                    Toast.makeText(ActivityBookTrip.this, "Please select proper weight.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 validator.validate();
             }
         });
 
         setListenersForAutoCompleteTextView();
 
+        spinWeights.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new Weights().getWeights()));
 
-        sbWeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        spinWeights.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                selectedWeight = 100 * i;
-                tvSelectedWeight.setText(selectedWeight + " Kg");
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedWeight = adapterView.getAdapter().getItem(i).toString();
+                //tvSelectedWeight.setText(selectedWeight);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
 
+        //tvSelectedWeight.setText(selectedWeight);
 
         final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CUSTOMER_ID, null);
@@ -459,18 +477,112 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
 
     private void getShippingLocationsFromRealm() {
 
-        realmFromLocations = realm.where(FromLocation.class).findAll();
+        final RealmResults<FromLocation> realmFromLocations = realm.where(FromLocation.class)
+                .equalTo("areaId", selectedFromAreaId)
+                .findAll();
+
+        if (realmFromLocations != null) {
+            Log.i(App.APP_TAG, "REALM FROM LOCATIONS: " + realmFromLocations.size());
+        }
 
         realmFromLocations.addChangeListener(new RealmChangeListener<RealmResults<FromLocation>>() {
             @Override
             public void onChange(RealmResults<FromLocation> element) {
-                setShippingLocationListAdapter();
+                Log.i(App.APP_TAG, "FROM LOCATIONS CHANGED");
+                setFromShippingLocationListAdapter(realmFromLocations);
             }
         });
+        setFromShippingLocationListAdapter(realmFromLocations);
+
+
+        final RealmResults<FromLocation> realmToLocations = realm.where(FromLocation.class)
+                .equalTo("areaId", selectedToAreaId)
+                .findAll();
+
+        if (realmToLocations != null) {
+            Log.i(App.APP_TAG, "REALM TO LOCATIONS: " + realmToLocations.size());
+        }
+
+        realmToLocations.addChangeListener(new RealmChangeListener<RealmResults<FromLocation>>() {
+            @Override
+            public void onChange(RealmResults<FromLocation> element) {
+                Log.i(App.APP_TAG, "TO LOCATIONS CHANGED");
+                setToShippingLocationListAdapter(realmToLocations);
+            }
+        });
+        setToShippingLocationListAdapter(realmToLocations);
 
     }
 
-    private void setShippingLocationListAdapter() {
+    private void setToShippingLocationListAdapter(RealmResults<FromLocation> realmToLocations) {
+        //////////////////////////////////////////////////////////////////////////////////////////// TO
+
+        ToShippingLocationList.clear();
+        ToShippingLocationList.addAll(realm.copyFromRealm(realmToLocations));
+
+        CustomListAdapter<FromLocation> toAdapter = new CustomListAdapter<FromLocation>(this,
+                android.R.layout.simple_list_item_1, ToShippingLocationList) {
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
+                if (convertView == null) {
+                    convertView = LayoutInflater.from(ActivityBookTrip.this)
+                            .inflate(R.layout.single_address_with_company_name, parent, false);
+                }
+
+                TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
+                companyName.setText(getString(R.string.company_name) + " " +
+                        suggestedSpinnerModelList.get(position).getShippingName());
+                companyName.setTextColor(Color.DKGRAY);
+                companyName.setTextSize(13f);
+
+                TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
+                label.setText(suggestedSpinnerModelList.get(position).getLabel());
+                label.setTextColor(Color.BLACK);
+                label.setTextSize(16f);
+
+
+                // And finally return your dynamic (or custom) view for each spinner item
+                return convertView;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
+                if (convertView == null) {
+                    convertView = LayoutInflater.from(ActivityBookTrip.this)
+                            .inflate(R.layout.single_address_with_company_name, parent, false);
+                }
+
+                TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
+                companyName.setText(getString(R.string.company_name) + " " +
+                        suggestedSpinnerModelList.get(position).getShippingName());
+                companyName.setTextColor(Color.DKGRAY);
+                companyName.setTextSize(13f);
+
+                TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
+                label.setText(suggestedSpinnerModelList.get(position).getLabel());
+                label.setTextColor(Color.BLACK);
+                label.setTextSize(16f);
+
+
+                // And finally return your dynamic (or custom) view for each spinner item
+                return convertView;
+            }
+
+        };
+
+        toAdapter.setFilter(new CustomListAdapter.CustomFilter(toAdapter.spinnerModelList,
+                toAdapter.suggestedSpinnerModelList, toAdapter));
+
+
+        actTo.setAdapter(toAdapter);
+
+    }
+
+    private void setFromShippingLocationListAdapter(RealmResults<FromLocation> realmFromLocations) {
+
         shippingLocationList.clear();
         shippingLocationList.addAll(realm.copyFromRealm(realmFromLocations));
 
@@ -536,64 +648,11 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         fromAdapter.setFilter(new CustomListAdapter.CustomFilter(fromAdapter.spinnerModelList,
                 fromAdapter.suggestedSpinnerModelList, fromAdapter));
 
-        CustomListAdapter<FromLocation> toAdapter = new CustomListAdapter<FromLocation>(this,
-                android.R.layout.simple_list_item_1, shippingLocationList) {
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(ActivityBookTrip.this)
-                            .inflate(R.layout.single_address_with_company_name, parent, false);
-                }
-
-                TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
-                companyName.setText(getString(R.string.company_name) + " " +
-                        suggestedSpinnerModelList.get(position).getShippingName());
-                companyName.setTextColor(Color.DKGRAY);
-                companyName.setTextSize(13f);
-
-                TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
-                label.setText(suggestedSpinnerModelList.get(position).getLabel());
-                label.setTextColor(Color.BLACK);
-                label.setTextSize(16f);
-
-
-                // And finally return your dynamic (or custom) view for each spinner item
-                return convertView;
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(ActivityBookTrip.this)
-                            .inflate(R.layout.single_address_with_company_name, parent, false);
-                }
-
-                TextView companyName = (TextView) convertView.findViewById(R.id.tv_spinnerItemCompanyName);
-                companyName.setText(getString(R.string.company_name) + " " +
-                        suggestedSpinnerModelList.get(position).getShippingName());
-                companyName.setTextColor(Color.DKGRAY);
-                companyName.setTextSize(13f);
-
-                TextView label = (TextView) convertView.findViewById(R.id.tv_spinnerItem);
-                label.setText(suggestedSpinnerModelList.get(position).getLabel());
-                label.setTextColor(Color.BLACK);
-                label.setTextSize(16f);
-
-
-                // And finally return your dynamic (or custom) view for each spinner item
-                return convertView;
-            }
-
-        };
-
-        toAdapter.setFilter(new CustomListAdapter.CustomFilter(toAdapter.spinnerModelList,
-                toAdapter.suggestedSpinnerModelList, toAdapter));
-
         actFrom.setAdapter(fromAdapter);
-        actTo.setAdapter(toAdapter);
+
+    }
+
+    private void setShippingLocationListAdapter() {
 
         final AdapterView.OnItemClickListener actFromListener = new AdapterView.OnItemClickListener() {
             @Override
@@ -610,6 +669,9 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             }
         };
 
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //TO
         final AdapterView.OnItemClickListener actToListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -632,8 +694,14 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
             }
         };
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //FROM
         actFrom.setOnItemClickListener(actFromListener);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //TO
         actTo.setOnItemClickListener(actToListener);
+
     }
 
     private void getShippingLocations(String customerId) {
@@ -846,4 +914,13 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         return super.onOptionsItemSelected(item);
     }
 
+    public static void start(final Context context, String selectedFromAreaId, String selectedToAreaId) {
+
+        final Intent i = new Intent(context, ActivityBookTrip.class);
+        i.putExtra(Constants.INTENT_EXTRA_FROM_AREA_ID, selectedFromAreaId);
+        i.putExtra(Constants.INTENT_EXTRA_TO_AREA_ID, selectedToAreaId);
+
+        context.startActivity(i);
+
+    }
 }

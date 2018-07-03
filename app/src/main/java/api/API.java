@@ -134,7 +134,7 @@ public class API {
                                                   final String toNewAddress,
                                                   final String fromLatLng,
                                                   final String toLatLng,
-                                                  final int selectedWeight,
+                                                  final String selectedWeight,
                                                   RetrofitCallbacks<List<Integer>> callback) {
         Call<List<Integer>> call =
                 apiService.insertCustomerTrip("insert_customer_trip",

@@ -151,6 +151,8 @@
     <string name="logout_message">Are you sure you want to logout?</string>
     <string name="cancel">Cancel</string>
     <string name="select_weight">Select Weight</string>
+    <string name="select_city">Select City</string>
+    <string name="select_city_area"><![CDATA[Select City & Area]]></string>
 
 
 </resources>

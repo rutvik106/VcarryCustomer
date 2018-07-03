@@ -186,7 +186,7 @@ public class NotificationHandler {
 
                 final BookedTrip bookedTrip = r.copyFromRealm(b);
 
-                api.getTripDetailsByTripId(extra.getString("trip_id"),
+                api.getTripDetailsByTripId(tripId,
                         new RetrofitCallbacks<TripByCustomerId>() {
                             @Override
                             public void onResponse(Call<TripByCustomerId> call, Response<TripByCustomerId> response) {

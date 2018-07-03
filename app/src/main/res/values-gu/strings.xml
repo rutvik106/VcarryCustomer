@@ -153,5 +153,7 @@
     <string name="logout_message">શું તમે ખરેખર લૉગઆઉટ કરવા માંગો છો?</string>
     <string name="cancel">રદ કરો</string>
     <string name="select_weight">વજન પસંદ કરો</string>
+    <string name="select_city">Select City</string>
+    <string name="select_city_area"><![CDATA[Select City & Area]]></string>
 
 </resources>

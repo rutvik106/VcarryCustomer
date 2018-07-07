@@ -126,6 +126,19 @@ public class API {
         return call;
     }
 
+    public Call<List<Integer>> getFareByAreaId(final String fromAreaId,
+                                                              final String toAreaId,
+                                                              final String vehicleTypeId,
+                                                              RetrofitCallbacks<List<Integer>> callback) {
+        Call<List<Integer>> call =
+                apiService.getFareByAreaId("get_fare_for_vehicle_type_area_id",
+                        fromAreaId, toAreaId, vehicleTypeId);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
     public Call<List<Integer>> insertCustomerTrip(final String fromShippingId,
                                                   final String toShippingId,
                                                   final String vehicleTypeId,

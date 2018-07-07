@@ -470,8 +470,11 @@ public class ActivityBookTrip extends BaseActivity implements Validator.Validati
         final String customerId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CUSTOMER_ID, null);
 
-        getFare = API.getInstance().getFareForVehicleTypeLocations(fromShippingLocationId + "",
-                toShippingLocationId + "", vehicleTypeId + "", customerId, onGetFairCallback);
+        //getFare = API.getInstance().getFareForVehicleTypeLocations(fromShippingLocationId + "",
+        //      toShippingLocationId + "", vehicleTypeId + "", customerId, onGetFairCallback);
+
+        getFare = API.getInstance().getFareByAreaId(selectedFromAreaId,
+                selectedToAreaId, vehicleTypeId + "", onGetFairCallback);
 
     }
 

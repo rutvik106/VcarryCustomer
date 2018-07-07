@@ -140,4 +140,11 @@ public interface ApiInterface {
     Call<PendingTrips> getAllPendingTrips(@Field("method") String method, //get_pending_customer_trip_ids
                                           @Field("customer_id") String customerId);
 
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<Integer>> getFareByAreaId(@Field("method") String method, //get_fare_for_vehicle_type_area_id
+                                        @Field("from_area_id") String fromShippingId,
+                                        @Field("to_area_id") String toShippingLocation,
+                                        @Field("vehicle_type_id") String vehicleTypeId);
+
 }

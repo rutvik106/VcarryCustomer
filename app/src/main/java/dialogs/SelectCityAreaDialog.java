@@ -138,6 +138,9 @@ public class SelectCityAreaDialog extends Dialog {
                             spinToCity.setAdapter(new CustomListAdapter<>(getContext(),
                                     android.R.layout.simple_spinner_item, cityList));
 
+                            fromSpinCity.setSelection(1);
+                            spinToCity.setSelection(1);
+
                             setupFromSpinnerListeners();
                             setupToSpinnerListeners();
 

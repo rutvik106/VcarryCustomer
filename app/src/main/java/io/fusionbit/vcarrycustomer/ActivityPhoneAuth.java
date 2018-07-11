@@ -26,8 +26,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +36,7 @@ import butterknife.ButterKnife;
 import fragments.PhoneAuthScreenOne;
 import fragments.PhoneAuthScreenTwo;
 
-public class ActivityPhoneAuth extends FragmentActivity implements PermissionListener, PhoneAuthScreenTwo.PhoneAuthScreenTwoCallbacks,
+public class ActivityPhoneAuth extends FragmentActivity implements PhoneAuthScreenTwo.PhoneAuthScreenTwoCallbacks,
         PhoneAuthScreenOne.PhoneAuthScreenOneCallbacks
 {
 
@@ -202,18 +200,7 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
 
     private void checkForPermissions()
     {
-        TedPermission.with(this)
-                .setPermissionListener(this)
-                .setDeniedMessage("If you reject any permission, you can not use this App\n\nPlease turn on permissions at [Setting] > [Permission]")
-                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.INTERNET,
-                        Manifest.permission.SYSTEM_ALERT_WINDOW,
-                        Manifest.permission.VIBRATE,
-                        Manifest.permission.WAKE_LOCK,
-                        Manifest.permission.DISABLE_KEYGUARD,
-                        Manifest.permission.RECEIVE_BOOT_COMPLETED)
-                .check();
+        onPermissionGranted();
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential)
@@ -257,7 +244,6 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
     }
 
 
-    @Override
     public void onPermissionGranted()
     {
         if (mAuth.getCurrentUser() != null)
@@ -266,7 +252,6 @@ public class ActivityPhoneAuth extends FragmentActivity implements PermissionLis
         }
     }
 
-    @Override
     public void onPermissionDenied(ArrayList<String> deniedPermissions)
     {
         finish();

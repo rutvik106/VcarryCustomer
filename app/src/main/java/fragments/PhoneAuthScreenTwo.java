@@ -2,6 +2,7 @@ package fragments;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -23,8 +24,7 @@ import io.fusionbit.vcarrycustomer.R;
  * Created by rutvik on 6/15/2017 at 12:15 PM.
  */
 
-public class PhoneAuthScreenTwo extends Fragment
-{
+public class PhoneAuthScreenTwo extends Fragment {
     @BindView(R.id.fabConfirmOtp)
     FloatingActionButton fabConfirmOtp;
     @BindView(R.id.et_otp)
@@ -38,9 +38,9 @@ public class PhoneAuthScreenTwo extends Fragment
     PhoneAuthScreenTwoCallbacks phoneAuthScreenTwoCallbacks;
 
     CountDownTimer timer;
+    private boolean timerIsFinished = true;
 
-    public static PhoneAuthScreenTwo newInstance(PhoneAuthScreenTwoCallbacks phoneAuthScreenTwoCallbacks)
-    {
+    public static PhoneAuthScreenTwo newInstance(PhoneAuthScreenTwoCallbacks phoneAuthScreenTwoCallbacks) {
         PhoneAuthScreenTwo fragment = new PhoneAuthScreenTwo();
         fragment = new PhoneAuthScreenTwo();
         fragment.phoneAuthScreenTwoCallbacks = phoneAuthScreenTwoCallbacks;
@@ -50,72 +50,69 @@ public class PhoneAuthScreenTwo extends Fragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_phone_auth_screen_two, container, false);
-
         unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
 
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
 
     @OnClick(R.id.fabConfirmOtp)
-    public void onFabConfirmOtpClicked()
-    {
+    public void onFabConfirmOtpClicked() {
         String code = etOtp.getText().toString();
-        if (TextUtils.isEmpty(code))
-        {
+        if (TextUtils.isEmpty(code)) {
             etOtp.setError("Cannot be empty.");
             return;
         }
         phoneAuthScreenTwoCallbacks.verifyNumberWithOtp(etOtp.getText().toString());
     }
 
-    public void startTimer()
-    {
+    public void startTimer() {
         btnResendOtp.setVisibility(View.GONE);
+        if (timerIsFinished) {
+            timerIsFinished = false;
+            timer = new CountDownTimer(60000, 1000) {
 
-        timer = new CountDownTimer(60000, 1000)
-        {
+                public void onTick(final long millisUntilFinished) {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvOtpWaitingText.setText("Please wait, You will receive a OTP in " + millisUntilFinished / 1000 + " Seconds.");
+                            }
+                        });
+                    }
+                }
 
-            public void onTick(long millisUntilFinished)
-            {
-                tvOtpWaitingText.setText("Please wait, You will receive a OTP in " + millisUntilFinished / 1000 + " Seconds.");
-            }
-
-            public void onFinish()
-            {
-                tvOtpWaitingText.setText("If you have not received any OTP. Please try resending.");
-                btnResendOtp.setVisibility(View.VISIBLE);
-            }
-        }.start();
+                public void onFinish() {
+                    timerIsFinished = true;
+                    tvOtpWaitingText.setText("If you have not received any OTP. Please try resending.");
+                    btnResendOtp.setVisibility(View.VISIBLE);
+                }
+            }.start();
+        }
     }
 
-    public void stopTimer()
-    {
-        if (timer != null)
-        {
+    public void stopTimer() {
+        if (timer != null) {
             timer.cancel();
             timer = null;
         }
     }
 
     @OnClick(R.id.btn_resendOtp)
-    public void onBtnResendOtpClicked()
-    {
+    public void onBtnResendOtpClicked() {
         phoneAuthScreenTwoCallbacks.resendOtp();
     }
 
-    public interface PhoneAuthScreenTwoCallbacks
-    {
+    public interface PhoneAuthScreenTwoCallbacks {
         void verifyNumberWithOtp(String otp);
 
         void resendOtp();

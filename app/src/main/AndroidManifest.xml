@@ -2,14 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.fusionbit.vcarrycustomer">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".App"
@@ -110,7 +103,8 @@
         <activity
             android:name=".ActivityTripSummary"
             android:screenOrientation="portrait" />
-        <activity android:name=".ActivityImageView" />
+        <activity android:name=".ActivityImageView"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ActivityFareDetails"
             android:screenOrientation="portrait" />
@@ -118,7 +112,7 @@
             android:name=".ActivityPhoneAuth"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible" />
-        <activity android:name=".ActivityWebInvoice"></activity>
+        <activity android:name=".ActivityWebInvoice"/>
     </application>
 
 </manifest>

@@ -5,25 +5,25 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.MainThread;
 import android.support.annotation.StyleRes;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
 
 import extra.Log;
 
-public class ActivityLogin extends BaseActivity implements PermissionListener
-{
+public class ActivityLogin extends BaseActivity {
 
     private static final String TAG = App.APP_TAG + ActivityLogin.class.getSimpleName();
     private static final String GOOGLE_TOS_URL =
@@ -33,10 +33,10 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
     private boolean isConnected = false;
     private FirebaseAuth mFirebaseAuth;
     private Intent intent;
+    private int PERMISSIONS_REQUEST = 324;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.i(TAG, "OnCreate");
@@ -46,47 +46,30 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
     }
 
     @Override
-    protected int getLayoutResourceId()
-    {
+    protected int getLayoutResourceId() {
         return R.layout.activity_login;
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
+    protected void internetNotAvailable() {
 
     }
 
     @Override
-    protected void internetAvailable()
-    {
+    protected void internetAvailable() {
 
     }
 
-    private void checkForPermissions()
-    {
-        TedPermission.with(ActivityLogin.this)
-                .setPermissionListener(this)
-                .setDeniedMessage("If you reject any permission, you can not use this App\n\nPlease turn on permissions at [Setting] > [Permission]")
-                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.INTERNET,
-                        Manifest.permission.SYSTEM_ALERT_WINDOW,
-                        Manifest.permission.VIBRATE,
-                        Manifest.permission.WAKE_LOCK,
-                        Manifest.permission.DISABLE_KEYGUARD,
-                        Manifest.permission.RECEIVE_BOOT_COMPLETED)
-                .check();
+    private void checkForPermissions() {
+        onPermissionGranted();
     }
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode)
-        {
+        switch (requestCode) {
 
             case RC_SIGN_IN:
                 handleSignInResponse(resultCode, data);
@@ -100,10 +83,8 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
     }
 
 
-    private void tryLogin()
-    {
-        if (!isConnected)
-        {
+    private void tryLogin() {
+        if (!isConnected) {
             return;
         }
 
@@ -122,15 +103,12 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
 
     //user signed in response
     @MainThread
-    private void handleSignInResponse(int resultCode, Intent data)
-    {
-        if (resultCode == RESULT_OK)
-        {
+    private void handleSignInResponse(int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
             startActivity(intent);
         }
 
-        if (resultCode == RESULT_CANCELED)
-        {
+        if (resultCode == RESULT_CANCELED) {
             Toast.makeText(this, "something went wrong", Toast.LENGTH_SHORT).show();
         }
 
@@ -138,8 +116,7 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
 
 
     @MainThread
-    private String getSelectedTosUrl()
-    {
+    private String getSelectedTosUrl() {
 
         return GOOGLE_TOS_URL;
 
@@ -147,8 +124,7 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
 
     @MainThread
     @StyleRes
-    private int getSelectedTheme()
-    {
+    private int getSelectedTheme() {
 
         //return R.style.LoginTheme; // AuthUI.getDefaultTheme();
         return 0; // AuthUI.getDefaultTheme();
@@ -157,15 +133,13 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
 
     @MainThread
     @DrawableRes
-    private int getSelectedLogo()
-    {
+    private int getSelectedLogo() {
         return R.drawable.logo;
     }
 
     //set login methods/providers (GOOGLE/FACEBOOK)
     @MainThread
-    private String[] getSelectedProviders()
-    {
+    private String[] getSelectedProviders() {
         ArrayList<String> selectedProviders = new ArrayList<>();
 
         //selectedProviders.add(AuthUI.GOOGLE_PROVIDER);
@@ -173,24 +147,18 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
         return selectedProviders.toArray(new String[selectedProviders.size()]);
     }
 
-    @Override
-    public void onPermissionGranted()
-    {
+    public void onPermissionGranted() {
 
         intent = new Intent(ActivityLogin.this, ActivityHome.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        findViewById(R.id.btn_googleSignIn).setOnClickListener(new View.OnClickListener()
-        {
+        findViewById(R.id.btn_googleSignIn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
 
-                if (isConnected)
-                {
+                if (isConnected) {
                     tryLogin();
-                } else
-                {
+                } else {
                     Toast.makeText(ActivityLogin.this, "check internet connection", Toast.LENGTH_SHORT).show();
                 }
 
@@ -201,25 +169,19 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
         //check internet connectivity
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected())
-        {
+        if (activeNetwork != null && activeNetwork.isConnected()) {
             isConnected = true;
-        } else
-        {
+        } else {
             isConnected = false;
         }
 
         //listen to network changes
-        networkChangeReceiver = new BroadcastReceiver()
-        {
+        networkChangeReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                if (intent.getBooleanExtra("is_active", false))
-                {
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getBooleanExtra("is_active", false)) {
                     isConnected = true;
-                } else
-                {
+                } else {
                     isConnected = false;
                 }
             }
@@ -227,17 +189,14 @@ public class ActivityLogin extends BaseActivity implements PermissionListener
 
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        if (mFirebaseAuth.getCurrentUser() != null)
-        {
+        if (mFirebaseAuth.getCurrentUser() != null) {
             startActivity(intent);
         }
 
 
     }
 
-    @Override
-    public void onPermissionDenied(ArrayList<String> deniedPermissions)
-    {
+    public void onPermissionDenied(ArrayList<String> deniedPermissions) {
         finish();
     }
 }

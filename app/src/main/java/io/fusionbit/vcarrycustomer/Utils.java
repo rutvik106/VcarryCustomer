@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.view.inputmethod.InputMethodManager;
 
@@ -32,6 +33,12 @@ public class Utils
                 .setMessage(message)
                 .setPositiveButton("OK", onClickListener)
                 .show();
+    }
+
+    public static void dialNumber(final Context context,final  String phoneNumber){
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + phoneNumber));
+        context.startActivity(intent);
     }
 
     public static void hideSoftKeyboard(Activity activity)

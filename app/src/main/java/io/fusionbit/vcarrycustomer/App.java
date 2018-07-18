@@ -2,6 +2,9 @@ package io.fusionbit.vcarrycustomer;
 
 import android.app.Application;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import extra.LocaleHelper;
 import extra.Log;
 import io.realm.Realm;
@@ -34,7 +37,6 @@ public class App extends Application {
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
 
     }
-
 
     /*@Override
     protected void attachBaseContext(Context base)

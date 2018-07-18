@@ -27,6 +27,7 @@ import io.fusionbit.vcarrycustomer.ActivityTripDetails;
 import io.fusionbit.vcarrycustomer.App;
 import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
+import io.fusionbit.vcarrycustomer.Utils;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
@@ -105,9 +106,7 @@ public class VHSingleTripDetails extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 if (tripDetails.getDriverNumber() != null) {
-                    Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse("tel:" + tripDetails.getDriverNumber()));
-                    context.startActivity(intent);
+                    Utils.dialNumber(context,tripDetails.getDriverNumber());
                 } else {
                     Toast.makeText(context, "Driver contact number not found", Toast.LENGTH_SHORT).show();
                 }

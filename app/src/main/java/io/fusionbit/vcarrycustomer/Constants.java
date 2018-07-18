@@ -6,7 +6,8 @@ package io.fusionbit.vcarrycustomer;
 
 public class Constants {
 
-    public static final boolean IS_EMULATOR = false;
+    public static final boolean IS_EMULATOR = true;
+    public static final String TEST_PHONE_NUMBER = "7990673558";
 
     //public static final String API_BASE_URL = "";
     public static final String API_BASE_URL = "http://tapandtype.com/vcarry/webservice/";

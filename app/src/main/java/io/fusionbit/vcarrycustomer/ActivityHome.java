@@ -72,12 +72,9 @@ public class ActivityHome extends BaseActivity
     MenuItem searchMenu;
     SearchView searchView;
     Call<List<String>> tripSearchCall;
-    String customerId;
     private BroadcastReceiver mNetworkDetectReceiver;
     private SimpleCursorAdapter tripSearchResultCursorAdapter;
     private String[] strArrData = {"No Suggestions"};
-    private AlertDialog notRegisterDialog;
-    private Call<List<Integer>> getCustomerIdFromEmail;
     private boolean showIt = true;
 
     private void checkInternetConnection() {
@@ -133,7 +130,6 @@ public class ActivityHome extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null || IS_EMULATOR == true) {
-            tryToGetCustomerIdFromCustomerPhone(IS_EMULATOR ? "9409210488" : FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
             /*Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
                     .bitmapTransform(new CropCircleTransformation(this))
@@ -143,7 +139,7 @@ public class ActivityHome extends BaseActivity
                     .setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());*/
 
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_subTitle))
-                    .setText(IS_EMULATOR ? "9409210488" :
+                    .setText(IS_EMULATOR ? Constants.TEST_PHONE_NUMBER :
                             FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
             ft = getSupportFragmentManager().beginTransaction();
@@ -190,108 +186,6 @@ public class ActivityHome extends BaseActivity
     @Override
     protected void internetAvailable() {
         checkInternetConnection();
-    }
-
-    private void tryToGetCustomerIdFromCustomerPhone(String phone) {
-
-        if (getCustomerIdFromEmail != null) {
-            getCustomerIdFromEmail.cancel();
-        }
-
-        final RetrofitCallbacks<List<Integer>> onGetCustomerIdCallback =
-                new RetrofitCallbacks<List<Integer>>() {
-                    @Override
-                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
-                        super.onResponse(call, response);
-                        if (response.isSuccessful()) {
-                            if (response.body() == null) {
-                                Toast.makeText(ActivityHome.this, "customer ID not found: " +
-                                        "Response NULL", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-
-                            if (response.body().get(0) > 0) {
-                                PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
-                                        .edit()
-                                        .putString(Constants.CUSTOMER_ID, String.valueOf(response.body().get(0)))
-                                        .apply();
-
-                                customerId = String.valueOf(response.body().get(0));
-
-                                updateFcmDeviceToken(String.valueOf(response.body().get(0)));
-
-                                Toast.makeText(ActivityHome.this, R.string.registered_customer, Toast.LENGTH_SHORT).show();
-
-                                if (notRegisterDialog != null) {
-                                    if (notRegisterDialog.isShowing()) {
-                                        notRegisterDialog.dismiss();
-                                    }
-                                }
-
-                                /*if (showIt)
-                                {
-                                    showIt = false;
-                                    promptForRegistration();
-                                }*/
-
-                            } else {
-                                PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
-                                        .edit()
-                                        .putString(Constants.CUSTOMER_ID, null)
-                                        .apply();
-
-                                Toast.makeText(ActivityHome.this,
-                                        "Something went wrong, Please try again later",
-                                        Toast.LENGTH_SHORT).show();
-
-                                Toast.makeText(ActivityHome.this, "customer ID not found: "
-                                        + response.body(), Toast.LENGTH_SHORT).show();
-
-                                promptForRegistration();
-                            }
-                        } else {
-                            Toast.makeText(ActivityHome.this, "cannot get customer ID API RESPONSE" +
-                                    " not OK: " + response.code(), Toast.LENGTH_SHORT).show();
-
-                            promptForRegistration();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Integer>> call, Throwable t) {
-                        super.onFailure(call, t);
-                        if (!call.isCanceled()) {
-                            promptForRegistration();
-                            /*Toast.makeText(ActivityHome.this, "cannot get customer ID RETROFIT ON FAILURE: " +
-                                    t.getMessage(), Toast.LENGTH_SHORT).show();*/
-                        }
-                    }
-                };
-
-        getCustomerIdFromEmail = API.getInstance().getCustomerIdFromPhone(phone, onGetCustomerIdCallback);
-
-    }
-
-    private void updateFcmDeviceToken(String customerId) {
-        final String fcmDeviceToken = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Constants.FCM_INSTANCE_ID, null);
-
-        final RetrofitCallbacks<ResponseBody> onUpdateDeviceTokenCallback =
-                new RetrofitCallbacks<ResponseBody>() {
-
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        super.onResponse(call, response);
-                    }
-                };
-
-        if (fcmDeviceToken != null) {
-            API.getInstance().updateDeviceTokenCustomer(customerId, fcmDeviceToken, onUpdateDeviceTokenCallback);
-        } else {
-            Toast.makeText(this, "FCM Instance ID not found!", Toast.LENGTH_SHORT).show();
-        }
-
-
     }
 
     private void setActionBarTitle(String title) {
@@ -368,7 +262,7 @@ public class ActivityHome extends BaseActivity
                     tripSearchCall.cancel();
                 }
 
-                tripSearchCall = API.getInstance().getTripNumberLike(s, customerId, new RetrofitCallbacks<List<String>>() {
+                tripSearchCall = API.getInstance().getTripNumberLike(s, getCustomerId(), new RetrofitCallbacks<List<String>>() {
 
                     @Override
                     public void onResponse(Call<List<String>> call, Response<List<String>> response) {
@@ -459,6 +353,11 @@ public class ActivityHome extends BaseActivity
                 .setPositiveButton(getString(R.string.nav_signOut), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int j) {
+                        realm.deleteAll();
+                        PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                .edit()
+                                .putString(Constants.CUSTOMER_ID, null)
+                                .apply();
                         FirebaseAuth.getInstance().signOut();
                         final Intent i = new Intent(ActivityHome.this, ActivityPhoneAuth.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -481,45 +380,6 @@ public class ActivityHome extends BaseActivity
                     break;
             }
         }
-    }
-
-    private void promptForRegistration() {
-        final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
-                .getString(Constants.CUSTOMER_ID, null);
-        if (customerId == null) {
-            notRegisterDialog = new AlertDialog.Builder(this)
-                    .setTitle("Not Registered")
-                    .setMessage("Dear Customer, you're not yet registered with V-Carry. \n" +
-                            "\n" +
-                            "Please call 079-2755-0007 to register your account, and let us take load off your business.")
-                    .setCancelable(false)
-                    .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            tryToGetCustomerIdFromCustomerPhone(IS_EMULATOR ? "9409210488" : FirebaseAuth.getInstance()
-                                    .getCurrentUser().getPhoneNumber());
-                        }
-                    })
-                    .setNeutralButton("LOGOUT", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int j) {
-                            FirebaseAuth.getInstance().signOut();
-                            final Intent i = new Intent(ActivityHome.this, ActivityPhoneAuth.class);
-                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(i);
-                        }
-                    })
-                    .show();
-        }
-        /*final String customerId = PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
-                .getString(Constants.CUSTOMER_ID, null);
-        ActivityHome.this.customerId = customerId;
-        if (customerId == null)
-        {
-            final Intent i = new Intent(this, ActivityRegistrationForm.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-        }*/
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

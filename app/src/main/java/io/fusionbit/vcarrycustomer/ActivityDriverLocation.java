@@ -122,6 +122,19 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
 
     }
 
+    @Override
+    protected void onDestroy() {
+        fragmentDriverLocation.cancelApiCall();
+        super.onDestroy();
+    }
+
+    @Override
+    public void locationFound() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getString(R.string.driver_location));
+        }
+    }
+
     class OnReceiveDriverLocation extends BroadcastReceiver {
 
         @Override
@@ -146,7 +159,7 @@ public class ActivityDriverLocation extends AppCompatActivity implements FCM.FCM
                 }
             });
 
-            fragmentDriverLocation.showDriverLocation(latLng);
+            //fragmentDriverLocation.showDriverLocation(latLng);
         }
     }
 

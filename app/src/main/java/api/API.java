@@ -9,6 +9,7 @@ import apimodels.AccountSummary;
 import apimodels.AccountSummaryNew;
 import apimodels.Area;
 import apimodels.City;
+import apimodels.DriverLocationDetails;
 import apimodels.FromLocation;
 import apimodels.PendingTrips;
 import apimodels.TripBreakUpDetails;
@@ -258,4 +259,14 @@ public class API {
         call.enqueue(callback);
         return call;
     }
+
+    public Call<DriverLocationDetails> getDriverRecentLocation(final String driverId,
+                                                               final RetrofitCallbacks<DriverLocationDetails> callbacks){
+
+        Call<DriverLocationDetails> call=apiService.getDriverRecentLocation("get_driver_location",
+                driverId);
+        call.enqueue(callbacks);
+        return call;
+    }
+
 }

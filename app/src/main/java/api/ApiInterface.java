@@ -6,6 +6,7 @@ import apimodels.AccountSummary;
 import apimodels.AccountSummaryNew;
 import apimodels.Area;
 import apimodels.City;
+import apimodels.DriverLocationDetails;
 import apimodels.FromLocation;
 import apimodels.PendingTrips;
 import apimodels.TripBreakUpDetails;
@@ -146,5 +147,10 @@ public interface ApiInterface {
                                         @Field("from_area_id") String fromShippingId,
                                         @Field("to_area_id") String toShippingLocation,
                                         @Field("vehicle_type_id") String vehicleTypeId);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<DriverLocationDetails> getDriverRecentLocation(@Field("method") String method, //get_driver_location
+                                                        @Field("driver_id") String driver_id);
 
 }

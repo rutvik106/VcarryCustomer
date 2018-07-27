@@ -183,6 +183,7 @@ public abstract class BaseActivity extends AppCompatActivity
                     @Override
                     public void onFailure(Call<List<Integer>> call, Throwable t) {
                         super.onFailure(call, t);
+
                         if (!call.isCanceled()) {
                             promptForRegistration(BaseActivity.this);
                             /*Toast.makeText(ActivityHome.this, "cannot get customer ID RETROFIT ON FAILURE: " +

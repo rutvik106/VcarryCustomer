@@ -61,7 +61,7 @@ public class ActivityHome extends BaseActivity
 
     FragmentTransaction ft;
 
-    Realm realm = Realm.getDefaultInstance();
+    private Realm realm;
 
     @BindView(R.id.cl_navActivityLayout)
     CoordinatorLayout clNavActivityLayout;
@@ -101,6 +101,8 @@ public class ActivityHome extends BaseActivity
         super.onCreate(savedInstanceState);
 
         ButterKnife.bind(this);
+
+        realm = Realm.getDefaultInstance();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -353,7 +355,9 @@ public class ActivityHome extends BaseActivity
                 .setPositiveButton(getString(R.string.nav_signOut), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int j) {
+                        realm.beginTransaction();
                         realm.deleteAll();
+                        realm.commitTransaction();
                         PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                                 .edit()
                                 .putString(Constants.CUSTOMER_ID, null)
@@ -395,5 +399,11 @@ public class ActivityHome extends BaseActivity
         if (currentFragment != null) {
             getSupportFragmentManager().beginTransaction().detach(currentFragment).attach(currentFragment).commit();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        realm.close();
+        super.onDestroy();
     }
 }

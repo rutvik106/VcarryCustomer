@@ -29,16 +29,18 @@
 
 -keep class sun.misc.** { *; }
 
-
+-ignorewarnings
+-keep class * {
+    public private *;
+}
 
 # FOR VALIDATION
 -keep class com.mobsandgeeks.saripaar.** {*;}
 -keep @com.mobsandgeeks.saripaar.annotation.ValidateUsing class * {*;}
 
-
 # FOR BUTTERKNIFE
 # Retain generated class which implement Unbinder.
--keep public class * implements butterknife.Unbinder { public <init>(...); }
+-keep public class * implements butterknife.Unbinder { public <init>(**, android.view.View); }
 
 # Prevent obfuscation of types which use ButterKnife annotations since the simple name
 # is used to reflectively look up the generated ViewBinding.
@@ -59,6 +61,7 @@
 # Uncomment for DexGuard only
 #-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 
+# FOR RETROFIT
 # Retrofit 2.X
 ## https://square.github.io/retrofit/ ##
 
@@ -72,6 +75,8 @@
 }
 
 #FOR OKHTTP3
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
 -dontwarn okio.**
 
@@ -85,7 +90,7 @@
 -keepattributes *Annotation*
 
 # Gson specific classes
--keep class sun.misc.Unsafe { *; }
+-dontwarn sun.misc.**
 #-keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
@@ -100,21 +105,16 @@
 ##---------------End: proguard configuration for Gson  ----------
 
 
-# FOR REALM
+
+# Proguard Configuration for Realm (http://realm.io)
+# For detailed discussion see: https://groups.google.com/forum/#!topic/realm-java/umqKCc50JGU
+# Additionally you need to keep your Realm Model classes as well
+# For example:
+# -keep class com.yourcompany.realm.** { *; }
+
 -keep class io.realm.annotations.RealmModule
 -keep @io.realm.annotations.RealmModule class *
 -keep class io.realm.internal.Keep
 -keep @io.realm.internal.Keep class *
 -dontwarn javax.**
 -dontwarn io.realm.**
-
-
-#FOR TED PRERMISSIONS
--keepattributes *Annotation*
--keepclassmembers class ** {
-    @com.squareup.otto.Subscribe public *;
-    @com.squareup.otto.Produce public *;
-}
-
-#FOR SEARCH VIEW
--keep class android.support.v7.widget.SearchView { *; }

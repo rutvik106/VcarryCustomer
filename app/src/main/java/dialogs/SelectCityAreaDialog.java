@@ -2,6 +2,7 @@ package dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatSpinner;
@@ -26,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.fusionbit.vcarrycustomer.ActivityBookTrip;
+import io.fusionbit.vcarrycustomer.Constants;
 import io.fusionbit.vcarrycustomer.R;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -63,8 +65,32 @@ public class SelectCityAreaDialog extends Dialog {
     String selectedFromCityId = null, selectedFromAreaId = null;
     String selectedToCityId = null, selectedToAreaId = null;
 
+    private Intent intentBookingActivityScheduled = null;
+
     public SelectCityAreaDialog(@NonNull Context context) {
         super(context);
+    }
+
+    public SelectCityAreaDialog(@NonNull Context context, int dayOfMonth, int month, int year, int hourIn24, int minute) {
+        super(context);
+
+        intentBookingActivityScheduled = new Intent(context, ActivityBookTrip.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constants.DAY, dayOfMonth);
+        bundle.putInt(Constants.MONTH, month);
+        bundle.putInt(Constants.YEAR, year);
+        bundle.putInt(Constants.HOUR, hourIn24);
+        bundle.putInt(Constants.MINUTE, minute);
+        if (hourIn24 >= 12) {
+            bundle.putBoolean(Constants.IS_PM, true);
+        } else {
+            bundle.putBoolean(Constants.IS_PM, false);
+        }
+
+
+        intentBookingActivityScheduled.putExtra(Constants.IS_SCHEDULING_TRIP, true);
+        intentBookingActivityScheduled.putExtra(Constants.SCHEDULE_DETAILS, bundle);
+
     }
 
     @Override
@@ -249,7 +275,11 @@ public class SelectCityAreaDialog extends Dialog {
             return;
         }
 
-        ActivityBookTrip.start(getContext(), selectedFromAreaId, selectedToAreaId);
+        if (intentBookingActivityScheduled != null) {
+            getContext().startActivity(intentBookingActivityScheduled);
+        } else {
+            ActivityBookTrip.start(getContext(), selectedFromAreaId, selectedToAreaId);
+        }
 
         dismiss();
 

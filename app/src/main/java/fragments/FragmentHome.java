@@ -90,25 +90,8 @@ public class FragmentHome extends Fragment implements DateTimePickerDialog.OnDat
     public void onDateTimeSet(DateTimePickerDialog dialog, int dayOfMonth, int month, int year, int hourIn24, int minute) {
         dialog.dismiss();
 
-        Intent i = new Intent(getActivity(), ActivityBookTrip.class);
+        new SelectCityAreaDialog(getActivity(), dayOfMonth, month, year, hourIn24, minute).show();
 
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constants.DAY, dayOfMonth);
-        bundle.putInt(Constants.MONTH, month);
-        bundle.putInt(Constants.YEAR, year);
-        bundle.putInt(Constants.HOUR, hourIn24);
-        bundle.putInt(Constants.MINUTE, minute);
-        if (hourIn24 >= 12) {
-            bundle.putBoolean(Constants.IS_PM, true);
-        } else {
-            bundle.putBoolean(Constants.IS_PM, false);
-        }
-
-
-        i.putExtra(Constants.IS_SCHEDULING_TRIP, true);
-        i.putExtra(Constants.SCHEDULE_DETAILS, bundle);
-
-        startActivity(i);
     }
 
     class BookTrip implements View.OnClickListener {

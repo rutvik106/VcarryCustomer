@@ -1,5 +1,6 @@
 package io.fusionbit.vcarrycustomer;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,6 +46,8 @@ public abstract class BaseActivity extends AppCompatActivity
 
     private String customerId;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +56,21 @@ public abstract class BaseActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
 
+    }
 
+    private void showProgressDialog(String title, String message) {
+        hideProgressDialog();
+        progressDialog = ProgressDialog.show(this, title, message, true, false);
+        progressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog != null) {
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            progressDialog = null;
+        }
     }
 
     public String getCustomerId() {
@@ -82,6 +99,8 @@ public abstract class BaseActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
+        hideProgressDialog();
+        cancelCall();
         if (networkConnectionDetector != null) {
             unregisterReceiver(networkConnectionDetector);
         }
@@ -117,9 +136,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
     private void tryToGetCustomerIdFromCustomerPhone(String phone) {
 
-        if (getCustomerIdFromEmail != null) {
-            getCustomerIdFromEmail.cancel();
-        }
+        cancelCall();
 
         final RetrofitCallbacks<List<Integer>> onGetCustomerIdCallback =
                 new RetrofitCallbacks<List<Integer>>() {
@@ -134,6 +151,7 @@ public abstract class BaseActivity extends AppCompatActivity
                             }
 
                             if (response.body().get(0) > 0) {
+                                hideProgressDialog();
                                 PreferenceManager.getDefaultSharedPreferences(BaseActivity.this)
                                         .edit()
                                         .putString(Constants.CUSTOMER_ID, String.valueOf(response.body().get(0)))
@@ -143,7 +161,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
                                 updateFcmDeviceToken(String.valueOf(response.body().get(0)));
 
-                                Toast.makeText(BaseActivity.this, R.string.registered_customer, Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(BaseActivity.this, R.string.registered_customer, Toast.LENGTH_SHORT).show();
 
                                 if (notRegisterDialog != null) {
                                     if (notRegisterDialog.isShowing()) {
@@ -196,8 +214,18 @@ public abstract class BaseActivity extends AppCompatActivity
 
     }
 
+    private void cancelCall() {
+        if (getCustomerIdFromEmail != null) {
+            if (!getCustomerIdFromEmail.isCanceled()) {
+                getCustomerIdFromEmail.cancel();
+            }
+            getCustomerIdFromEmail = null;
+        }
+    }
+
 
     private void promptForRegistration(final Context context) {
+        hideProgressDialog();
         final String customerId = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(Constants.CUSTOMER_ID, null);
         if (customerId == null) {
@@ -210,6 +238,7 @@ public abstract class BaseActivity extends AppCompatActivity
                     .setNegativeButton("Try Again", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            showProgressDialog("Trying Again...","Authenticating with V Carry...");
                             tryToGetCustomerIdFromCustomerPhone(IS_EMULATOR ? TEST_PHONE_NUMBER : FirebaseAuth.getInstance()
                                     .getCurrentUser().getPhoneNumber());
                         }
@@ -217,7 +246,7 @@ public abstract class BaseActivity extends AppCompatActivity
                     .setPositiveButton("CALL", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Utils.dialNumber(context,"7575888848");
+                            Utils.dialNumber(context, "7575888848");
                         }
                     })
                     .setNeutralButton("LOGOUT", new DialogInterface.OnClickListener() {
